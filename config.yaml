@@ -1,0 +1,75 @@
+project:
+  name: "Τα νέα στα ελληνικά!"
+  name_en: "The News in Greek!"
+  language: "el"
+
+sources:
+  greek_news:
+    enabled: true
+    max_items_per_feed: 20
+    feeds:
+      - url: "https://www.protothema.gr/rss/"
+        name: "Proto Thema"
+      - url: "https://www.in.gr/feed/"
+        name: "in.gr"
+      # Google News aggregators for Greece (multiple topics)
+      - url: "https://news.google.com/rss/search?q=Ελλάδα&hl=el&gl=GR&ceid=GR:el"
+        name: "Google News GR"
+      - url: "https://news.google.com/rss/search?q=Greece+achievement+OR+innovation+OR+culture&hl=en&gl=GR&ceid=GR:en"
+        name: "Google News Greece EN"
+
+  world_positive_news:
+    enabled: true
+    max_items_per_feed: 20
+    feeds:
+      - url: "https://www.positive.news/feed/"
+        name: "Positive News"
+      - url: "https://www.goodnewsnetwork.org/feed/"
+        name: "Good News Network"
+      - url: "https://rss.nytimes.com/services/xml/rss/nyt/Science.xml"
+        name: "NYT Science"
+      - url: "https://rss.nytimes.com/services/xml/rss/nyt/Health.xml"
+        name: "NYT Health"
+      - url: "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml"
+        name: "BBC Science"
+
+curation:
+  model: "claude-sonnet-4-6"
+  max_tokens: 8192
+  temperature: 0.3
+  greek_section_items: 6
+  world_section_items: 6
+  # Claude will filter these out — list is guidance for the prompt
+  excluded_topics:
+    - "θάνατος, νεκρός, εκτελέσεις"
+    - "πόλεμος, επίθεση, βομβαρδισμός"
+    - "διαφθορά, σκάνδαλο"
+    - "σεισμός, πλημμύρα, φωτιά"
+    - "έγκλημα, δολοφονία, αρπαγή"
+    - "κρίση, ύφεση, χρεοκοπία"
+    - "death, war, attack, bombing"
+    - "corruption, scandal"
+    - "earthquake, flood, disaster"
+    - "murder, crime, arrest"
+
+audio:
+  enabled: true
+  model: "tts-1-hd"
+  voice: "nova"
+
+github:
+  enabled: true
+  repo: "EiriniOr/greek-weekly-digest"
+  branch: "gh-pages"
+
+schedule:
+  day: "Monday"
+  time: "09:00"
+
+email:
+  enabled: true
+  recipient: "renaorn@gmail.com"
+  smtp_server: "smtp.gmail.com"
+  smtp_port: 587
+  sender_email: "renaorn@gmail.com"
+  sender_password: ""  # Set via env var EMAIL_PASSWORD

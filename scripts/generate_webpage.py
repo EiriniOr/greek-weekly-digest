@@ -68,14 +68,29 @@ def build_html(curated, date_str, has_audio):
     greek_news = curated.get("greek_news", [])
     world_news = curated.get("world_news", [])
 
-    audio_player = ""
     if has_audio:
         audio_player = f"""
         <div class="audio-bar">
-            <span class="audio-label">🎧 Ακούστε το podcast «Τα νέα στα ελληνικά!» (~7 λεπτά)</span>
-            <audio controls>
-                <source src="narration_{date_str}.mp3" type="audio/mpeg">
-            </audio>
+            <div class="audio-inner">
+                <div class="audio-meta">
+                    <span class="audio-title">🎙️ Τα νέα στα ελληνικά!</span>
+                    <span class="audio-duration">~7 λεπτά · {greek_dt}</span>
+                </div>
+                <audio controls preload="metadata">
+                    <source src="narration_{date_str}.mp3" type="audio/mpeg">
+                </audio>
+            </div>
+        </div>"""
+    else:
+        audio_player = f"""
+        <div class="audio-bar audio-bar--pending">
+            <div class="audio-inner">
+                <div class="audio-meta">
+                    <span class="audio-title">🎙️ Τα νέα στα ελληνικά!</span>
+                    <span class="audio-duration">~7 λεπτά · {greek_dt}</span>
+                </div>
+                <span class="audio-pending">Το podcast ετοιμάζεται…</span>
+            </div>
         </div>"""
 
     greek_cards = "\n".join(news_card(item) for item in greek_news)
@@ -198,15 +213,31 @@ def build_html(curated, date_str, has_audio):
         .audio-bar {{
             background: var(--blue-light);
             color: var(--white);
+            padding: 1rem 1.5rem;
+        }}
+        .audio-bar--pending {{ background: #37474f; }}
+        .audio-inner {{
+            max-width: 900px;
+            margin: 0 auto;
             display: flex;
             align-items: center;
-            gap: 1rem;
-            padding: 0.85rem 1.5rem;
+            gap: 1.25rem;
             flex-wrap: wrap;
-            justify-content: center;
         }}
-        .audio-label {{ font-size: 0.9rem; font-weight: 500; }}
-        audio {{ height: 36px; }}
+        .audio-meta {{
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            min-width: 180px;
+        }}
+        .audio-title {{ font-size: 0.95rem; font-weight: 700; }}
+        .audio-duration {{ font-size: 0.75rem; opacity: 0.75; }}
+        .audio-pending {{
+            font-size: 0.85rem;
+            opacity: 0.8;
+            font-style: italic;
+        }}
+        audio {{ height: 40px; flex: 1; min-width: 200px; max-width: 480px; }}
 
         /* ── Main layout ── */
         main {{

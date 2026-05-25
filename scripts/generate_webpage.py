@@ -70,17 +70,31 @@ def build_html(curated, date_str, has_audio):
 
     if has_audio:
         audio_player = f"""
-        <div class="audio-bar">
+        <div class="audio-bar" id="podcast-bar">
             <div class="audio-inner">
                 <div class="audio-meta">
                     <span class="audio-title">🎙️ Τα νέα στα ελληνικά!</span>
                     <span class="audio-duration">~7 λεπτά · {greek_dt}</span>
                 </div>
-                <audio controls preload="metadata">
+                <audio id="podcast-audio" controls preload="auto" autoplay>
                     <source src="narration_{date_str}.mp3" type="audio/mpeg">
                 </audio>
             </div>
-        </div>"""
+        </div>
+        <script>
+            window.addEventListener('load', function() {{
+                var a = document.getElementById('podcast-audio');
+                var p = a.play();
+                if (p !== undefined) {{
+                    p.catch(function() {{
+                        // browser blocked autoplay — user tap/click will start it
+                        document.getElementById('podcast-bar').addEventListener('click', function() {{
+                            a.play();
+                        }}, {{ once: true }});
+                    }});
+                }}
+            }});
+        </script>"""
     else:
         audio_player = f"""
         <div class="audio-bar audio-bar--pending">
@@ -214,6 +228,10 @@ def build_html(curated, date_str, has_audio):
             background: var(--blue-light);
             color: var(--white);
             padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
         }}
         .audio-bar--pending {{ background: #37474f; }}
         .audio-inner {{
@@ -350,6 +368,8 @@ def build_html(curated, date_str, has_audio):
     </style>
 </head>
 <body>
+    {audio_player}
+
     <header>
         <div class="meander"></div>
         <div class="header-inner">
@@ -360,8 +380,6 @@ def build_html(curated, date_str, has_audio):
         </div>
         <div class="meander-bottom"></div>
     </header>
-
-    {audio_player}
 
     <main>
         <div class="section-heading">

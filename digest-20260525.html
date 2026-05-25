@@ -115,11 +115,11 @@
         .audio-bar {
             background: var(--blue-light);
             color: var(--white);
-            padding: 1rem 1.5rem;
+            padding: 0.85rem 1.25rem;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
         .audio-bar--pending { background: #37474f; }
         .audio-inner {
@@ -127,23 +127,53 @@
             margin: 0 auto;
             display: flex;
             align-items: center;
-            gap: 1.25rem;
-            flex-wrap: wrap;
+            gap: 1rem;
         }
+        .play-btn {
+            background: var(--gold);
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            transition: transform 0.15s;
+        }
+        .play-btn:active { transform: scale(0.92); }
         .audio-meta {
             display: flex;
             flex-direction: column;
-            gap: 0.15rem;
-            min-width: 180px;
+            gap: 0.1rem;
+            flex-shrink: 0;
         }
-        .audio-title { font-size: 0.95rem; font-weight: 700; }
-        .audio-duration { font-size: 0.75rem; opacity: 0.75; }
+        .audio-title { font-size: 0.9rem; font-weight: 700; }
+        .audio-duration { font-size: 0.72rem; opacity: 0.75; }
+        .progress-wrap {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 3px;
+            cursor: pointer;
+            min-width: 60px;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--gold);
+            border-radius: 3px;
+            transition: width 0.5s linear;
+        }
         .audio-pending {
             font-size: 0.85rem;
             opacity: 0.8;
             font-style: italic;
         }
-        audio { height: 40px; flex: 1; min-width: 200px; max-width: 480px; }
 
         /* ── Main layout ── */
         main {
@@ -259,28 +289,50 @@
     
         <div class="audio-bar" id="podcast-bar">
             <div class="audio-inner">
+                <button class="play-btn" id="play-btn" aria-label="Άκου το podcast">&#9654;</button>
                 <div class="audio-meta">
                     <span class="audio-title">🎙️ Τα νέα στα ελληνικά!</span>
-                    <span class="audio-duration">~7 λεπτά · 25 Μαΐου 2026</span>
+                    <span class="audio-duration">~5 λεπτά · 25 Μαΐου 2026</span>
                 </div>
-                <audio id="podcast-audio" controls preload="auto" autoplay>
+                <audio id="podcast-audio" preload="auto" playsinline>
                     <source src="narration_20260525.mp3" type="audio/mpeg">
                 </audio>
+                <div class="progress-wrap" id="progress-wrap">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
             </div>
         </div>
         <script>
-            window.addEventListener('load', function() {
-                var a = document.getElementById('podcast-audio');
-                var p = a.play();
-                if (p !== undefined) {
-                    p.catch(function() {
-                        // browser blocked autoplay — user tap/click will start it
-                        document.getElementById('podcast-bar').addEventListener('click', function() {
-                            a.play();
-                        }, { once: true });
-                    });
+        (function() {
+            var audio = document.getElementById('podcast-audio');
+            var btn   = document.getElementById('play-btn');
+            var bar   = document.getElementById('progress-bar');
+            var wrap  = document.getElementById('progress-wrap');
+
+            function setBtn(playing) {
+                btn.innerHTML = playing ? '&#9646;&#9646;' : '&#9654;';
+            }
+
+            btn.addEventListener('click', function() {
+                if (audio.paused) { audio.play(); } else { audio.pause(); }
+            });
+
+            wrap.addEventListener('click', function(e) {
+                var rect = wrap.getBoundingClientRect();
+                audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+            });
+
+            audio.addEventListener('play',  function() { setBtn(true);  });
+            audio.addEventListener('pause', function() { setBtn(false); });
+            audio.addEventListener('timeupdate', function() {
+                if (audio.duration) {
+                    bar.style.width = (audio.currentTime / audio.duration * 100) + '%';
                 }
             });
+
+            // autoplay — works on desktop; on mobile first tap on play-btn handles it
+            audio.play().catch(function() {});
+        })();
         </script>
 
     <header>
@@ -289,7 +341,7 @@
             <p class="site-label">Εβδομαδιαία Έκδοση · Podcast</p>
             <h1>Τα νέα στα ελληνικά! 🇬🇷</h1>
             <p class="header-date">25 Μαΐου 2026</p>
-            <p class="intro">Αυτή η εβδομάδα φέρνει εμπνευστικές ειδήσεις από την Ελλάδα και τον κόσμο: από καινοτόμες τεχνολογίες και επιστημονικές ανακαλύψεις μέχρι περιβαλλοντικές επιτυχίες και πολιτιστικά επιτεύγματα. Η Θεσσαλονίκη αναδύεται ως ψηφιακός κόμβος, η Κρήτη κερδίζει παγκόσμια αναγνώριση για τη γαστρονομία της, ενώ στο εξωτερικό η επιστήμη προσφέρει ελπίδα για την υγεία και το περιβάλλον.</p>
+            <p class="intro">Αυτή την εβδομάδα ξεχωρίζουν σημαντικές εξελίξεις στην τεχνολογία και την εκπαίδευση στην Ελλάδα, με το ΑΠΘ να ανοίγει δρόμους για τεχνολογική αυτονομία και τη Θεσσαλονίκη να αναδεικνύεται σε ψηφιακό κόμβο της νοτιοανατολικής Ευρώπης. Στο διεθνές σκηνικό, επιστημονικές ανακαλύψεις στην υγεία και το διάστημα, καθώς και εμπνευστικές ιστορίες ανθρώπων και φύσης, δίνουν μια αισιόδοξη νότα στην εβδομάδα.</p>
         </div>
         <div class="meander-bottom"></div>
     </header>
@@ -305,10 +357,10 @@
         <article class="card">
             <div class="card-header">
                 <span class="badge" style="background:#6d28d9">Εκπαίδευση</span>
-                <span class="source">ESOS / Google News GR</span>
+                <span class="source">ESOS</span>
             </div>
-            <h3 class="card-title">Το ΑΠΘ λανσάρει το πρώτο μεταπτυχιακό για UAVs στην Ελλάδα</h3>
-            <p class="card-summary">Το Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης ανακοίνωσε το πρώτο μεταπτυχιακό πρόγραμμα για μη επανδρωμένα αεροχήματα στη χώρα, με στόχο την τεχνολογική αυτονομία της Ελλάδας.</p>
+            <h3 class="card-title">Το ΑΠΘ λανσάρει το πρώτο μεταπτυχιακό για drones στην Ελλάδα</h3>
+            <p class="card-summary">Το Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης ανακοίνωσε το πρώτο μεταπτυχιακό πρόγραμμα για UAVs στη χώρα, με στόχο την τεχνολογική αυτονομία της Ελλάδας στον τομέα των μη επανδρωμένων αεροσκαφών.</p>
             <a href="https://news.google.com/rss/articles/CBMitwFBVV95cUxQc1VfNmZvV0ttMlhDaXp6UzJ1bUdPZDl2VWRlWk1uODI0UDgtV2NleDdfY3luWXJfcXY0MmpWUmRGNkFEXy1xQjRzSmhPOWlfdGI5LXhwcjdTS2F3cWhPaTJNU0NtMWZrSnBDNXhQcC1VUjdrRV9FRG9JZmota2VRaEQtZEdMTC12N3N3MHkxemRiYmdJVWRoeWNxd1lKQ09zdjJLS1dnX1NHNTUyOVptNUZET21xQWs" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
@@ -317,11 +369,23 @@
         <article class="card">
             <div class="card-header">
                 <span class="badge" style="background:#0891b2">Τεχνολογία</span>
-                <span class="source">Voria / Google News GR</span>
+                <span class="source">Voria</span>
             </div>
-            <h3 class="card-title">Θεσσαλονίκη: Από brain drain σε κόμβο τεχνητής νοημοσύνης της ΝΑ Ευρώπης</h3>
-            <p class="card-summary">Η Θεσσαλονίκη φιλοδοξεί να γίνει το «ψηφιακό λιμάνι» της νοτιοανατολικής Ευρώπης, προσελκύοντας επιστήμονες και εταιρείες τεχνολογίας και αντιστρέφοντας το brain drain.</p>
-            <a href="https://news.google.com/rss/articles/CBMiqwFBVV95cUxNcDh6S3V4VGszM0w1OXVIRHY2Z195aWFkN0NkOEw4WGIyQXExb09rM1JoNUt1WmVCMzNiQ0s1UVI2bFVPc3c3V3lwLXd1WUFtSUNNR1VGVXVGdmpVMHNqMU9EVktOdUNVZDVocGItakJBeVZ3OXVkLVN4UjFJQXNDakJHUlh2M1ZGRG11RmsxWHFoS2RST2M3UUU3cjVQMFFLMWx6SDd4SGwwdlU" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Θεσσαλονίκη: Από brain drain σε κόμβο τεχνητής νοημοσύνης της νοτιοανατολικής Ευρώπης</h3>
+            <p class="card-summary">Η Θεσσαλονίκη μετασχηματίζεται σε «ψηφιακό λιμάνι» της νοτιοανατολικής Ευρώπης, προσελκύοντας επενδύσεις στην τεχνητή νοημοσύνη και αντιστρέφοντας το φαινόμενο της διαρροής εγκεφάλων.</p>
+            <a href="https://news.google.com/rss/articles/CBMiqwFBVV95cUxNcDh6S3V4VGszM0w1OXVIRHY2Z195aWFkN0NkOEw4WGIyQXExb09rM1JoNUt1WmVCMzNiQ0s1UVI2bFVPc3c3V3lpLXd1WUFtSUNNR1VGVXVGdmpVMHNqMU9EVktOdUNVZDVocGItakJBeVZ3OXVkLVN4UjFJQXNDakJHUlh2M1ZGRG11RmsxWHFoS2RST2M3UUU3cjVQMFFLMWx6SDd4SGwwdlU" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0369a1">Οικονομία</span>
+                <span class="source">Fortunegreece.com</span>
+            </div>
+            <h3 class="card-title">Ελλάδα, Πορτογαλία και Μονακό γίνονται «μαγνήτες» για εκατομμυριούχους</h3>
+            <p class="card-summary">Σύμφωνα με νέα έρευνα, η Ελλάδα συγκαταλέγεται στους κορυφαίους προορισμούς παγκοσμίως για εκατομμυριούχους, ενισχύοντας τις προοπτικές της οικονομίας και του τουρισμού.</p>
+            <a href="https://news.google.com/rss/articles/CBMiqgFBVV95cUxQRG1JUGxiTXNFSWlsdmlZM3YtTGpJZFVNVFk2aDVBY1RXTGVzcVAyOXZ3TkMycUt1aTBTZEhDYTNKSkVtUk5aQXdROUczYWdTaXhWb1JtQ3d6Y0REd01aNkEtYjdydVZZU1RZZi1OckZ2SWtxQlB5eWpKalJNcUZOLVo5OVJ3b2hNNEswVHYxYWhqOVZBMmZSRTlOMFA0VmF1Y0tVamROSVBPQQ" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -329,22 +393,10 @@
         <article class="card">
             <div class="card-header">
                 <span class="badge" style="background:#0e7490">Τουρισμός</span>
-                <span class="source">Travel And Tour World / Google News GR</span>
-            </div>
-            <h3 class="card-title">Κρήτη: Παγκόσμια αναγνώριση ως κορυφαίος γαστρονομικός προορισμός για το 2026</h3>
-            <p class="card-summary">Η Κρήτη κατακτά κορυφαία θέση στους παγκόσμιους γαστρονομικούς προορισμούς για το 2026, αναδεικνύοντας τη μεσογειακή κουζίνα και τα τοπικά προϊόντα της.</p>
-            <a href="https://news.google.com/rss/articles/CBMibkFVX3lxTE5xYmV3d2w4UHF6QlREU1BKT2JHVG00V1BFTXRNT3NkTnV4cjZBdklMclI2NzBSLThBc0RsNEJMOE93MDFVMFhBQlMyVkVGeEo1NjdXR0tMeUVQUGgxNUt4aUF5b3NYSVpaVVpWakxR" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#0e7490">Τουρισμός</span>
-                <span class="source">Travel And Tour World / Google News GR</span>
+                <span class="source">Travel And Tour World</span>
             </div>
             <h3 class="card-title">Βόρεια Ελλάδα: Υψηλές βαθμολογίες από τουρίστες για πολιτισμό και ακτογραμμή</h3>
-            <p class="card-summary">Οι τουρίστες αξιολογούν τη Βόρεια Ελλάδα με εξαιρετικές βαθμολογίες για τον πλούσιο πολιτισμό, τις εντυπωσιακές ακτές και τις αυθεντικές εμπειρίες που προσφέρει.</p>
+            <p class="card-summary">Τουρίστες από όλο τον κόσμο αξιολογούν εξαιρετικά τη βόρεια Ελλάδα για τον πλούσιο πολιτισμό, τις εντυπωσιακές ακτές και τις αυθεντικές εμπειρίες που προσφέρει.</p>
             <a href="https://news.google.com/rss/articles/CBMibkFVX3lxTFBWa29UREFOUEZoNHZBUm03YS00bWhicjBtQlNRSW1zaUlMSk1LX3FDUWY4Qy1ybEtzTDVKOGVoUTZYaUhna1JhTnJKWkxrcU5tellHM0Uzc09nMjZad2ZZcEF6Mi0tdnhlTGFTT1N3" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
@@ -353,11 +405,11 @@
         <article class="card">
             <div class="card-header">
                 <span class="badge" style="background:#0e7490">Τουρισμός</span>
-                <span class="source">Travel And Tour World / Google News GR</span>
+                <span class="source">Travel And Tour World</span>
             </div>
-            <h3 class="card-title">Ελλάδα: Νέο βιώσιμο όραμα τουρισμού με έμφαση στην ποιότητα και την καινοτομία</h3>
-            <p class="card-summary">Η Ελλάδα παρουσιάζει επαναστατική στρατηγική βιώσιμου τουρισμού που δίνει προτεραιότητα στις ποιοτικές εμπειρίες, την καινοτομία και τη μακροπρόθεσμη οικονομική ανάπτυξη.</p>
-            <a href="https://news.google.com/rss/articles/CBMibkFVX3lxTE53ekphdk1mNEkzeVF6VmU3YW9RT1pGYWNGLTd0c0lycnpmaVNKM0dFMlMtRXp0LTJ0M0NKNHR6QTk1TWRjbkRhZk9CM1ZNaEYzekRDVXBVbXRTQmV1Qm41Z2tqYlhSQ2hxeGdpR3dn" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Η Κρήτη αναγνωρίζεται παγκοσμίως ως κορυφαίος γαστρονομικός προορισμός για το 2026</h3>
+            <p class="card-summary">Η Κρήτη κερδίζει διεθνή αναγνώριση ως ένας από τους κορυφαίους γαστρονομικούς προορισμούς του κόσμου, αναδεικνύοντας τον πλούτο της κρητικής κουζίνας και διατροφικής κουλτούρας.</p>
+            <a href="https://news.google.com/rss/articles/CBMibkFVX3lxTE5xYmV3d2w4UHF6QlREU1BKT2JHVG00V1BFTXRNT3NkTnV4cjZBdklMclI2NzBSLThBc0RsNEJMOE93MDFVMFhBQlMyVkVGeEo1NjdXR0tMeUVQUGgxNUt4aUF5b3NYSVpaVVpWakxR" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -365,10 +417,10 @@
         <article class="card">
             <div class="card-header">
                 <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
-                <span class="source">GreekReporter.com / Google News GR</span>
+                <span class="source">GreekReporter.com</span>
             </div>
-            <h3 class="card-title">Αναγέννηση του Μυστρά: Ανοίγει ξανά το μοναδικό επιζών Βυζαντινό Παλάτι της Ελλάδας</h3>
-            <p class="card-summary">Το μοναδικό επιζών βυζαντινό παλάτι της Ελλάδας στον Μυστρά ανοίγει ξανά τις πύλες του για το κοινό, μετά από εργασίες αποκατάστασης, προσφέροντας μια μοναδική ιστορική εμπειρία.</p>
+            <h3 class="card-title">Αναγέννηση του Μυστρά: Ανοίγει ξανά το μοναδικό βυζαντινό παλάτι της Ελλάδας</h3>
+            <p class="card-summary">Το μοναδικό επιζών βυζαντινό παλάτι της Ελλάδας στον Μυστρά ανοίγει ξανά τις πύλες του μετά από εργασίες αποκατάστασης, προσφέροντας στους επισκέπτες μια μοναδική εμπειρία ιστορίας.</p>
             <a href="https://news.google.com/rss/articles/CBMilAFBVV95cUxOODhtd1lHbWc2LVkxbU0wdXJISEFSVmxweU5lUnE1OHdIS25HQ3IzdDZlRWRibWxpNGRnb3ZxVUtzQW51b0V6VHJvRTY3ZERvclUtc1VzWVRoN1dFQ0JSWDM3R25HMGlmTTNJS0JvVi05Sm84WjZZVTk1dURYSEhEamtPYXhOOGN1T2NpSl9aYzRYRWhG" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
@@ -376,24 +428,12 @@
 
         <article class="card">
             <div class="card-header">
-                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
-                <span class="source">ProtoThema / Google News GR</span>
+                <span class="badge" style="background:#0e7490">Τουρισμός</span>
+                <span class="source">Travel And Tour World</span>
             </div>
-            <h3 class="card-title">Θρύλοι και μυστήρια που στοιχειώνουν την Ελλάδα: Από τη Σπηλιά του Νταβέλη ως τους Δροσουλίτες</h3>
-            <p class="card-summary">Ένα ταξίδι στους πιο εντυπωσιακούς θρύλους και τα μυστήρια της ελληνικής γης, από τη διάσημη σπηλιά του Νταβέλη έως το φαινόμενο των Δροσουλιτών στην Κρήτη.</p>
-            <a href="https://news.google.com/rss/articles/CBMiowFBVV95cUxOUjFLTzdLNkJYa05tRVMxOC1yMG80MWdIcHF6RUd5R3d1QU5YZ2ZDYlJsR1BoVm5TMWY2aExEV1JpMU8zSXluRlUzaDhUSzYzdDEtMGN0VWpHMlY5eC1PSE11YWNnT0xWSnVsOEJtZUtpaVYxTWdGOXZDVTY3bThUSC1EQ2JIZUZMTmlmcFpoYkdNWFhSRk5XbzhGbGpEV1k0Q3pn" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
-                <span class="source">The National Herald / Google News GR</span>
-            </div>
-            <h3 class="card-title">Ελαιόλαδο Λέσβου: Οικονομία, κουζίνα και πολιτισμός σε ένα μοναδικό προϊόν</h3>
-            <p class="card-summary">Το ελαιόλαδο της Λέσβου αναδεικνύεται διεθνώς ως σύμβολο της ελληνικής γαστρονομικής κληρονομιάς, συνδυάζοντας παράδοση, οικονομία και πολιτισμό.</p>
-            <a href="https://news.google.com/rss/articles/CBMilgFBVV95cUxQTnMwaTlnejY2Rk1DVmQ5cjdaUGZiaF9nVDkzWjJJNGlFZFBMbDVLNWxkRWZaZHZmQ00wNk1wNFNPaktMQ0RtU042a21Kc19VNmxFZHBwV2txQmZ6MUJGb3c4dkpXMnJMemFnTVNVM1gwbGF5SDZPX1drbUhGRU10bzQ1QnZHZEN4Vi1lWEZEbTU3TVNIU1E" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Η Ελλάδα παρουσιάζει επαναστατικό όραμα για βιώσιμο τουρισμό</h3>
+            <p class="card-summary">Η Ελλάδα αποκαλύπτει νέα στρατηγική για βιώσιμο τουρισμό που δίνει προτεραιότητα στην ποιότητα εμπειριών, την καινοτομία και τη μακροπρόθεσμη οικονομική ανάπτυξη.</p>
+            <a href="https://news.google.com/rss/articles/CBMibkFVX3lxTE53ekphdk1mNEkzeVF6VmU3YW9RT1pGYWNGLTd0c0lycnpmaVNKM0dFMlMtRXp0LTJ0M0NKNHR6QTk1TWRjbkRhZk9CM1ZNaEYzekRDVXBVbXRTQmV1Qm41Z2tqYlhSQ2hxeGdpR3dn" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -403,8 +443,8 @@
                 <span class="badge" style="background:#16a34a">Περιβάλλον</span>
                 <span class="source">Proto Thema</span>
             </div>
-            <h3 class="card-title">684.000 πλαστικά μπουκάλια γίνονται δρόμος 1 χιλιομέτρου</h3>
-            <p class="card-summary">Σκωτσέζικη εταιρεία μετατρέπει ανακυκλωμένο πλαστικό σε πρόσθετο ασφάλτου, δημιουργώντας δρόμους από 684.000 μπουκάλια και μειώνοντας τη χρήση πετρελαϊκής πίσσας.</p>
+            <h3 class="card-title">684.000 πλαστικά μπουκάλια μετατρέπονται σε δρόμο 1 χιλιομέτρου</h3>
+            <p class="card-summary">Μια σκωτσέζικη εταιρεία αξιοποιεί ανακυκλωμένο πλαστικό ως πρόσθετο ασφάλτου, μειώνοντας δραστικά τη χρήση πίσσας από πετρέλαιο και ανοίγοντας νέους δρόμους για πράσινες υποδομές.</p>
             <a href="https://www.protothema.gr/best-of-network/article/1824541/i-asfaltos-allazei-684000-plastika-boukalia-ginodai-dromos-1-hiliometrou/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
@@ -415,9 +455,21 @@
                 <span class="badge" style="background:#0891b2">Τεχνολογία</span>
                 <span class="source">Proto Thema</span>
             </div>
-            <h3 class="card-title">Μηχανικοί «φουσκώνουν» σκυρόδεμα με αέρα και δημιουργούν θόλους χωρίς σκαλωσιές</h3>
-            <p class="card-summary">Αυστριακοί μηχανικοί ανέπτυξαν καινοτόμο τεχνική που μετατρέπει επίπεδες πλάκες σκυροδέματος σε θόλους και καμπύλες στέγες, χωρίς ανάγκη για σκαλωσιές.</p>
+            <h3 class="card-title">Μηχανικοί «φουσκώνουν» σκυρόδεμα με αέρα για να φτιάξουν θόλους χωρίς σκαλωσιές</h3>
+            <p class="card-summary">Αυστριακοί μηχανικοί ανέπτυξαν καινοτόμο τεχνική που μετατρέπει επίπεδες πλάκες σκυροδέματος σε θόλους και καμπύλες στέγες, επαναστατικοποιώντας την κατασκευή κτιρίων.</p>
             <a href="https://www.protothema.gr/best-of-network/article/1824539/mihanikoi-fouskonoun-skurodema-me-aera-kai-to-metatrepoun-se-tholous-horis-skalosies/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">South China Morning Post</span>
+            </div>
+            <h3 class="card-title">Κινεζική αρχαιολογική αποστολή ανασκάπτει στην Ελλάδα για να αποκαλύψει αλήθειες της αρχαίας ιστορίας</h3>
+            <p class="card-summary">Κινέζοι αρχαιολόγοι συνεργάζονται με Έλληνες επιστήμονες σε ανασκαφές που υπόσχονται να φέρουν στο φως νέα στοιχεία για την αρχαία ελληνική ιστορία και τις διασυνδέσεις των πολιτισμών.</p>
+            <a href="https://news.google.com/rss/articles/CBMiwAFBVV95cUxNcGZpYWhRdHNRdmo4ZTJIVTIzMFBUN2lUVGJSM1FsekN2U05HMWpaS3BON2pVeWpwTkNPeW13TGMzTzNKSVgwSlc1NkYwcnlpc1pueWpUU3otcjR3Wms0RmRDbEtUVWFyNDl4cHZoVjlXYWRuZXNoVnZocTdYMmVrVWJvRVBfYTRiZFlMMFZWUnotTzJOdU8zZWpnVFNiVWhSX0FzdTMwc1FXS3NfRVJOdHlLcGNxYkk5RGp2MlBXa0M" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -435,8 +487,8 @@
                 <span class="badge" style="background:#be185d">Υγεία</span>
                 <span class="source">NYT Health</span>
             </div>
-            <h3 class="card-title">Μία μόνο έγχυση μπορεί να προλάβει καρδιακές παθήσεις για πάντα</h3>
-            <p class="card-summary">Πειραματικό φάρμακο γονιδιακής επεξεργασίας σε μία μόνο έγχυση μείωσε μακροπρόθεσμα την LDL χοληστερόλη σε κλινική δοκιμή, ανοίγοντας τον δρόμο για «θεραπευτική» αντιμετώπιση.</p>
+            <h3 class="card-title">Επαναστατικό φάρμακο γονιδιακής θεραπείας μειώνει τη χοληστερόλη με μία μόνο έγχυση</h3>
+            <p class="card-summary">Επιστήμονες παρουσίασαν πειραματικό φάρμακο γονιδιακής επεξεργασίας που μειώνει μακροπρόθεσμα την LDL χοληστερόλη με μία μόνο έγχυση, ανοίγοντας τον δρόμο για «θεραπεία» καρδιακών παθήσεων.</p>
             <a href="https://www.nytimes.com/2026/05/25/health/cholesterol-ldl-gene-therapy.html" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
@@ -447,8 +499,8 @@
                 <span class="badge" style="background:#be185d">Υγεία</span>
                 <span class="source">NYT Science</span>
             </div>
-            <h3 class="card-title">Νέο πειραματικό φάρμακο επιτυγχάνει劇ματική απώλεια βάρους 28%</h3>
-            <p class="card-summary">Το retatrutide της Eli Lilly έδωσε μέση απώλεια βάρους 28% σε 80 εβδομάδες, σηματοδοτώντας νέα εποχή στη θεραπεία της παχυσαρκίας.</p>
+            <h3 class="card-title">Νέο πειραματικό φάρμακο επιτυγχάνει απώλεια βάρους 28% σε 80 εβδομάδες</h3>
+            <p class="card-summary">Η Eli Lilly ανακοίνωσε εντυπωσιακά αποτελέσματα για το retatrutide: οι ασθενείς έχασαν κατά μέσο όρο το 28% του σωματικού τους βάρους, σηματοδοτώντας νέα εποχή στη θεραπεία της παχυσαρκίας.</p>
             <a href="https://www.nytimes.com/2026/05/21/science/retatrutide-weight-loss-drug.html" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
@@ -460,7 +512,7 @@
                 <span class="source">NYT Science</span>
             </div>
             <h3 class="card-title">SpaceX: Επιτυχής εκτόξευση του Starship V3 – Νέο ορόσημο για τη διαστημική εξερεύνηση</h3>
-            <p class="card-summary">Η SpaceX ολοκλήρωσε επιτυχώς την 12η δοκιμαστική πτήση του γιγαντιαίου πυραύλου Starship, ανοίγοντας τον δρόμο για μελλοντικές αποστολές στη Σελήνη και τον Άρη.</p>
+            <p class="card-summary">Η SpaceX ολοκλήρωσε επιτυχώς την 12η δοκιμαστική πτήση του γιγαντιαίου πυραύλου Starship, που προσγειώθηκε στον Ινδικό Ωκεανό, ανοίγοντας νέους ορίζοντες για τα ταξίδια στο διάστημα.</p>
             <a href="https://www.nytimes.com/2026/05/22/science/spacex-starship-launch-nasa.html" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
@@ -471,8 +523,8 @@
                 <span class="badge" style="background:#2563eb">Επιστήμη</span>
                 <span class="source">NYT Science</span>
             </div>
-            <h3 class="card-title">Νέα γενιά ραδιοτηλεσκοπίων θα αλλάξει την εξερεύνηση του σύμπαντος</h3>
-            <p class="card-summary">Το Next Generation Very Large Array με 263 κεραίες σε ΗΠΑ και Μεξικό θα ανοίξει νέο κεφάλαιο στη ραδιοαστρονομία και την κατανόηση του σύμπαντος.</p>
+            <h3 class="card-title">Νέα γενιά ραδιοτηλεσκοπίων θα χαρτογραφήσει το σύμπαν με 263 κεραίες</h3>
+            <p class="card-summary">Το Next Generation Very Large Array, με 263 κεραίες σε ΗΠΑ και Μεξικό, υπόσχεται να επαναστατικοποιήσει τη ραδιοαστρονομία και να αποκαλύψει τα μυστικά του σύμπαντος.</p>
             <a href="https://www.nytimes.com/2026/05/22/science/astronomy-telescopes-universe-ngvla.html" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
@@ -483,9 +535,21 @@
                 <span class="badge" style="background:#16a34a">Περιβάλλον</span>
                 <span class="source">Good News Network</span>
             </div>
-            <h3 class="card-title">Αυξημένες εμφανίσεις των δύο μεγαλύτερων φαλαινών στον κόσμο δίνουν ελπίδα επιβίωσης</h3>
-            <p class="card-summary">Νέα έρευνα καταγράφει αυξημένες εμφανίσεις μπλε φαλαινών και φαλαινών φιν, 40 χρόνια μετά το τέλος της εμπορικής φαλαινοθηρίας, προσφέροντας ελπίδα για την ανάκαμψή τους.</p>
+            <h3 class="card-title">Αυξημένες παρατηρήσεις των δύο μεγαλύτερων ειδών φαλαινών δίνουν ελπίδα για επιβίωσή τους</h3>
+            <p class="card-summary">Νέα έρευνα καταγράφει αύξηση των παρατηρήσεων μπλε φαλαινών και φαλαινών φιν, 40 χρόνια μετά το τέλος της εμπορικής φαλαινοθηρίας, προσφέροντας ελπίδα για την ανάκαμψη των ειδών.</p>
             <a href="https://www.goodnewsnetwork.org/increased-sightings-of-worlds-two-largest-whale-species-decimated-by-hunting-provides-hope/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Τεχνητή νοημοσύνη εντοπίζει φάλαινες στον κόλπο του Σαν Φρανσίσκο για να αποτρέψει συγκρούσεις με πλοία</h3>
+            <p class="card-summary">Επιστήμονες χρησιμοποιούν θερμικές κάμερες και AI για να εντοπίζουν γκρίζες φάλαινες στον κόλπο του Σαν Φρανσίσκο, προστατεύοντάς τες από συγκρούσεις με πλοία.</p>
+            <a href="https://www.goodnewsnetwork.org/ai-employed-to-pinpoint-whale-heat-signatures-in-san-francisco-bay-to-prevent-ship-collisions/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -495,9 +559,21 @@
                 <span class="badge" style="background:#16a34a">Περιβάλλον</span>
                 <span class="source">Good News Network</span>
             </div>
-            <h3 class="card-title">Τεχνητή νοημοσύνη εντοπίζει φάλαινες στον Κόλπο του Σαν Φρανσίσκο για να αποτρέψει συγκρούσεις με πλοία</h3>
-            <p class="card-summary">Επιστήμονες χρησιμοποιούν θερμικές κάμερες και AI για να εντοπίζουν γκρίζες φάλαινες στον Κόλπο του Σαν Φρανσίσκο, προστατεύοντάς τες από συγκρούσεις με πλοία.</p>
-            <a href="https://www.goodnewsnetwork.org/ai-employed-to-pinpoint-whale-heat-signatures-in-san-francisco-bay-to-prevent-ship-collisions/" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Κουκουβάγια που βρέθηκε σκεπασμένη με τσιμέντο πέταξε ξανά ελεύθερη μετά από μεταμόσχευση φτερών</h3>
+            <p class="card-summary">Μια μεγάλη κερκινέζα που βρέθηκε σκεπασμένη με σκυρόδεμα, μετά από έξι μήνες φροντίδας και μεταμόσχευση φτερών σε καταφύγιο της Γιούτα, πέταξε ξανά ελεύθερη στη φύση.</p>
+            <a href="https://www.goodnewsnetwork.org/owl-found-in-concrete-gets-feather-transplant/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#be185d">Υγεία</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Φάρμακο για άσθμα και αλλεργίες δείχνει υπόσχεση κατά επιθετικών μορφών καρκίνου</h3>
+            <p class="card-summary">Αμερικανική έρευνα αποκαλύπτει ότι γνωστό φάρμακο για άσθμα και αλλεργίες μπορεί να βοηθήσει στην καταπολέμηση επιθετικών μορφών καρκίνου, εμποδίζοντας τους όγκους να αποφεύγουν την ανοσοθεραπεία.</p>
+            <a href="https://www.goodnewsnetwork.org/drug-used-to-treat-asthma-and-allergies-may-also-fight-aggressive-cancers/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -508,7 +584,7 @@
                 <span class="source">Good News Network</span>
             </div>
             <h3 class="card-title">Το Λούβρο ανακοινώνει ξεχωριστό κτίριο για τη Μόνα Λίζα</h3>
-            <p class="card-summary">Το πιο επισκέψιμο μουσείο του κόσμου θα δώσει στον πιο διάσημο πίνακα τον δικό του χώρο, βελτιώνοντας δραματικά την εμπειρία των επισκεπτών.</p>
+            <p class="card-summary">Το πιο διάσημο μουσείο του κόσμου αποφάσισε να μεταφέρει τον πιο διάσημο πίνακα σε ξεχωριστό χώρο, ώστε οι επισκέπτες να απολαμβάνουν καλύτερη εμπειρία θέασης του αριστουργήματος.</p>
             <a href="https://www.goodnewsnetwork.org/louvre-announces-mona-lisa-will-have-her-own-building-in-major-redesign-to-ease-tourist-scrum/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
@@ -516,36 +592,12 @@
 
         <article class="card">
             <div class="card-header">
-                <span class="badge" style="background:#be185d">Υγεία</span>
-                <span class="source">Good News Network</span>
-            </div>
-            <h3 class="card-title">Φάρμακο για άσθμα και αλλεργίες μπορεί να καταπολεμά επιθετικούς καρκίνους</h3>
-            <p class="card-summary">Νέα αμερικανική έρευνα αποκαλύπτει ότι γνωστό φάρμακο για άσθμα και αλλεργίες μπορεί να βοηθήσει στην καταπολέμηση επιθετικών μορφών καρκίνου, αναστέλλοντας τον μηχανισμό διαφυγής των όγκων.</p>
-            <a href="https://www.goodnewsnetwork.org/drug-used-to-treat-asthma-and-allergies-may-also-fight-aggressive-cancers/" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
                 <span class="source">BBC Science</span>
             </div>
-            <h3 class="card-title">Σπάνιο αρχαίο τροπικό δάσος αναγεννάται μετά από 100 χρόνια</h3>
-            <p class="card-summary">Η οργάνωση Ulster Wildlife ξεκινά εκατονταετές πρόγραμμα αποκατάστασης σπάνιου αρχαίου τροπικού δάσους στη Βόρεια Ιρλανδία, επαναφέροντας μοναδικά οικοσυστήματα.</p>
-            <a href="https://www.bbc.com/news/articles/cp3p2dw1w39o" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#2563eb">Επιστήμη</span>
-                <span class="source">Good News Network</span>
-            </div>
-            <h3 class="card-title">Ιστορικός θησαυρός της Εποχής του Σιδήρου εκτίθεται για πρώτη φορά στο κοινό</h3>
-            <p class="card-summary">Η μεγαλύτερη συλλογή αντικειμένων της Εποχής του Σιδήρου που ανακαλύφθηκε ποτέ στη Βρετανία εκτίθεται για πρώτη φορά, αποκαλύπτοντας μυστικά για την πρώτη τετράτροχη άμαξα.</p>
-            <a href="https://www.goodnewsnetwork.org/britains-largest-iron-age-hoard-on-display-for-the-first-time-includes-evidence-of-first-4-horse-carriage/" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Πρώτος αστροναύτης από το Χονγκ Κονγκ εκτοξεύεται στο διάστημα με κινεζική αποστολή</h3>
+            <p class="card-summary">Μια 43χρονη αστυνομικός και μητέρα τριών παιδιών έγινε ο πρώτος αστροναύτης από το Χονγκ Κονγκ που ταξιδεύει στο διάστημα, ως επιστήμονας φορτίου της κινεζικής αποστολής.</p>
+            <a href="https://www.bbc.com/news/articles/cn7p87r56mgo" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>

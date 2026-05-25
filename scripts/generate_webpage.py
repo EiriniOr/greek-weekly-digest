@@ -72,28 +72,50 @@ def build_html(curated, date_str, has_audio):
         audio_player = f"""
         <div class="audio-bar" id="podcast-bar">
             <div class="audio-inner">
+                <button class="play-btn" id="play-btn" aria-label="Άκου το podcast">&#9654;</button>
                 <div class="audio-meta">
                     <span class="audio-title">🎙️ Τα νέα στα ελληνικά!</span>
-                    <span class="audio-duration">~7 λεπτά · {greek_dt}</span>
+                    <span class="audio-duration">~5 λεπτά · {greek_dt}</span>
                 </div>
-                <audio id="podcast-audio" controls preload="auto" autoplay>
+                <audio id="podcast-audio" preload="auto" playsinline>
                     <source src="narration_{date_str}.mp3" type="audio/mpeg">
                 </audio>
+                <div class="progress-wrap" id="progress-wrap">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
             </div>
         </div>
         <script>
-            window.addEventListener('load', function() {{
-                var a = document.getElementById('podcast-audio');
-                var p = a.play();
-                if (p !== undefined) {{
-                    p.catch(function() {{
-                        // browser blocked autoplay — user tap/click will start it
-                        document.getElementById('podcast-bar').addEventListener('click', function() {{
-                            a.play();
-                        }}, {{ once: true }});
-                    }});
+        (function() {{
+            var audio = document.getElementById('podcast-audio');
+            var btn   = document.getElementById('play-btn');
+            var bar   = document.getElementById('progress-bar');
+            var wrap  = document.getElementById('progress-wrap');
+
+            function setBtn(playing) {{
+                btn.innerHTML = playing ? '&#9646;&#9646;' : '&#9654;';
+            }}
+
+            btn.addEventListener('click', function() {{
+                if (audio.paused) {{ audio.play(); }} else {{ audio.pause(); }}
+            }});
+
+            wrap.addEventListener('click', function(e) {{
+                var rect = wrap.getBoundingClientRect();
+                audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+            }});
+
+            audio.addEventListener('play',  function() {{ setBtn(true);  }});
+            audio.addEventListener('pause', function() {{ setBtn(false); }});
+            audio.addEventListener('timeupdate', function() {{
+                if (audio.duration) {{
+                    bar.style.width = (audio.currentTime / audio.duration * 100) + '%';
                 }}
             }});
+
+            // autoplay — works on desktop; on mobile first tap on play-btn handles it
+            audio.play().catch(function() {{}});
+        }})();
         </script>"""
     else:
         audio_player = f"""
@@ -101,7 +123,7 @@ def build_html(curated, date_str, has_audio):
             <div class="audio-inner">
                 <div class="audio-meta">
                     <span class="audio-title">🎙️ Τα νέα στα ελληνικά!</span>
-                    <span class="audio-duration">~7 λεπτά · {greek_dt}</span>
+                    <span class="audio-duration">~5 λεπτά · {greek_dt}</span>
                 </div>
                 <span class="audio-pending">Το podcast ετοιμάζεται…</span>
             </div>
@@ -227,11 +249,11 @@ def build_html(curated, date_str, has_audio):
         .audio-bar {{
             background: var(--blue-light);
             color: var(--white);
-            padding: 1rem 1.5rem;
+            padding: 0.85rem 1.25rem;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }}
         .audio-bar--pending {{ background: #37474f; }}
         .audio-inner {{
@@ -239,23 +261,53 @@ def build_html(curated, date_str, has_audio):
             margin: 0 auto;
             display: flex;
             align-items: center;
-            gap: 1.25rem;
-            flex-wrap: wrap;
+            gap: 1rem;
         }}
+        .play-btn {{
+            background: var(--gold);
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            transition: transform 0.15s;
+        }}
+        .play-btn:active {{ transform: scale(0.92); }}
         .audio-meta {{
             display: flex;
             flex-direction: column;
-            gap: 0.15rem;
-            min-width: 180px;
+            gap: 0.1rem;
+            flex-shrink: 0;
         }}
-        .audio-title {{ font-size: 0.95rem; font-weight: 700; }}
-        .audio-duration {{ font-size: 0.75rem; opacity: 0.75; }}
+        .audio-title {{ font-size: 0.9rem; font-weight: 700; }}
+        .audio-duration {{ font-size: 0.72rem; opacity: 0.75; }}
+        .progress-wrap {{
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 3px;
+            cursor: pointer;
+            min-width: 60px;
+        }}
+        .progress-bar {{
+            height: 100%;
+            width: 0%;
+            background: var(--gold);
+            border-radius: 3px;
+            transition: width 0.5s linear;
+        }}
         .audio-pending {{
             font-size: 0.85rem;
             opacity: 0.8;
             font-style: italic;
         }}
-        audio {{ height: 40px; flex: 1; min-width: 200px; max-width: 480px; }}
 
         /* ── Main layout ── */
         main {{

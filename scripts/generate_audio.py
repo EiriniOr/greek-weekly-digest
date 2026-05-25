@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
 Generates Greek narration using OpenAI TTS (tts-1-hd, nova voice).
-OpenAI TTS limit is 4096 chars per call — long scripts are split at sentence
-boundaries and the MP3 chunks are concatenated as raw bytes (same CBR bitrate).
+OpenAI TTS hard limit is 4096 chars per call. Script is split at sentence
+boundaries into chunks, each converted separately, then concatenated as raw
+MP3 bytes (safe for CBR streams from the same encoder/bitrate).
 """
 
 import json
@@ -13,34 +14,34 @@ import anthropic
 from openai import OpenAI
 from pathlib import Path
 
-
 SCRIPT_PROMPT = """Είσαι η Βερόνικα, παρουσιάστρια του podcast «Τα νέα στα ελληνικά!».
-Γράψε ένα σενάριο διάρκειας 7 λεπτών (περίπου 900-1000 λέξεις).
+Γράψε ένα σενάριο διάρκειας ΑΚΡΙΒΩΣ 5 λεπτών (600-650 λέξεις — μην ξεπεράσεις τις 650).
 
-Το σενάριο ξεκινά ΑΚΡΙΒΩΣ έτσι, χωρίς καμία αλλαγή:
-«Γεια σας, είμαι η Βερόνικα και αυτά είναι τα νέα στα ελληνικά.»
+Το σενάριο ξεκινά ΑΚΡΙΒΩΣ με αυτή τη φράση, χωρίς καμία αλλαγή:
+Γεια σας, είμαι η Βερόνικα και αυτά είναι τα νέα στα ελληνικά.
 
-Μετά από αυτήν την πρώτη φράση, πήγαινε ΑΜΕΣΩΣ στην πρώτη είδηση — χωρίς περίληψη εβδομάδας, χωρίς εισαγωγή, χωρίς «σήμερα θα μιλήσουμε για».
+Μετά πήγαινε ΑΜΕΣΩΣ στην πρώτη είδηση — χωρίς εισαγωγή, χωρίς «σήμερα θα μιλήσουμε για», χωρίς περίληψη.
 
-Στυλ: ζεστό, φυσικό, σαν να μιλάς σε φίλο. Συνεχές κείμενο, φυσικές μεταβάσεις μεταξύ ειδήσεων.
+Στυλ: ζεστό, φυσικό, σαν συνομιλία. Συνεχές κείμενο, φυσικές μεταβάσεις.
 
 Δομή:
-- Χαιρετισμός (μία φράση μόνο)
-- Ελληνικά νέα (~3,5 λεπτά): ΟΛΑ τα ελληνικά, με πλαίσιο και σημασία
-- Διεθνή θετικά νέα (~3 λεπτά): ΟΛΑ τα διεθνή, με πλαίσιο
-- Κλείσιμο (~15 δευτ.): «Καλή εβδομάδα!»
+- Χαιρετισμός (μία φράση)
+- Ελληνικά νέα (~2,5 λεπτά): τα σημαντικότερα, με πλαίσιο
+- Διεθνή θετικά νέα (~2 λεπτά): τα σημαντικότερα, με πλαίσιο
+- Κλείσιμο (μία φράση): «Καλή εβδομάδα!»
 
 ΔΕΔΟΜΕΝΑ:
 {data}
 
-Επίστρεψε ΜΟΝΟ το κείμενο. Χωρίς τίτλους, ετικέτες ή παρενθέσεις."""
+Επίστρεψε ΜΟΝΟ το κείμενο. Χωρίς τίτλους, ετικέτες ή σχόλια. Μέγιστο 650 λέξεις."""
 
-TTS_LIMIT = 4000  # chars — stay under OpenAI's 4096 hard limit
+# Stay comfortably under OpenAI's 4096-char hard limit
+TTS_LIMIT = 3800
 
 
 def split_into_chunks(text: str, limit: int = TTS_LIMIT) -> list[str]:
     """Split at sentence boundaries so no chunk exceeds limit chars."""
-    sentences = re.split(r"(?<=[.!;])\s+", text)
+    sentences = re.split(r"(?<=[.!?;])\s+", text)
     chunks, current = [], ""
     for sentence in sentences:
         if len(current) + len(sentence) + 1 <= limit:
@@ -48,8 +49,8 @@ def split_into_chunks(text: str, limit: int = TTS_LIMIT) -> list[str]:
         else:
             if current:
                 chunks.append(current)
-            # sentence itself longer than limit — hard split at word boundary
             if len(sentence) > limit:
+                # sentence itself too long — split at word boundary
                 words = sentence.split()
                 current = ""
                 for word in words:
@@ -93,13 +94,14 @@ class AudioGenerator:
             lines.append(f"- {item['title']}: {item.get('summary', '')}")
         return "\n".join(lines)
 
-    def _tts_chunk(self, text: str, cfg: dict) -> bytes:
-        response = self.openai.audio.speech.create(
+    def _tts(self, text: str, cfg: dict) -> bytes:
+        resp = self.openai.audio.speech.create(
             model=cfg["model"],
             voice=cfg["voice"],
             input=text,
         )
-        return response.read()
+        # Use with_streaming_response to reliably get all bytes
+        return b"".join(resp.iter_bytes())
 
     def generate(self):
         curated_path = self.get_latest_curated()
@@ -108,31 +110,35 @@ class AudioGenerator:
             curated = json.load(f)
 
         print("Generating narration script with Claude...")
-        summary = self._build_summary(curated)
         response = self.claude.messages.create(
             model=self.config["curation"]["model"],
-            max_tokens=3000,
-            messages=[{"role": "user", "content": SCRIPT_PROMPT.format(data=summary)}],
+            max_tokens=2000,
+            messages=[
+                {
+                    "role": "user",
+                    "content": SCRIPT_PROMPT.format(data=self._build_summary(curated)),
+                }
+            ],
         )
         script = response.content[0].text.strip()
-        print(f"Script: {len(script)} chars, ~{len(script.split())} words")
+        word_count = len(script.split())
+        print(f"Script: {len(script)} chars, {word_count} words")
 
         script_path = self.audio_dir / f"script_{date_str}.txt"
-        with open(script_path, "w", encoding="utf-8") as f:
-            f.write(script)
+        script_path.write_text(script, encoding="utf-8")
 
         chunks = split_into_chunks(script)
-        print(f"TTS: {len(chunks)} chunk(s) — {[len(c) for c in chunks]} chars each")
+        print(f"TTS: {len(chunks)} chunk(s), sizes: {[len(c) for c in chunks]}")
 
         cfg = self.config["audio"]
         mp3_bytes = b""
         for i, chunk in enumerate(chunks, 1):
-            print(f"  Chunk {i}/{len(chunks)}...")
-            mp3_bytes += self._tts_chunk(chunk, cfg)
+            print(f"  Chunk {i}/{len(chunks)} ({len(chunk)} chars)...")
+            mp3_bytes += self._tts(chunk, cfg)
 
         audio_path = self.audio_dir / f"narration_{date_str}.mp3"
         audio_path.write_bytes(mp3_bytes)
-        print(f"Audio saved to {audio_path}")
+        print(f"Audio saved to {audio_path} ({len(mp3_bytes):,} bytes)")
         return audio_path
 
 

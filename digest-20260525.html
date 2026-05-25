@@ -116,6 +116,10 @@
             background: var(--blue-light);
             color: var(--white);
             padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
         }
         .audio-bar--pending { background: #37474f; }
         .audio-inner {
@@ -252,29 +256,43 @@
     </style>
 </head>
 <body>
+    
+        <div class="audio-bar" id="podcast-bar">
+            <div class="audio-inner">
+                <div class="audio-meta">
+                    <span class="audio-title">🎙️ Τα νέα στα ελληνικά!</span>
+                    <span class="audio-duration">~7 λεπτά · 25 Μαΐου 2026</span>
+                </div>
+                <audio id="podcast-audio" controls preload="auto" autoplay>
+                    <source src="narration_20260525.mp3" type="audio/mpeg">
+                </audio>
+            </div>
+        </div>
+        <script>
+            window.addEventListener('load', function() {
+                var a = document.getElementById('podcast-audio');
+                var p = a.play();
+                if (p !== undefined) {
+                    p.catch(function() {
+                        // browser blocked autoplay — user tap/click will start it
+                        document.getElementById('podcast-bar').addEventListener('click', function() {
+                            a.play();
+                        }, { once: true });
+                    });
+                }
+            });
+        </script>
+
     <header>
         <div class="meander"></div>
         <div class="header-inner">
             <p class="site-label">Εβδομαδιαία Έκδοση · Podcast</p>
             <h1>Τα νέα στα ελληνικά! 🇬🇷</h1>
             <p class="header-date">25 Μαΐου 2026</p>
-            <p class="intro">Η εβδομάδα ξεκίνησε με μεγάλες αθλητικές χαρές, καθώς ο Ολυμπιακός κατέκτησε την Euroleague και η ΑΕΚ προκρίθηκε στα ημιτελικά της GBL. Παράλληλα, εντυπωσιακές καινοτομίες στην επιστήμη και τον τουρισμό έφεραν θετικά νέα από την Ελλάδα και τον κόσμο.</p>
+            <p class="intro">Η εβδομάδα ξεκίνησε με αθλητικούς θριάμβους, καθώς ο Ολυμπιακός κατέκτησε την Euroleague και η ΑΕΚ προκρίθηκε στα ημιτελικά της GBL. Παράλληλα, εντυπωσιακές καινοτομίες στην τεχνολογία και την επιστήμη, καθώς και σπουδαία νέα για τον ελληνικό τουρισμό, δίνουν αισιόδοξο τόνο στις εξελίξεις της εβδομάδας.</p>
         </div>
         <div class="meander-bottom"></div>
     </header>
-
-    
-        <div class="audio-bar">
-            <div class="audio-inner">
-                <div class="audio-meta">
-                    <span class="audio-title">🎙️ Τα νέα στα ελληνικά!</span>
-                    <span class="audio-duration">~7 λεπτά · 25 Μαΐου 2026</span>
-                </div>
-                <audio controls preload="metadata">
-                    <source src="narration_20260525.mp3" type="audio/mpeg">
-                </audio>
-            </div>
-        </div>
 
     <main>
         <div class="section-heading">
@@ -287,11 +305,11 @@
         <article class="card">
             <div class="card-header">
                 <span class="badge" style="background:#059669">Αθλητισμός</span>
-                <span class="source">iefimerida.gr</span>
+                <span class="source">ertnews.gr</span>
             </div>
-            <h3 class="card-title">Ολυμπιακός: Ξέφρενοι πανηγυρισμοί σε όλη την Ελλάδα για την κατάκτηση της Euroleague</h3>
-            <p class="card-summary">Η Ελλάδα «βάφτηκε κόκκινη» μετά τη νίκη του Ολυμπιακού στην Euroleague. Πανηγυρισμοί ξέσπασαν σε Βόλο, Πάτρα, Καλαμάτα και άλλες πόλεις.</p>
-            <a href="https://news.google.com/rss/articles/CBMicEFVX3lxTE1JRXpZMnllTG5SSVVMNVlYRkl0eFNqdEFUWl9adzEtOXJUaHNyLVFFLXczT1BKUDZJbGlaOWlPWWZZc1p0MVVWeFF2NGYzbmJXak1WSGFEWjF0UTVvaXROZWRSaGt3N3pORjZVdjNDR2bSAXZBVV95cUxOUTg4OURGdmYxMThBeUQ3SmFsd0ItU3J5QVF2Z2dhVFZ0cmRNS0thZ0dZQl9lODB0dE9sYzBfOWw0UkVXdVY4eHVCYnlpelVRY1lyZDd2Q05McWFBeFVhTHM5bUJCOUUyN1ZvNFpiWkY2N1ZMRGdR" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Ολυμπιακός: Η Ελλάδα «βάφτηκε κόκκινη» μετά την κατάκτηση της Euroleague</h3>
+            <p class="card-summary">Ξέφρενοι πανηγυρισμοί σε όλη την Ελλάδα μετά τη μεγάλη νίκη του Ολυμπιακού στην Euroleague. Ο Πρόεδρος της Βουλής δήλωσε: «Η Ελλάδα ξανά στην κορυφή της Ευρώπης μέσω του μπάσκετ».</p>
+            <a href="https://news.google.com/rss/articles/CBMirwFBVV95cUxNeVQ0NzhvRk9PbGVaNUlFVk9zYXdNZVZBR1dKVmRtSWVoOVpiT1A2MVVqcy1tVzRhSHp5VlI3aERJYXVpQ3Y4bmphYm9yXzFteWJIdHJDdTRIQkdzOEpIN0twYUtzbGs5S1Y2bUNFMW5lb2RPbDBteEtidHMweDJpVU9yaEdFdXRubm1QRUduR0gyZmZrOXJWSUZjTDR4NzRtMG1QNGppcFJBeEw2SzBF0gG0AUFVX3lxTE9mYUp2RmstRk9IWjFpN1RJVUxDSDBJUnF4V3draWEwMXg2M0RoYVY2TC0tZkRwNkdwTjNEaERELU5FZU5lSEpPNXMwYkZDMXlPSzVUemxSV3dNRElocE9faWlfZGdGWFc4WXlUN2FrU01INjczaGZDWUMzaU00Ull3OXRHRHhJX3FCZk5GZ01LNHdpQWQyYldkTXExLUZZeEltVWRxTmhxc3owVjlYNTlFNnVmcA" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -299,11 +317,11 @@
         <article class="card">
             <div class="card-header">
                 <span class="badge" style="background:#059669">Αθλητισμός</span>
-                <span class="source">in.gr</span>
+                <span class="source">Proto Thema</span>
             </div>
             <h3 class="card-title">ΑΕΚ – Άρης 102-99: Θρίλερ πρόκριση για την «Ένωση» στα ημιτελικά της GBL</h3>
-            <p class="card-summary">Η ΑΕΚ νίκησε τον Άρη 102-99 σε συναρπαστικό αγώνα και εξασφάλισε θέση στα ημιτελικά, όπου θα αντιμετωπίσει τον Ολυμπιακό.</p>
-            <a href="https://www.in.gr/2026/05/25/sports/basketball/aek-aris-betsson-102-99-prokrisi-thriler-gia-tin-enosi-kontra-ston-olympiako-sta-imitelika/" class="read-more" target="_blank" rel="noopener">
+            <p class="card-summary">Η ΑΕΚ επικράτησε δραματικά του Άρη με 102-99 στα Λιόσια και προκρίθηκε στα ημιτελικά της Stoiximan GBL, όπου θα αντιμετωπίσει τον Ολυμπιακό.</p>
+            <a href="https://www.protothema.gr/sports/article/1824558/i-aek-pire-me-102-99-to-thriler-kodra-ston-ari-kai-prokrithike-sta-imitelika-tis-gbl/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -313,9 +331,33 @@
                 <span class="badge" style="background:#0891b2">Τεχνολογία</span>
                 <span class="source">ESOS</span>
             </div>
-            <h3 class="card-title">Το πρώτο μεταπτυχιακό για UAVs στην Ελλάδα από το ΑΠΘ</h3>
-            <p class="card-summary">Το Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης λανσάρει το πρώτο μεταπτυχιακό πρόγραμμα για μη επανδρωμένα αεροχήματα, με στόχο την τεχνολογική αυτονομία της χώρας.</p>
+            <h3 class="card-title">Το ΑΠΘ ανοίγει το πρώτο μεταπτυχιακό για UAVs στην Ελλάδα</h3>
+            <p class="card-summary">Το Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης λανσάρει το πρώτο μεταπτυχιακό πρόγραμμα για μη επανδρωμένα αεροσκάφη στη χώρα, με στόχο την τεχνολογική αυτονομία της Ελλάδας.</p>
             <a href="https://news.google.com/rss/articles/CBMitwFBVV95cUxQc1VfNmZvV0ttMlhDaXp6UzJ1bUdPZDl2VWRlWk1uODI0UDgtV2NleDdfY3luWXJfcXY0MmpWUmRGNkFEXy1xQjRzSmhPOWlfdGI5LXhwcjdTS2F3cWhPaTJNU0NtMWZrSnBDNXhQcC1VUjdrRV9FRG9JZmota2VRaEQtZEdMTC12N3N3MHkxemRiYmdJVWRoeWNxd1lKQ09zdjJLS1dnX1NHNTUyOVptNUZET21xQWs" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">Voria</span>
+            </div>
+            <h3 class="card-title">Θεσσαλονίκη: Από brain drain σε AI hub – Το «ψηφιακό λιμάνι» της ΝΑ Ευρώπης</h3>
+            <p class="card-summary">Η Θεσσαλονίκη αναδύεται ως κέντρο τεχνητής νοημοσύνης για τη Νοτιοανατολική Ευρώπη, αντιστρέφοντας το brain drain και προσελκύοντας επενδύσεις στον ψηφιακό τομέα.</p>
+            <a href="https://news.google.com/rss/articles/CBMiqwFBVV95cUxNcDh6S3V4VGszM0w1OXVIRHY2Z195aWFkN0NkOEw4WGIyQXExb09rM1JoNUt1WmVCMzNiQ0s1UVI2bFVPc3c3V3lpLXd1WUFtSUNNR1VGVXVGdmpVMHNqMU9EVktOdUNVZDVocGItakJBeVZ3OXVkLVN4UjFJQXNDakJHUlh2M1ZGRG11RmsxWHFoS2RST2M3UUU3cjVQMFFLMWx6SDd4SGwwdlU" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0369a1">Τουρισμός</span>
+                <span class="source">Travel And Tour World</span>
+            </div>
+            <h3 class="card-title">Κρήτη: Παγκόσμια αναγνώριση ως κορυφαίος γαστρονομικός προορισμός για το 2026</h3>
+            <p class="card-summary">Η Κρήτη κατακτά παγκόσμια διάκριση ως ένας από τους κορυφαίους γαστρονομικούς προορισμούς για το 2026, αναδεικνύοντας την πλούσια κουλτούρα και τα τοπικά προϊόντα της.</p>
+            <a href="https://news.google.com/rss/articles/CBMibkFVX3lxTE5xYmV3d2w4UHF6QlREU1BKT2JHVG00V1BFTXRNT3NkTnV4cjZBdklMclI2NzBSLThBc0RsNEJMOE93MDFVMFhBQlMyVkVGeEo1NjdXR0tMeUVQUGgxNUt4aUF5b3NYSVpaVVpWakxR" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -326,32 +368,8 @@
                 <span class="source">Proto Thema</span>
             </div>
             <h3 class="card-title">Η άσφαλτος αλλάζει: 684.000 πλαστικά μπουκάλια γίνονται δρόμος 1 χιλιομέτρου</h3>
-            <p class="card-summary">Σκωτσέζικη εταιρεία μετατρέπει ανακυκλωμένο πλαστικό σε πρόσθετο ασφάλτου, μειώνοντας τη χρήση πίσσας από πετρέλαιο και δίνοντας νέα ζωή σε εκατοντάδες χιλιάδες μπουκάλια.</p>
+            <p class="card-summary">Σκωτσέζικη εταιρεία μετατρέπει ανακυκλωμένο πλαστικό σε πρόσθετο ασφάλτου, μειώνοντας τη χρήση πίσσας από πετρέλαιο και δίνοντας νέα ζωή σε εκατοντάδες χιλιάδες πλαστικά μπουκάλια.</p>
             <a href="https://www.protothema.gr/best-of-network/article/1824541/i-asfaltos-allazei-684000-plastika-boukalia-ginodai-dromos-1-hiliometrou/" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#0369a1">Τουρισμός</span>
-                <span class="source">Voria</span>
-            </div>
-            <h3 class="card-title">Βόρεια Ελλάδα: Υψηλές βαθμολογίες από τουρίστες για πολιτισμό και ακτογραμμή</h3>
-            <p class="card-summary">Οι τουρίστες αξιολογούν με εξαιρετικές βαθμολογίες τη Βόρεια Ελλάδα για τον πλούσιο πολιτισμό, τις εντυπωσιακές ακτές και τις αυθεντικές εμπειρίες που προσφέρει.</p>
-            <a href="https://news.google.com/rss/articles/CBMirwFBVV95cUxQenFtTUZjZHFSWkEyVzUwTWtWb2NSbEF1Zjh3NVU4NzZoeDZxUkxydkJtdm1vUDZaQ2dXNmM1dk9NUDFGWUxpZlUyMWpNcTJaWEsxZ0pVREpseks0dUVrRXBISDB5SVR3QVJyZGpXQ0JZcVdTazZ4OUhXSy1EQ2EzU0xpa1pYUk5ZekZiUE9Cc2t2NFZROVZ2LVltLVpQLVhLdloxZG5ERHNIZnVQbEZ3" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
-                <span class="source">GreekReporter.com</span>
-            </div>
-            <h3 class="card-title">Αναγέννηση του Μυστρά: Ανοίγει ξανά το μοναδικό επιζώντα Βυζαντινό Παλάτι της Ελλάδας</h3>
-            <p class="card-summary">Το Βυζαντινό Παλάτι του Μυστρά, το μοναδικό που έχει διασωθεί στην Ελλάδα, ανοίγει ξανά τις πύλες του για το κοινό μετά από εργασίες αποκατάστασης.</p>
-            <a href="https://news.google.com/rss/articles/CBMilAFBVV95cUxOODhtd1lHbWc2LVkxbU0wdXJISEFSVmxweU5lUnE1OHdIS25HQ3IzdDZlRWRibWxpNGRnb3ZxVUtzQW51b0V6VHJvRTY3ZERvclUtc1VzWVRoN1dFQ0JSWDM3R25HMGlmTTNJS0JvVi05Sm84WjZZVTk1dURYSEhEamtPYXhOOGN1T2NpSl9aYzRYRWhG" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -369,8 +387,8 @@
                 <span class="badge" style="background:#be185d">Υγεία</span>
                 <span class="source">NYT Health</span>
             </div>
-            <h3 class="card-title">Επιστήμη: Μία μόνο έγχυση μπορεί να προλάβει καρδιοπάθειες για πάντα</h3>
-            <p class="card-summary">Πειραματικό φάρμακο γονιδιακής επεξεργασίας μείωσε μακροπρόθεσμα την LDL χοληστερόλη σε μικρή κλινική δοκιμή. Οι επιστήμονες μιλούν για πιθανή «θεραπεία» της καρδιοπάθειας.</p>
+            <h3 class="card-title">Μια μόνο έγχυση κατά της καρδιακής νόσου; Επιστήμονες λένε ότι είναι εφικτό</h3>
+            <p class="card-summary">Πειραματικό φάρμακο γονιδιακής επεξεργασίας σε μία μόνο έγχυση φαίνεται να μειώνει μακροπρόθεσμα την LDL χοληστερόλη. Οι ειδικοί μιλούν για πιθανή «θεραπευτική» προσέγγιση.</p>
             <a href="https://www.nytimes.com/2026/05/25/health/cholesterol-ldl-gene-therapy.html" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
@@ -378,11 +396,11 @@
 
         <article class="card">
             <div class="card-header">
-                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
                 <span class="source">NYT Science</span>
             </div>
             <h3 class="card-title">SpaceX: Επιτυχής εκτόξευση του Starship V3 – Νέο ορόσημο για τη διαστημική εξερεύνηση</h3>
-            <p class="card-summary">Η SpaceX ολοκλήρωσε με επιτυχία την 12η δοκιμαστική πτήση του γιγαντιαίου πυραύλου Starship, ανοίγοντας τον δρόμο για μελλοντικές αποστολές στη Σελήνη και τον Άρη.</p>
+            <p class="card-summary">Η SpaceX ολοκλήρωσε επιτυχώς την 12η δοκιμαστική πτήση του γιγαντιαίου πυραύλου Starship, ανοίγοντας τον δρόμο για μελλοντικές αποστολές στη Σελήνη και τον Άρη.</p>
             <a href="https://www.nytimes.com/2026/05/22/science/spacex-starship-launch-nasa.html" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
@@ -390,12 +408,12 @@
 
         <article class="card">
             <div class="card-header">
-                <span class="badge" style="background:#b45309">Τέχνη</span>
-                <span class="source">Positive News</span>
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
+                <span class="source">NYT Science</span>
             </div>
-            <h3 class="card-title">Νέο Μουσείο Εικονογράφησης ανοίγει στο Λονδίνο από τον Quentin Blake</h3>
-            <p class="card-summary">Ο διάσημος Βρετανός εικονογράφος Quentin Blake ιδρύει μουσείο αφιερωμένο αποκλειστικά στην τέχνη της εικονογράφησης, με στόχο να εμπνεύσει νέους καλλιτέχνες.</p>
-            <a href="https://www.positive.news/lifestyle/arts/landmark-illustration-museum-launches-in-the-capital/" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Νέο τηλεσκόπιο ραδιοαστρονομίας θα εξερευνά το σύμπαν με 263 κεραίες</h3>
+            <p class="card-summary">Το Next Generation Very Large Array, με 263 κεραίες σε ΗΠΑ και Μεξικό, υπόσχεται να ανοίξει νέα εποχή στη ραδιοαστρονομία και την εξερεύνηση του σύμπαντος.</p>
+            <a href="https://www.nytimes.com/2026/05/22/science/astronomy-telescopes-universe-ngvla.html" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -405,9 +423,21 @@
                 <span class="badge" style="background:#16a34a">Περιβάλλον</span>
                 <span class="source">Good News Network</span>
             </div>
-            <h3 class="card-title">Αυξημένες εμφανίσεις των δύο μεγαλύτερων ειδών φάλαινας δίνουν ελπίδα επιβίωσης</h3>
-            <p class="card-summary">Νέα έρευνα καταγράφει αυξημένες εμφανίσεις των μεγαλύτερων φαλαινών του κόσμου, 40 χρόνια μετά το τέλος της εμπορικής φαλαινοθηρίας, προσφέροντας ελπίδα για το μέλλον τους.</p>
+            <h3 class="card-title">Αυξημένες εμφανίσεις των δύο μεγαλύτερων φαλαινών στον κόσμο δίνουν ελπίδα επιβίωσης</h3>
+            <p class="card-summary">Νέα έρευνα καταγράφει αυξημένες εμφανίσεις μπλε φαλαινών και φαλαινών φιν, 40 χρόνια μετά το τέλος της εμπορικής φαλαινοθηρίας, προσφέροντας ελπίδα για το μέλλον τους.</p>
             <a href="https://www.goodnewsnetwork.org/increased-sightings-of-worlds-two-largest-whale-species-decimated-by-hunting-provides-hope/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#b45309">Τέχνη</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Το Λούβρο ανακοινώνει ξεχωριστό κτίριο για τη Μόνα Λίζα</h3>
+            <p class="card-summary">Το πιο επισκέψιμο μουσείο του κόσμου θα δώσει στον πιο διάσημο πίνακα δικό του χώρο, για να μπορούν οι επισκέπτες να τον απολαμβάνουν χωρίς συνωστισμό.</p>
+            <a href="https://www.goodnewsnetwork.org/louvre-announces-mona-lisa-will-have-her-own-building-in-major-redesign-to-ease-tourist-scrum/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -417,21 +447,9 @@
                 <span class="badge" style="background:#0891b2">Τεχνολογία</span>
                 <span class="source">Good News Network</span>
             </div>
-            <h3 class="card-title">Τεχνητή νοημοσύνη εντοπίζει φάλαινες στον κόλπο του Σαν Φρανσίσκο για να αποτρέψει συγκρούσεις με πλοία</h3>
-            <p class="card-summary">Επιστήμονες στην Καλιφόρνια χρησιμοποιούν θερμική AI για να εντοπίζουν γκρίζες φάλαινες και να αποτρέπουν θανατηφόρες συγκρούσεις με πλοία στον κόλπο.</p>
+            <h3 class="card-title">Τεχνητή νοημοσύνη σώζει φάλαινες από συγκρούσεις με πλοία στον Κόλπο του Σαν Φρανσίσκο</h3>
+            <p class="card-summary">Επιστήμονες χρησιμοποιούν AI με θερμικούς αισθητήρες για να εντοπίζουν γκρίζες φάλαινες και να αποτρέπουν θανατηφόρες συγκρούσεις με πλοία στα ανοιχτά της Καλιφόρνιας.</p>
             <a href="https://www.goodnewsnetwork.org/ai-employed-to-pinpoint-whale-heat-signatures-in-san-francisco-bay-to-prevent-ship-collisions/" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#be185d">Υγεία</span>
-                <span class="source">Good News Network</span>
-            </div>
-            <h3 class="card-title">Νέο φάρμακο για άσθμα δείχνει υποσχόμενα αποτελέσματα κατά επιθετικών μορφών καρκίνου</h3>
-            <p class="card-summary">Αμερικανική έρευνα αποκαλύπτει ότι φάρμακο για άσθμα και αλλεργίες μπορεί να βοηθήσει στην καταπολέμηση επιθετικών καρκίνων, εμποδίζοντας τους όγκους να αποφεύγουν την ανοσοθεραπεία.</p>
-            <a href="https://www.goodnewsnetwork.org/drug-used-to-treat-asthma-and-allergies-may-also-fight-aggressive-cancers/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>

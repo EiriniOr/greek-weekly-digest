@@ -37,8 +37,8 @@ curation:
   model: "claude-sonnet-4-6"
   max_tokens: 8192
   temperature: 0.3
-  greek_section_items: 6
-  world_section_items: 6
+  greek_section_items: 10
+  world_section_items: 10
   # Claude will filter these out — list is guidance for the prompt
   excluded_topics:
     - "θάνατος, νεκρός, εκτελέσεις"

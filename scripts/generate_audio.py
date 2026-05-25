@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
 Generates Greek narration using OpenAI TTS (tts-1-hd, nova voice).
-OpenAI's TTS is multilingual — passing Greek text produces Greek speech.
+OpenAI TTS limit is 4096 chars per call — long scripts are split at sentence
+boundaries and the MP3 chunks are concatenated as raw bytes (same CBR bitrate).
 """
 
 import json
+import re
 import yaml
 import os
 import anthropic
@@ -12,20 +14,55 @@ from openai import OpenAI
 from pathlib import Path
 
 
-SCRIPT_PROMPT = """Είσαι παρουσιαστής του podcast «Τα νέα στα ελληνικά!». Γράψε ένα ακουστικό σενάριο στα ελληνικά, διάρκειας ακριβώς 7 λεπτών (περίπου 900-1000 λέξεις σε φυσικό ρυθμό ομιλίας).
+SCRIPT_PROMPT = """Είσαι η Βερόνικα, παρουσιάστρια του podcast «Τα νέα στα ελληνικά!».
+Γράψε ένα σενάριο διάρκειας 7 λεπτών (περίπου 900-1000 λέξεις).
 
-Στυλ: ζεστό, φιλικό, ενθαρρυντικό — σαν να μιλάς σε παρέα. Χωρίς bullet points, μόνο συνεχές, ρέον κείμενο. Χρησιμοποίησε φυσικές συνδετικές φράσεις και μεταβάσεις μεταξύ θεμάτων.
+Το σενάριο ξεκινά ΑΚΡΙΒΩΣ έτσι, χωρίς καμία αλλαγή:
+«Γεια σας, είμαι η Βερόνικα και αυτά είναι τα νέα στα ελληνικά.»
 
-Δομή (7 λεπτά συνολικά):
-1. Εισαγωγή (~30 δευτ.): Χαιρετισμός, τίτλος podcast, σύντομη περίληψη της εβδομάδας
-2. Ελληνικά νέα (~3 λεπτά): Παρουσίασε ΟΛΑ τα ελληνικά highlights με λεπτομέρεια — επεξήγησε γιατί είναι σημαντικά, ποια η επίδρασή τους
-3. Διεθνή θετικά νέα (~3 λεπτά): Παρουσίασε ΟΛΑ τα διεθνή highlights με πλαίσιο και σημασία για τον ακροατή
-4. Αποχαιρετισμός (~30 δευτ.): Σύνοψη, αισιόδοξο κλείσιμο, «Καλή εβδομάδα!»
+Μετά από αυτήν την πρώτη φράση, πήγαινε ΑΜΕΣΩΣ στην πρώτη είδηση — χωρίς περίληψη εβδομάδας, χωρίς εισαγωγή, χωρίς «σήμερα θα μιλήσουμε για».
+
+Στυλ: ζεστό, φυσικό, σαν να μιλάς σε φίλο. Συνεχές κείμενο, φυσικές μεταβάσεις μεταξύ ειδήσεων.
+
+Δομή:
+- Χαιρετισμός (μία φράση μόνο)
+- Ελληνικά νέα (~3,5 λεπτά): ΟΛΑ τα ελληνικά, με πλαίσιο και σημασία
+- Διεθνή θετικά νέα (~3 λεπτά): ΟΛΑ τα διεθνή, με πλαίσιο
+- Κλείσιμο (~15 δευτ.): «Καλή εβδομάδα!»
 
 ΔΕΔΟΜΕΝΑ:
 {data}
 
-Επίστρεψε ΜΟΝΟ το κείμενο του σεναρίου, χωρίς τίτλους ή ετικέτες. Στόχος: ακριβώς 7 λεπτά."""
+Επίστρεψε ΜΟΝΟ το κείμενο. Χωρίς τίτλους, ετικέτες ή παρενθέσεις."""
+
+TTS_LIMIT = 4000  # chars — stay under OpenAI's 4096 hard limit
+
+
+def split_into_chunks(text: str, limit: int = TTS_LIMIT) -> list[str]:
+    """Split at sentence boundaries so no chunk exceeds limit chars."""
+    sentences = re.split(r"(?<=[.!;])\s+", text)
+    chunks, current = [], ""
+    for sentence in sentences:
+        if len(current) + len(sentence) + 1 <= limit:
+            current = (current + " " + sentence).strip()
+        else:
+            if current:
+                chunks.append(current)
+            # sentence itself longer than limit — hard split at word boundary
+            if len(sentence) > limit:
+                words = sentence.split()
+                current = ""
+                for word in words:
+                    if len(current) + len(word) + 1 <= limit:
+                        current = (current + " " + word).strip()
+                    else:
+                        chunks.append(current)
+                        current = word
+            else:
+                current = sentence
+    if current:
+        chunks.append(current)
+    return chunks
 
 
 class AudioGenerator:
@@ -48,7 +85,7 @@ class AudioGenerator:
         return files[0]
 
     def _build_summary(self, curated):
-        lines = [f"Εισαγωγή: {curated.get('weekly_intro', '')}", "", "ΕΛΛΗΝΙΚΑ ΝΕΑ:"]
+        lines = ["ΕΛΛΗΝΙΚΑ ΝΕΑ:"]
         for item in curated.get("greek_news", []):
             lines.append(f"- {item['title']}: {item.get('summary', '')}")
         lines.append("\nΔΙΕΘΝΗ ΘΕΤΙΚΑ ΝΕΑ:")
@@ -56,35 +93,45 @@ class AudioGenerator:
             lines.append(f"- {item['title']}: {item.get('summary', '')}")
         return "\n".join(lines)
 
+    def _tts_chunk(self, text: str, cfg: dict) -> bytes:
+        response = self.openai.audio.speech.create(
+            model=cfg["model"],
+            voice=cfg["voice"],
+            input=text,
+        )
+        return response.read()
+
     def generate(self):
         curated_path = self.get_latest_curated()
         date_str = curated_path.stem.split("_")[1]
         with open(curated_path, encoding="utf-8") as f:
             curated = json.load(f)
 
-        print("Generating Greek narration script with Claude...")
+        print("Generating narration script with Claude...")
         summary = self._build_summary(curated)
         response = self.claude.messages.create(
             model=self.config["curation"]["model"],
-            max_tokens=2048,
+            max_tokens=3000,
             messages=[{"role": "user", "content": SCRIPT_PROMPT.format(data=summary)}],
         )
         script = response.content[0].text.strip()
+        print(f"Script: {len(script)} chars, ~{len(script.split())} words")
 
         script_path = self.audio_dir / f"script_{date_str}.txt"
         with open(script_path, "w", encoding="utf-8") as f:
             f.write(script)
 
-        print("Generating audio with OpenAI TTS (Greek)...")
+        chunks = split_into_chunks(script)
+        print(f"TTS: {len(chunks)} chunk(s) — {[len(c) for c in chunks]} chars each")
+
         cfg = self.config["audio"]
-        tts_response = self.openai.audio.speech.create(
-            model=cfg["model"],
-            voice=cfg["voice"],
-            input=script,
-        )
+        mp3_bytes = b""
+        for i, chunk in enumerate(chunks, 1):
+            print(f"  Chunk {i}/{len(chunks)}...")
+            mp3_bytes += self._tts_chunk(chunk, cfg)
 
         audio_path = self.audio_dir / f"narration_{date_str}.mp3"
-        tts_response.stream_to_file(str(audio_path))
+        audio_path.write_bytes(mp3_bytes)
         print(f"Audio saved to {audio_path}")
         return audio_path
 

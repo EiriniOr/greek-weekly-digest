@@ -72,19 +72,16 @@ def build_html(curated, date_str, has_audio):
     if has_audio:
         audio_player = f"""
         <div class="audio-bar" id="podcast-bar">
-            <div class="audio-inner">
-                <button class="play-btn" id="play-btn" aria-label="Άκου το podcast">&#9654;</button>
-                <div class="audio-meta">
-                    <span class="audio-title">🎙️ Τα νέα στα ελληνικά!</span>
-                    <span class="audio-duration">~5 λεπτά · {greek_dt}</span>
-                </div>
-                <audio id="podcast-audio" preload="auto" playsinline>
-                    <source src="narration_{date_str}.mp3?v={cache_bust}" type="audio/mpeg">
-                </audio>
-                <div class="progress-wrap" id="progress-wrap">
-                    <div class="progress-bar" id="progress-bar"></div>
-                </div>
+            <audio id="podcast-audio" preload="auto" playsinline>
+                <source src="narration_{date_str}.mp3?v={cache_bust}" type="audio/mpeg">
+            </audio>
+            <button class="big-play-btn" id="play-btn">
+                🔊 ΠΑΤΑ ΕΔΩ ΓΙΑ ΝΑ ΠΑΙΞΕΙ
+            </button>
+            <div class="progress-wrap" id="progress-wrap">
+                <div class="progress-bar" id="progress-bar"></div>
             </div>
+            <span class="audio-duration-label">🎙️ Τα νέα στα ελληνικά &nbsp;·&nbsp; ~5 λεπτά &nbsp;·&nbsp; {greek_dt}</span>
         </div>
         <script>
         (function() {{
@@ -94,7 +91,7 @@ def build_html(curated, date_str, has_audio):
             var wrap  = document.getElementById('progress-wrap');
 
             function setBtn(playing) {{
-                btn.innerHTML = playing ? '&#9646;&#9646;' : '&#9654;';
+                btn.textContent = playing ? '⏸ ΠΑΥΣΗ' : '🔊 ΠΑΤΑ ΕΔΩ ΓΙΑ ΝΑ ΠΑΙΞΕΙ';
             }}
 
             btn.addEventListener('click', function() {{
@@ -108,26 +105,20 @@ def build_html(curated, date_str, has_audio):
 
             audio.addEventListener('play',  function() {{ setBtn(true);  }});
             audio.addEventListener('pause', function() {{ setBtn(false); }});
+            audio.addEventListener('ended', function() {{ setBtn(false); bar.style.width='100%'; }});
             audio.addEventListener('timeupdate', function() {{
                 if (audio.duration) {{
                     bar.style.width = (audio.currentTime / audio.duration * 100) + '%';
                 }}
             }});
 
-            // autoplay — works on desktop; on mobile first tap on play-btn handles it
             audio.play().catch(function() {{}});
         }})();
         </script>"""
     else:
         audio_player = f"""
         <div class="audio-bar audio-bar--pending">
-            <div class="audio-inner">
-                <div class="audio-meta">
-                    <span class="audio-title">🎙️ Τα νέα στα ελληνικά!</span>
-                    <span class="audio-duration">~5 λεπτά · {greek_dt}</span>
-                </div>
-                <span class="audio-pending">Το podcast ετοιμάζεται…</span>
-            </div>
+            <span class="audio-pending">🎙️ Το podcast ετοιμάζεται… &nbsp;·&nbsp; {greek_dt}</span>
         </div>"""
 
     greek_cards = "\n".join(news_card(item) for item in greek_news)
@@ -248,65 +239,61 @@ def build_html(curated, date_str, has_audio):
 
         /* ── Audio bar ── */
         .audio-bar {{
-            background: var(--blue-light);
+            background: var(--blue);
             color: var(--white);
-            padding: 0.85rem 1.25rem;
+            padding: 1.25rem 1.5rem 1rem;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }}
-        .audio-bar--pending {{ background: #37474f; }}
-        .audio-inner {{
-            max-width: 900px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }}
-        .play-btn {{
-            background: var(--gold);
-            color: #000;
-            border: none;
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-            transition: transform 0.15s;
-        }}
-        .play-btn:active {{ transform: scale(0.92); }}
-        .audio-meta {{
+            box-shadow: 0 3px 12px rgba(0,0,0,0.35);
             display: flex;
             flex-direction: column;
-            gap: 0.1rem;
-            flex-shrink: 0;
+            align-items: center;
+            gap: 0.75rem;
         }}
-        .audio-title {{ font-size: 0.9rem; font-weight: 700; }}
-        .audio-duration {{ font-size: 0.72rem; opacity: 0.75; }}
-        .progress-wrap {{
-            flex: 1;
-            height: 6px;
-            background: rgba(255,255,255,0.25);
-            border-radius: 3px;
+        .audio-bar--pending {{
+            background: #37474f;
+            padding: 1rem 1.5rem;
+            justify-content: center;
+        }}
+        .big-play-btn {{
+            background: #FFD600;
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 560px;
+            padding: 1.1rem 1rem;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 0.05em;
             cursor: pointer;
-            min-width: 60px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+            transition: transform 0.12s, background 0.12s;
+        }}
+        .big-play-btn:active {{ transform: scale(0.97); background: #FFC400; }}
+        .progress-wrap {{
+            width: 100%;
+            max-width: 560px;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            cursor: pointer;
         }}
         .progress-bar {{
             height: 100%;
             width: 0%;
-            background: var(--gold);
-            border-radius: 3px;
+            background: #FFD600;
+            border-radius: 4px;
             transition: width 0.5s linear;
         }}
+        .audio-duration-label {{
+            font-size: 0.78rem;
+            opacity: 0.7;
+        }}
         .audio-pending {{
-            font-size: 0.85rem;
-            opacity: 0.8;
+            font-size: 1rem;
+            opacity: 0.85;
             font-style: italic;
         }}
 
@@ -318,27 +305,37 @@ def build_html(curated, date_str, has_audio):
         }}
 
         /* ── Section heading ── */
+        .section-block {{
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem 1.5rem 1.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 2px 12px rgba(13,71,161,0.08);
+            border: 2px solid var(--border);
+        }}
         .section-heading {{
             display: flex;
             align-items: center;
             gap: 0.75rem;
             margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 3px solid var(--blue);
+            padding-bottom: 1rem;
+            border-bottom: 4px solid var(--blue);
         }}
-        .section-flag {{ font-size: 1.8rem; }}
+        .section-flag {{ font-size: 2rem; }}
         .section-heading h2 {{
             font-family: 'Noto Serif', serif;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             color: var(--blue);
+            font-weight: 700;
         }}
         .section-count {{
             margin-left: auto;
             font-size: 0.8rem;
             color: var(--muted);
             background: var(--sky);
-            padding: 0.2rem 0.6rem;
+            padding: 0.25rem 0.7rem;
             border-radius: 999px;
+            font-weight: 600;
         }}
 
         /* ── Card grid ── */
@@ -435,22 +432,26 @@ def build_html(curated, date_str, has_audio):
     </header>
 
     <main>
-        <div class="section-heading">
-            <span class="section-flag">🇬🇷</span>
-            <h2>Νέα από την Ελλάδα</h2>
-            <span class="section-count">{len(greek_news)} ειδήσεις</span>
-        </div>
-        <div class="card-grid">
-            {greek_cards}
+        <div class="section-block">
+            <div class="section-heading">
+                <span class="section-flag">🇬🇷</span>
+                <h2>Νέα από την Ελλάδα</h2>
+                <span class="section-count">{len(greek_news)} ειδήσεις</span>
+            </div>
+            <div class="card-grid">
+                {greek_cards}
+            </div>
         </div>
 
-        <div class="section-heading">
-            <span class="section-flag">🌍</span>
-            <h2>Θετικά Νέα από τον Κόσμο</h2>
-            <span class="section-count">{len(world_news)} ειδήσεις</span>
-        </div>
-        <div class="card-grid">
-            {world_cards}
+        <div class="section-block">
+            <div class="section-heading">
+                <span class="section-flag">🌍</span>
+                <h2>Θετικά Νέα από τον Κόσμο</h2>
+                <span class="section-count">{len(world_news)} ειδήσεις</span>
+            </div>
+            <div class="card-grid">
+                {world_cards}
+            </div>
         </div>
     </main>
 

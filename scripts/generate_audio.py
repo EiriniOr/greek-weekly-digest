@@ -15,7 +15,7 @@ from openai import OpenAI
 from pathlib import Path
 
 SCRIPT_PROMPT = """Είσαι η Βερόνικα, παρουσιάστρια του podcast «Τα νέα στα ελληνικά!».
-Γράψε ένα σενάριο διάρκειας ΑΚΡΙΒΩΣ 5 λεπτών (600-650 λέξεις — μην ξεπεράσεις τις 650).
+Γράψε ένα σενάριο διάρκειας περίπου 4 λεπτών (380-420 λέξεις — μην ξεπεράσεις τις 420 με κανένα τρόπο).
 
 Το σενάριο ξεκινά ΑΚΡΙΒΩΣ με αυτή τη φράση, χωρίς καμία αλλαγή:
 Γεια σας, είμαι η Βερόνικα και αυτά είναι τα νέα στα ελληνικά.
@@ -124,6 +124,13 @@ class AudioGenerator:
             ],
         )
         script = response.content[0].text.strip()
+
+        # Hard cap at 3500 chars — truncate at last sentence boundary
+        if len(script) > 3500:
+            cut = script[:3500].rfind(".")
+            script = script[: cut + 1] if cut > 0 else script[:3500]
+            print(f"Script truncated to {len(script)} chars")
+
         word_count = len(script.split())
         print(f"Script: {len(script)} chars, {word_count} words")
 

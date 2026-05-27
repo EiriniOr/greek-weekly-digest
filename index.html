@@ -113,65 +113,61 @@
 
         /* ── Audio bar ── */
         .audio-bar {
-            background: var(--blue-light);
+            background: var(--blue);
             color: var(--white);
-            padding: 0.85rem 1.25rem;
+            padding: 1.25rem 1.5rem 1rem;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-        .audio-bar--pending { background: #37474f; }
-        .audio-inner {
-            max-width: 900px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .play-btn {
-            background: var(--gold);
-            color: #000;
-            border: none;
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-            transition: transform 0.15s;
-        }
-        .play-btn:active { transform: scale(0.92); }
-        .audio-meta {
+            box-shadow: 0 3px 12px rgba(0,0,0,0.35);
             display: flex;
             flex-direction: column;
-            gap: 0.1rem;
-            flex-shrink: 0;
+            align-items: center;
+            gap: 0.75rem;
         }
-        .audio-title { font-size: 0.9rem; font-weight: 700; }
-        .audio-duration { font-size: 0.72rem; opacity: 0.75; }
-        .progress-wrap {
-            flex: 1;
-            height: 6px;
-            background: rgba(255,255,255,0.25);
-            border-radius: 3px;
+        .audio-bar--pending {
+            background: #37474f;
+            padding: 1rem 1.5rem;
+            justify-content: center;
+        }
+        .big-play-btn {
+            background: #FFD600;
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 560px;
+            padding: 1.1rem 1rem;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 0.05em;
             cursor: pointer;
-            min-width: 60px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+            transition: transform 0.12s, background 0.12s;
+        }
+        .big-play-btn:active { transform: scale(0.97); background: #FFC400; }
+        .progress-wrap {
+            width: 100%;
+            max-width: 560px;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            cursor: pointer;
         }
         .progress-bar {
             height: 100%;
             width: 0%;
-            background: var(--gold);
-            border-radius: 3px;
+            background: #FFD600;
+            border-radius: 4px;
             transition: width 0.5s linear;
         }
+        .audio-duration-label {
+            font-size: 0.78rem;
+            opacity: 0.7;
+        }
         .audio-pending {
-            font-size: 0.85rem;
-            opacity: 0.8;
+            font-size: 1rem;
+            opacity: 0.85;
             font-style: italic;
         }
 
@@ -183,27 +179,37 @@
         }
 
         /* ── Section heading ── */
+        .section-block {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem 1.5rem 1.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 2px 12px rgba(13,71,161,0.08);
+            border: 2px solid var(--border);
+        }
         .section-heading {
             display: flex;
             align-items: center;
             gap: 0.75rem;
             margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 3px solid var(--blue);
+            padding-bottom: 1rem;
+            border-bottom: 4px solid var(--blue);
         }
-        .section-flag { font-size: 1.8rem; }
+        .section-flag { font-size: 2rem; }
         .section-heading h2 {
             font-family: 'Noto Serif', serif;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             color: var(--blue);
+            font-weight: 700;
         }
         .section-count {
             margin-left: auto;
             font-size: 0.8rem;
             color: var(--muted);
             background: var(--sky);
-            padding: 0.2rem 0.6rem;
+            padding: 0.25rem 0.7rem;
             border-radius: 999px;
+            font-weight: 600;
         }
 
         /* ── Card grid ── */
@@ -288,19 +294,16 @@
 <body>
     
         <div class="audio-bar" id="podcast-bar">
-            <div class="audio-inner">
-                <button class="play-btn" id="play-btn" aria-label="Άκου το podcast">&#9654;</button>
-                <div class="audio-meta">
-                    <span class="audio-title">🎙️ Τα νέα στα ελληνικά!</span>
-                    <span class="audio-duration">~5 λεπτά · 27 Μαΐου 2026</span>
-                </div>
-                <audio id="podcast-audio" preload="auto" playsinline>
-                    <source src="narration_20260527.mp3?v=202605270841" type="audio/mpeg">
-                </audio>
-                <div class="progress-wrap" id="progress-wrap">
-                    <div class="progress-bar" id="progress-bar"></div>
-                </div>
+            <audio id="podcast-audio" preload="auto" playsinline>
+                <source src="narration_20260527.mp3?v=202605271757" type="audio/mpeg">
+            </audio>
+            <button class="big-play-btn" id="play-btn">
+                🔊 ΠΑΤΑ ΕΔΩ ΓΙΑ ΝΑ ΠΑΙΞΕΙ
+            </button>
+            <div class="progress-wrap" id="progress-wrap">
+                <div class="progress-bar" id="progress-bar"></div>
             </div>
+            <span class="audio-duration-label">🎙️ Τα νέα στα ελληνικά &nbsp;·&nbsp; ~5 λεπτά &nbsp;·&nbsp; 27 Μαΐου 2026</span>
         </div>
         <script>
         (function() {
@@ -310,7 +313,7 @@
             var wrap  = document.getElementById('progress-wrap');
 
             function setBtn(playing) {
-                btn.innerHTML = playing ? '&#9646;&#9646;' : '&#9654;';
+                btn.textContent = playing ? '⏸ ΠΑΥΣΗ' : '🔊 ΠΑΤΑ ΕΔΩ ΓΙΑ ΝΑ ΠΑΙΞΕΙ';
             }
 
             btn.addEventListener('click', function() {
@@ -324,13 +327,13 @@
 
             audio.addEventListener('play',  function() { setBtn(true);  });
             audio.addEventListener('pause', function() { setBtn(false); });
+            audio.addEventListener('ended', function() { setBtn(false); bar.style.width='100%'; });
             audio.addEventListener('timeupdate', function() {
                 if (audio.duration) {
                     bar.style.width = (audio.currentTime / audio.duration * 100) + '%';
                 }
             });
 
-            // autoplay — works on desktop; on mobile first tap on play-btn handles it
             audio.play().catch(function() {});
         })();
         </script>
@@ -341,63 +344,28 @@
             <p class="site-label">Εβδομαδιαία Έκδοση · Podcast</p>
             <h1>Τα νέα στα ελληνικά! 🇬🇷</h1>
             <p class="header-date">27 Μαΐου 2026</p>
-            <p class="intro">Η εβδομάδα αυτή φέρνει ενθαρρυντικά νέα από την Ελλάδα και τον κόσμο: η χώρα μας αναδεικνύεται σε διεθνές επιστημονικό και τουριστικό κέντρο, ενώ η τεχνολογία και η επιστήμη προσφέρουν εντυπωσιακές ανακαλύψεις. Από αρχαιολογικές αποκαλύψεις που συνδέονται με τον Μέγα Αλέξανδρο έως επαναστατικές θεραπείες για καρδιακές παθήσεις, η αισιοδοξία κυριαρχεί.</p>
+            <p class="intro">Αυτή την εβδομάδα ξεχωρίζουν σπουδαίες ανακαλύψεις στην επιστήμη και το διάστημα, ενώ η Ελλάδα λάμπει στον τουρισμό και τον πολιτισμό. Από αρχαιολογικές αποκαλύψεις που συνδέονται με τον Μέγα Αλέξανδρο μέχρι επαναστατικές θεραπείες για καρδιακές παθήσεις, η εβδομάδα ήταν γεμάτη ελπιδοφόρα νέα.</p>
         </div>
         <div class="meander-bottom"></div>
     </header>
 
     <main>
-        <div class="section-heading">
-            <span class="section-flag">🇬🇷</span>
-            <h2>Νέα από την Ελλάδα</h2>
-            <span class="section-count">10 ειδήσεις</span>
-        </div>
-        <div class="card-grid">
-            
+        <div class="section-block">
+            <div class="section-heading">
+                <span class="section-flag">🇬🇷</span>
+                <h2>Νέα από την Ελλάδα</h2>
+                <span class="section-count">10 ειδήσεις</span>
+            </div>
+            <div class="card-grid">
+                
         <article class="card">
             <div class="card-header">
-                <span class="badge" style="background:#be185d">Υγεία</span>
-                <span class="source">Proto Thema</span>
+                <span class="badge" style="background:#0e7490">Τουρισμός</span>
+                <span class="source">LiFO</span>
             </div>
-            <h3 class="card-title">Η Αθήνα φιλοξενεί το κορυφαίο διεθνές χειρουργικό συνέδριο της EAES</h3>
-            <p class="card-summary">Η Αθήνα γίνεται επίκεντρο της διεθνούς χειρουργικής κοινότητας με το 34ο Ετήσιο Συνέδριο της Ευρωπαϊκής Ένωσης Ενδοσκοπικής Χειρουργικής, με τίτλο «Από τον Ιπποκράτη ως σήμερα».</p>
-            <a href="https://www.protothema.gr/ugeia/article/1825315/to-korufaio-diethnes-heirourgiko-sunedrio-tis-eaes-erhetai-stin-athina/" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#0369a1">Οικονομία</span>
-                <span class="source">Proto Thema</span>
-            </div>
-            <h3 class="card-title">Αεροδρόμιο Καλαμάτας: Υπογραφές τον Ιούνιο για τη σύμβαση παραχώρησης</h3>
-            <p class="card-summary">Εγκρίθηκε από το Υπουργικό Συμβούλιο η σύμβαση παραχώρησης του αεροδρομίου Καλαμάτας στο σχήμα Fraport-Κοπελούζου-Κωνσταντακόπουλου, ενισχύοντας τις υποδομές τουρισμού της Πελοποννήσου.</p>
-            <a href="https://www.protothema.gr/economy/article/1825296/aerodromio-kalamatas-iounio-oi-upografes-gia-ti-sumvasi-parahorisis-me-to-shima-fraport-kopelouzou-konstadakopoulou/" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#0369a1">Οικονομία</span>
-                <span class="source">Proto Thema</span>
-            </div>
-            <h3 class="card-title">Ελληνικό: Πάνω από 1,7 δισ. εισπράξεις από πωλήσεις – Επιτάχυνση του έργου</h3>
-            <p class="card-summary">Η LAMDA Development επιταχύνει το μεγαλόπνοο έργο του Ελληνικού με ισχυρές πωλήσεις και νέο ομολογιακό έως 350 εκατ. ευρώ, με το 86% των κατοικιών της Little Athens ήδη πωλημένο.</p>
-            <a href="https://www.protothema.gr/economy/article/1825290/lamda-omologo-eos-350-ekat-gia-to-elliniko-pano-apo-17-dis-oi-eispraxeis-apo-poliseis/" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#0369a1">Οικονομία</span>
-                <span class="source">Proto Thema</span>
-            </div>
-            <h3 class="card-title">Jefferies: Θετικές προοπτικές για τις ελληνικές τράπεζες</h3>
-            <p class="card-summary">Ο διεθνής οίκος Jefferies δίνει σύσταση αγοράς για τις τέσσερις μεγάλες ελληνικές τράπεζες, αναδεικνύοντας την ανθεκτικότητα και τις αναπτυξιακές προοπτικές του ελληνικού τραπεζικού τομέα.</p>
-            <a href="https://www.protothema.gr/economy/article/1825284/jefferies-gia-ellinikes-trapezes-anthektikotita-daneia-kai-asfaleies-kratoun-zodano-to-ependutiko-story/" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Ελληνικό νησί που «είναι κρίμα» να αγνοούν οι τουρίστες, σύμφωνα με τους Times</h3>
+            <p class="card-summary">Οι Times αναδεικνύουν ένα ελληνικό νησί που αξίζει να επισκεφθεί κανείς και παραμένει αδικαίωτα άγνωστο στους τουρίστες.</p>
+            <a href="https://news.google.com/rss/articles/CBMiqgFBVV95cUxPLVN2eUUzQzd6X1JYdzE0cjFLUkpoQlRyQ2dtOXgzNnRNV1doMFdyMEFPb1ZIdFNucnY2cUZsT3phbmtuZ2o4d054QnNYenRSSDNmejJrUjFsZXZ3RnNqNXoxZ05OUl9aSVFmQlJhRU9iY21LZXBKMTdmQmVKbS03clZLdmxIdDhLaXJlVDdVX2N3Zk1FREZDTTh2YlB2X3A1bW1qQS1ieWtVd9IBrwFBVV95cUxOVVlnWC1wckplNTM5Y3BRY09nQ2tla1V0X1RLeVM5c0l2eWlNRXBUZEx0Qm4wX0RXX3dqOEJKdWJSellsTzNoS3huOFpGeUtpWlRId2tIdkQ3aXVfa19heHdfLVhheDVjTDY5cG5LVlh2ZVNNWEpHcWpOV2h5TTJCRmdEazdwSXBVempZQm85VlhlcFd3NDdERTFKTG1yVF93UVJHTW56bVByZFp6aXhn" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -407,8 +375,8 @@
                 <span class="badge" style="background:#0369a1">Οικονομία</span>
                 <span class="source">Kathimerini</span>
             </div>
-            <h3 class="card-title">Έκρηξη μεγάλων επενδύσεων σε ξενοδοχεία και γραφεία στην Ελλάδα</h3>
-            <p class="card-summary">Μεγάλα επενδυτικά deals στον τομέα ξενοδοχείων και κτιρίων γραφείων καταγράφονται στην Ελλάδα, αντικατοπτρίζοντας την αυξανόμενη εμπιστοσύνη των διεθνών επενδυτών στη χώρα.</p>
+            <h3 class="card-title">Έκρηξη μεγάλων επενδύσεων σε ξενοδοχεία και κτίρια γραφείων στην Ελλάδα</h3>
+            <p class="card-summary">Μεγάλες επενδυτικές συμφωνίες σε ξενοδοχεία και εμπορικά ακίνητα καταγράφονται στην Ελλάδα, σηματοδοτώντας ισχυρή εμπιστοσύνη στην αγορά.</p>
             <a href="https://news.google.com/rss/articles/CBMiwwFBVV95cUxON3gyV3piaGx4Q0Vjam13aUJzVkxJOTNHZVFNVXF2THlkRzNYZE9qWHRZdXloS0xfSnIzUGd2TDJSZG1HVGxYdWczV0JhODRPVFdQU0tHaUV1NzNwUFd3VUs2a3ZZcmhnRGxTSVdXS0Z1Yl9yMXF2d3AzVmhlV3VNdlFKaWt6bTA0TVhISDYwaGZ6VldCOUpoaGtJVE1lT1pDZkVGN2FGWXJaTHd0U01iSVBheVg2U2ZmWV9JZnhnYlhiekk" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
@@ -416,24 +384,48 @@
 
         <article class="card">
             <div class="card-header">
-                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
-                <span class="source">Liberal.gr</span>
+                <span class="badge" style="background:#d97706">Κοινωνία</span>
+                <span class="source">Newsbeast</span>
             </div>
-            <h3 class="card-title">Ελλάδα και Τεχνητή Νοημοσύνη: Το στοίχημα των 10 δισεκατομμυρίων</h3>
-            <p class="card-summary">Η Ελλάδα στοχεύει σε επενδύσεις 10 δισ. ευρώ στον τομέα της Τεχνητής Νοημοσύνης, τοποθετώντας τη χώρα στον χάρτη της παγκόσμιας τεχνολογικής ανάπτυξης.</p>
-            <a href="https://news.google.com/rss/articles/CBMidkFVX3lxTE9UNW9fT3JhSHE0dS03OFNseERHTXZSUFBlTUtJS2RWYW5rQm8tRXhrVUM0RGlXTlk2VFIyWUw3ZTZkZFpxWmR2RzFjMHFRcHp3OGw3ZXhBSnBlZEhycnJHMURmVzcwdWhDSVNQQzdhdmVPT2JxT0E" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Σε ποιους κλάδους γίνονται οι περισσότερες προσλήψεις στην Ελλάδα σήμερα</h3>
+            <p class="card-summary">Νέα δεδομένα για την αγορά εργασίας αποκαλύπτουν ποιοι κλάδοι προσφέρουν τις περισσότερες ευκαιρίες απασχόλησης στη χώρα.</p>
+            <a href="https://news.google.com/rss/articles/CBMiwgFBVV95cUxPTWh2eks3Q1FmS1h2ekJ1TWZVM1NXaG03WTZud1Y1c0Rmd0l1dHRHZVd3bTdKVnc2VmdMOERSZXVwR1JpT2NsbEhMcDkxY1ZhM2J1R203eXFMTVJHbnFXVDU5c0d4VDRTQzhfUFU4b2h5NU8wM3VDdGVPZlpDczE1UEhMUFBKZTI3Mk9ZZjhwMHBVU2JqRXQybmRGNXgwTUtWb1lhSWlUWmdtZGZHeGlFcExGcTlqMDhCcEtrYm5paThnUQ" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
 
         <article class="card">
             <div class="card-header">
-                <span class="badge" style="background:#6d28d9">Εκπαίδευση</span>
-                <span class="source">Υπουργείο Παιδείας</span>
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">GreekReporter.com</span>
             </div>
-            <h3 class="card-title">Διεθνές μεταπτυχιακό «One Health» στο Πανεπιστήμιο Ιωαννίνων</h3>
-            <p class="card-summary">Η υπουργός Παιδείας Σοφία Ζαχαράκη παρουσίασε νέο διεθνές μεταπτυχιακό πρόγραμμα στο Πανεπιστήμιο Ιωαννίνων, τονίζοντας ότι «η Ελλάδα επενδύει σε δημόσια πανεπιστήμια διεθνή και καινοτόμα».</p>
-            <a href="https://news.google.com/rss/articles/CBMi2AJBVV95cUxOaEFhbkVhWl9NbHc3TGlUak9VZ1J0cW15NTU4blQ1bmgyRzdLcmU4ZmVfV0paRnU1Q2NXZkppWlZiTThROTlXRHhHMlhZLWtoS3YzV09tdjc3SGU4TmdyYjVzMzNzTjNpOHJEYVVBSXZ5a2lBNEZ4cWtFOV9rRWNubUZFOGFKcGZMdDFBZl9MS2RyQXdaX3RDOFEtdmw5TkVlc1FSZmFFU1VLaVhMWmlSaWlFR3BpRkxRWW1MMDFaQ1lKbDFIWU1EeFQxQ1NHeVh4dzRVM1UyMXRMaWw4aXVHc0kxNmF1QnBpUWExZm9PbU9oQVdPSDBzN2FRaExtV0tUUlRZZU40OXhweU5CQjJjeVcweDZnejJBOWpNcEE3RmZKa2d2Vm5KeTd0VmY5UXlqSnFGcWhiZC1hamFVRXFRRFp1TWktckRxcTJnRVJ2Z2tjZk42WVQwbw" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Ελαιόλαδο από τη Λέσβο: Οικονομία, Γαστρονομία και Πολιτισμός</h3>
+            <p class="card-summary">Το ελαιόλαδο της Λέσβου αναδεικνύεται διεθνώς ως σύμβολο ελληνικής γαστρονομίας και πολιτισμού, συνδυάζοντας παράδοση και οικονομική ανάπτυξη.</p>
+            <a href="https://news.google.com/rss/articles/CBMihAFBVV95cUxPbW1seFFjWXo4OVdYN3RSd0UwSU9iTnhXRDloSFd4REFjcFdvbWtTcERITjFnVnp1Z0p5Y2dZT2JPU2tLNlBydWY4MmpQeUtHekVlMzg0d3dpcU1yNi1OdjhSNVlibnU5VzFxMHlMWW9MdWhQZDlMbk9mNjd6Ny1fdEZCMVc" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">GreekReporter.com</span>
+            </div>
+            <h3 class="card-title">Η Ελλάδα αφαίρεσε 1.850 τόνους απορριμμάτων από αρχαιολογικούς χώρους</h3>
+            <p class="card-summary">Μεγάλη περιβαλλοντική δράση για την προστασία της πολιτιστικής κληρονομιάς: η Ελλάδα καθάρισε τους αρχαιολογικούς της χώρους από χιλιάδες τόνους σκουπιδιών.</p>
+            <a href="https://news.google.com/rss/articles/CBMikwFBVV95cUxOcWVtZTgxSExEZmhScFVZdEprZmVMb0xHeFJib0pJcms4MFVrUkhOMzZ3aGpDSDNfVFk0bU00OG5GY0JFRkY3bi1LYVg1NVZrV0UtMHp4Y0NrbXFUWVJoUG1RUkVJTnNlNWl2ZGltXzVVdzlURWppdWhyTFRZZVNTRzNmaVhJdlJhaFAxSmZaOUJxU2s" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">ZME Science</span>
+            </div>
+            <h3 class="card-title">Αρχαιολόγοι αποκαλύπτουν τεράστιο ελληνικό τάφο συνδεδεμένο με τον Μέγα Αλέξανδρο</h3>
+            <p class="card-summary">Νέα αρχαιολογική ανακάλυψη εντυπωσιάζει: ένας γιγαντιαίος τάφος που συνδέεται με τον Μέγα Αλέξανδρο αποκαλύπτει τα μυστικά του.</p>
+            <a href="https://news.google.com/rss/articles/CBMi0wFBVV95cUxPWlVGQno0VlpvaWNPbG10d09Dc09HZjNtSTdDT0NMRXJqclZuWmdpTVpZdmMtZjcxdEJkamJlNUxVX2tKUVFQWmJvdGs3WEZXdkpWcGs1MmJ2azVSTEJwaXVxYlE1WnJLYktRMGdaZVA0T0lZR1NxZzVGQ0pEc0pRR2ZSM1ZndU12UzZVY0xpS1RJbWZJYldNckp0T1QtMWV1dlY5cHZRWVktZVdhU2xtc2VhVlIwWHpWTV9BMnhMVmswOVFGUUpxdlRDc1piV1UyOE1R" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -444,20 +436,8 @@
                 <span class="source">Travel And Tour World</span>
             </div>
             <h3 class="card-title">Βόρεια Ελλάδα: Υψηλές βαθμολογίες από τουρίστες για πολιτισμό και ακτές</h3>
-            <p class="card-summary">Η Βόρεια Ελλάδα κερδίζει εξαιρετικές κριτικές από διεθνείς τουρίστες για τον πλούσιο πολιτισμό, τις εντυπωσιακές ακτές και τις αυθεντικές εμπειρίες που προσφέρει.</p>
+            <p class="card-summary">Η Βόρεια Ελλάδα κερδίζει εξαιρετικές κριτικές από επισκέπτες για τον πλούσιο πολιτισμό, τις εντυπωσιακές ακτές και τις αυθεντικές εμπειρίες.</p>
             <a href="https://news.google.com/rss/articles/CBMibkFVX3lxTFBWa29UREFOUEZoNHZBUm03YS00bWhicjBtQlNRSW1zaUlMSk1LX3FDUWY4Qy1ybEtzTDVKOGVoUTZYaUhna1JhTnJKWkxrcU5tellHM0Uzc09nMjZad2ZZcEF6Mi0tdnhlTGFTT1N3" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
-                <span class="source">in.gr</span>
-            </div>
-            <h3 class="card-title">Έκθεση χαρακτικής «Λάμπρος Ορφανός» στο Ιστορικό Αρχείο Εθνικής Τράπεζας</h3>
-            <p class="card-summary">Μια ξεχωριστή εικαστική έκθεση αφιερωμένη στη χαρακτική τέχνη του Λάμπρου Ορφανού φιλοξενείται με ελεύθερη είσοδο έως τις 26 Ιουνίου 2026 στο Ιστορικό Αρχείο της Εθνικής Τράπεζας.</p>
-            <a href="https://www.in.gr/2026/05/27/life/texni/lampros-orfanos-ekfanseis-xaraktikis-sto-istoriko-arxeio-ethnikis-trapezas-ellados/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -467,29 +447,9 @@
                 <span class="badge" style="background:#0e7490">Τουρισμός</span>
                 <span class="source">Travel And Tour World</span>
             </div>
-            <h3 class="card-title">Ελλάδα: Βιώσιμος τουρισμός με έμφαση στην ποιότητα και την καινοτομία</h3>
-            <p class="card-summary">Η Ελλάδα παρουσιάζει νέο όραμα βιώσιμου τουρισμού που δίνει προτεραιότητα στις ποιοτικές εμπειρίες, την καινοτομία και τη μακροπρόθεσμη οικονομική ανάπτυξη.</p>
+            <h3 class="card-title">Ελλάδα: Επαναστατικό βιώσιμο τουριστικό όραμα με έμφαση στην ποιότητα και την καινοτομία</h3>
+            <p class="card-summary">Η Ελλάδα παρουσιάζει νέο στρατηγικό πλάνο για βιώσιμο τουρισμό, εστιάζοντας σε ποιοτικές εμπειρίες και μακροπρόθεσμη οικονομική ανάπτυξη.</p>
             <a href="https://news.google.com/rss/articles/CBMibkFVX3lxTE53ekphdk1mNEkzeVF6VmU3YW9RT1pGYWNGLTd0c0lycnpmaVNKM0dFMlMtRXp0LTJ0M0NKNHR6QTk1TWRjbkRhZk9CM1ZNaEYzekRDVXBVbXRTQmV1Qm41Z2tqYlhSQ2hxeGdpR3dn" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-        </div>
-
-        <div class="section-heading">
-            <span class="section-flag">🌍</span>
-            <h2>Θετικά Νέα από τον Κόσμο</h2>
-            <span class="section-count">10 ειδήσεις</span>
-        </div>
-        <div class="card-grid">
-            
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#2563eb">Επιστήμη</span>
-                <span class="source">ZME Science</span>
-            </div>
-            <h3 class="card-title">Αρχαιολόγοι αποκαλύπτουν τεράστιο ελληνικό τάφο συνδεδεμένο με τον Μέγα Αλέξανδρο</h3>
-            <p class="card-summary">Νέα αρχαιολογική έρευνα αποκαλύπτει την εντυπωσιακή κλίμακα ενός γιγαντιαίου ελληνικού τάφου που συνδέεται με τον Μέγα Αλέξανδρο, ανοίγοντας νέα κεφάλαια στην ιστορία της αρχαιότητας.</p>
-            <a href="https://news.google.com/rss/articles/CBMi0wFBVV95cUxPWlVGQno0VlpvaWNPbG10d09Dc09HZjNtSTdDT0NMRXJqclZuWmdpTVpZdmMtZjcxdEJkamJlNUxVX2tKUVFQWmJvdGs3WEZXdkpWcGs1MmJ2azVSTEJwaXVxYlE1WnJLYktRMGdaZVA0T0lZR1NxZzVGQ0pEc0pRR2ZSM1ZndU12UzZVY0xpS1RJbWZJYldNckp0T1QtMWV1dlY5cHZRWVktZVdhU2xtc2VhVlIwWHpWTV9BMnhMVmswOVFGUUpxdlRDc1piV1UyOE1R" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -497,10 +457,44 @@
         <article class="card">
             <div class="card-header">
                 <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">Capital.gr</span>
+            </div>
+            <h3 class="card-title">Τριμερής συνεργασία Ελλάδας-Κύπρου-Ισραήλ σε καινοτομία και κυβερνοασφάλεια</h3>
+            <p class="card-summary">Ο πρέσβης του Ισραήλ επισημαίνει την αυξανόμενη τριμερή συνεργασία με Ελλάδα και Κύπρο στους τομείς της τεχνολογίας και της κυβερνοασφάλειας.</p>
+            <a href="https://news.google.com/rss/articles/CBMi6wFBVV95cUxPVU55alROdkY2YmhOWU1GcXFxTmpzX1o3WklVeFNsRE0xczFSdng5RFg2dHVvdG1CVVpZeGRVSTN5RTJzQmgxakM0SmdMbnFQNUlXQVpCdmtMSkxuQUo2WGlvRVNrOEl5aDlwelAxREh2eTVha0FGZnpTUXJETDZoRDhiZVEyc3UxenhQR1ppQTdtQ0txa0RkcVA4ZGlwb0Nreks3UUs3NjR3UmNmTTFydFZhckprYlFCU0pOYzZSSGVxZW4wSm5ocHVxNmlBNEdKOThWd0hhbFdDS3VTaUxuUlAza1Q1ZlNjdHpZ0gH3AUFVX3lxTE4zcUxuZWNrRTUxdGEtbjYtbUdGRXRSMFN0dE5CMVkwbFRLel9zVkxvT280REd0YUZIdnVxckFTU21MNFM5Y3JQclFHdHpkX1FJOG12clUya0VnU3Q5ZmNpZVdfVHZjNndkSTdqNzYxSlNENEY1RXd0UjQxeTRoSkdxWkpmQldxcE1UdjJlZGo1azc4UnV2akZsYlhBbGtwa3VhX3F6Q1B3SjVmbHV2eVFxMjRaS3J0dWxLWVpOekZmaDBHM2ZWb1E2THpEU2NjSkhDckh6NWVfa1ZFWUNoN3lCSDgySGNubXdKOHV1MkpvVUs1MU9mczg" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0e7490">Τουρισμός</span>
+                <span class="source">travel.gr</span>
+            </div>
+            <h3 class="card-title">5 εναλλακτικοί προορισμοί στην Ελλάδα για καλοκαιρινή απόδραση</h3>
+            <p class="card-summary">Ανακαλύψτε πέντε κρυφούς προορισμούς στην Ελλάδα που υπόσχονται αξέχαστες καλοκαιρινές εμπειρίες μακριά από τα τουριστικά πλήθη.</p>
+            <a href="https://news.google.com/rss/articles/CBMifEFVX3lxTE5yYnE2bW1NUElrcTlvTWRYZ1hmMWZnMnBKVE81ZWsxLV9nVlRzZnlEMUxZdllKMDlpcWpPV01WLU5VXzF0ZGRjT3JPci1FU1ZjTW1fQlZKV2dsa1JlYkpoQzB0NnJHTVJKU1Z3eFRwZVFUOWVKbWIyU05vUXQ" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+            </div>
+        </div>
+
+        <div class="section-block">
+            <div class="section-heading">
+                <span class="section-flag">🌍</span>
+                <h2>Θετικά Νέα από τον Κόσμο</h2>
+                <span class="section-count">10 ειδήσεις</span>
+            </div>
+            <div class="card-grid">
+                
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
                 <span class="source">BBC Science</span>
             </div>
-            <h3 class="card-title">NASA: Επόμενα βήματα για μόνιμη βάση στη Σελήνη με rovers και drones</h3>
-            <p class="card-summary">Η NASA ανακοίνωσε νέες συμβάσεις για αναπηδητικά drones και ρόβερ που θα χρησιμοποιηθούν στη μόνιμη σεληνιακή βάση, με στόχο μόνιμη ανθρώπινη παρουσία στη Σελήνη έως το 2032.</p>
+            <h3 class="card-title">NASA: Νέα βήματα για μόνιμη βάση στη Σελήνη με rovers και drones</h3>
+            <p class="card-summary">Η NASA ανακοίνωσε συμβόλαια για rovers και ιπτάμενα drones που θα υποστηρίξουν τη δημιουργία μόνιμης ανθρώπινης βάσης στη Σελήνη έως το 2032.</p>
             <a href="https://www.bbc.com/news/articles/c39228nxyr4o" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
@@ -508,12 +502,36 @@
 
         <article class="card">
             <div class="card-header">
-                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
-                <span class="source">NYT Science</span>
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
+                <span class="source">BBC Science</span>
             </div>
-            <h3 class="card-title">SpaceX: Επιτυχής 12η δοκιμαστική πτήση του Starship</h3>
-            <p class="card-summary">Το γιγαντιαίο πύραυλο Starship V3 της SpaceX ολοκλήρωσε επιτυχώς την 12η δοκιμαστική πτήση του, εκτοξευόμενο και προσγειωνόμενος στον Ινδικό Ωκεανό μετά από πάνω από μία ώρα πτήσης.</p>
-            <a href="https://www.nytimes.com/2026/05/22/science/spacex-starship-launch-nasa.html" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Πρώτος αστροναύτης από το Χονγκ Κονγκ εκτοξεύεται στο διάστημα</h3>
+            <p class="card-summary">Μια 43χρονη αστυνομικός και μητέρα τριών παιδιών έγινε ο πρώτος αστροναύτης από το Χονγκ Κονγκ, επιβαίνοντας σε κινεζική αποστολή.</p>
+            <a href="https://www.bbc.com/news/articles/cn7p87r56mgo" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#be185d">Υγεία</span>
+                <span class="source">NYT Health</span>
+            </div>
+            <h3 class="card-title">Μία μόνο έγχυση μπορεί να προλάβει καρδιακές παθήσεις για πάντα</h3>
+            <p class="card-summary">Πειραματικό φάρμακο γονιδιακής επεξεργασίας μείωσε μακροπρόθεσμα την κακή χοληστερόλη σε μικρή κλινική δοκιμή, ανοίγοντας τον δρόμο για «θεραπεία».</p>
+            <a href="https://www.nytimes.com/2026/05/25/health/cholesterol-ldl-gene-therapy.html" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#be185d">Υγεία</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Νέο φάρμακο για άσθμα δείχνει υποσχόμενα αποτελέσματα κατά επιθετικών καρκίνων</h3>
+            <p class="card-summary">Αμερικανική έρευνα αποκαλύπτει ότι γνωστό φάρμακο για άσθμα και αλλεργίες μπορεί να βοηθήσει στην καταπολέμηση επιθετικών μορφών καρκίνου.</p>
+            <a href="https://www.goodnewsnetwork.org/drug-used-to-treat-asthma-and-allergies-may-also-fight-aggressive-cancers/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -524,7 +542,7 @@
                 <span class="source">Good News Network</span>
             </div>
             <h3 class="card-title">Η νόσος Guinea Worm σε ιστορικό χαμηλό: Μόλις 10 κρούσματα το 2025</h3>
-            <p class="card-summary">Μόνο 10 κρούσματα της νόσου Guinea Worm καταγράφηκαν παγκοσμίως το 2025, ο χαμηλότερος αριθμός που έχει ποτέ καταγραφεί, φέρνοντας την εξάλειψη της αρχαίας ασθένειας πιο κοντά από ποτέ.</p>
+            <p class="card-summary">Μόνο 10 κρούσματα της νόσου Guinea Worm καταγράφηκαν παγκοσμίως το 2025, φέρνοντας την εξάλειψη της αρχαίας ασθένειας πιο κοντά από ποτέ.</p>
             <a href="https://www.goodnewsnetwork.org/guinea-worm-disease-reaches-all-time-low-only-10-human-cases-reported-in-2025/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
@@ -532,12 +550,12 @@
 
         <article class="card">
             <div class="card-header">
-                <span class="badge" style="background:#be185d">Υγεία</span>
-                <span class="source">NYT Health</span>
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">Good News Network</span>
             </div>
-            <h3 class="card-title">Επαναστατική θεραπεία γονιδιακής επεξεργασίας για καρδιακές παθήσεις</h3>
-            <p class="card-summary">Μία μόνο έγχυση πειραματικού φαρμάκου γονιδιακής επεξεργασίας φαίνεται να μειώνει μακροπρόθεσμα την «κακή» χοληστερόλη LDL, ανοίγοντας τον δρόμο για μια πιθανώς «θεραπευτική» προσέγγιση.</p>
-            <a href="https://www.nytimes.com/2026/05/25/health/cholesterol-ldl-gene-therapy.html" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">70% μείωση «αιώνιων χημικών» σε αυγά θαλασσοπουλιών: Επιτυχία των κανονισμών</h3>
+            <p class="card-summary">Επιστήμονες διαπίστωσαν δραματική μείωση επικίνδυνων χημικών ουσιών σε αυγά θαλασσοπουλιών τα τελευταία 55 χρόνια, αποδεικνύοντας την αποτελεσματικότητα των περιβαλλοντικών κανονισμών.</p>
+            <a href="https://www.goodnewsnetwork.org/70-drop-in-levels-of-forever-chemicals-observed-in-seabird-eggs-tracks-regulatory-success/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -547,33 +565,9 @@
                 <span class="badge" style="background:#16a34a">Περιβάλλον</span>
                 <span class="source">Good News Network</span>
             </div>
-            <h3 class="card-title">30.000 εθελοντές φύτεψαν 1 εκατομμύριο δέντρα για την καταπολέμηση της ερημοποίησης</h3>
-            <p class="card-summary">Στην Κίνα, μια viral έκκληση κινητοποίησε 30.000 εθελοντές από τις πόλεις να φυτέψουν ένα εκατομμύριο δέντρα στην αγροτική περιοχή Minqin, που απειλείται από την ερημοποίηση.</p>
+            <h3 class="card-title">30.000 εθελοντές φύτεψαν 1 εκατομμύριο δέντρα για να σταματήσουν την ερημοποίηση</h3>
+            <p class="card-summary">Στην Κίνα, ένας άνδρας ξεκίνησε εκστρατεία που συγκέντρωσε 30.000 εθελοντές για να φυτέψουν ένα εκατομμύριο δέντρα σε περιοχή που απειλείται από ερημοποίηση.</p>
             <a href="https://www.goodnewsnetwork.org/30000-volunteers-respond-to-countys-call-to-help-combat-desertification-and-plant-1-million-trees/" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
-                <span class="source">Good News Network</span>
-            </div>
-            <h3 class="card-title">Αυξημένες παρατηρήσεις των δύο μεγαλύτερων ειδών φαλαινών – Ελπίδα για επιβίωση</h3>
-            <p class="card-summary">Νέα έρευνα καταγράφει αυξημένες παρατηρήσεις των δύο μεγαλύτερων ειδών φαλαινών στον κόσμο, 40 χρόνια μετά το τέλος της εμπορικής φαλαινοθηρίας, δίνοντας ελπίδα για την επιβίωσή τους.</p>
-            <a href="https://www.goodnewsnetwork.org/increased-sightings-of-worlds-two-largest-whale-species-decimated-by-hunting-provides-hope/" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#be185d">Υγεία</span>
-                <span class="source">Good News Network</span>
-            </div>
-            <h3 class="card-title">Πειραματικό φάρμακο για άσθμα μπορεί να καταπολεμά επιθετικούς καρκίνους</h3>
-            <p class="card-summary">Νέα αμερικανική έρευνα δείχνει ότι φάρμακο που χρησιμοποιείται για άσθμα και αλλεργίες μπορεί επίσης να βοηθήσει στην καταπολέμηση επιθετικών μορφών καρκίνου, αποκαλύπτοντας νέους θεραπευτικούς δρόμους.</p>
-            <a href="https://www.goodnewsnetwork.org/drug-used-to-treat-asthma-and-allergies-may-also-fight-aggressive-cancers/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -583,8 +577,8 @@
                 <span class="badge" style="background:#2563eb">Επιστήμη</span>
                 <span class="source">Good News Network</span>
             </div>
-            <h3 class="card-title">Το γέλιο κάνει τον εγκέφαλο των παιδιών πιο ανθεκτικό και διευκολύνει τη μάθηση</h3>
-            <p class="card-summary">Νέα επιστημονική έρευνα αποδεικνύει ότι το να κάνουμε τα παιδιά να γελούν ενισχύει την ανθεκτικότητα του εγκεφάλου τους και διευκολύνει τη μαθησιακή διαδικασία.</p>
+            <h3 class="card-title">Τα γέλια κάνουν τον εγκέφαλο των παιδιών πιο ανθεκτικό και τη μάθηση ευκολότερη</h3>
+            <p class="card-summary">Νέα έρευνα δείχνει ότι το γέλιο ενισχύει την ανάπτυξη του παιδικού εγκεφάλου, κάνοντάς τον πιο ανθεκτικό και ανοιχτό στη μάθηση.</p>
             <a href="https://www.goodnewsnetwork.org/making-children-laugh-can-help-make-their-brains-more-resilient/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
@@ -595,12 +589,25 @@
                 <span class="badge" style="background:#2563eb">Επιστήμη</span>
                 <span class="source">NYT Science</span>
             </div>
-            <h3 class="card-title">Νέο τηλεσκόπιο ραδιοαστρονομίας θα εξερευνά το σύμπαν με 263 κεραίες</h3>
-            <p class="card-summary">Το Next Generation Very Large Array, με 263 κεραίες απλωμένες σε ΗΠΑ και Μεξικό, υπόσχεται να ανοίξει νέα εποχή στη ραδιοαστρονομία και την εξερεύνηση του σύμπαντος.</p>
-            <a href="https://www.nytimes.com/2026/05/22/science/astronomy-telescopes-universe-ngvla.html" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Τα ψάρια κοιμούνται σαν εμάς – ακόμα και κάνουν σιέστα!</h3>
+            <p class="card-summary">Παρακολουθώντας τις κινήσεις των ματιών σε ψάρια zebra, επιστήμονες ανακάλυψαν τέσσερις τύπους ύπνου, ανάλογους με τα σύνθετα πρότυπα ύπνου των ανθρώπων.</p>
+            <a href="https://www.nytimes.com/2026/05/27/science/fish-sleep-a-lot-like-us-they-even-nap.html" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#b45309">Τέχνη</span>
+                <span class="source">Positive News</span>
+            </div>
+            <h3 class="card-title">Το μεγαλύτερο μουσείο εικονογράφησης στον κόσμο ανοίγει τις πύλες του</h3>
+            <p class="card-summary">Ο Βρετανός εικονογράφος Quentin Blake ίδρυσε νέο μουσείο αφιερωμένο αποκλειστικά στην τέχνη της εικονογράφησης, με στόχο να εμπνεύσει νέους καλλιτέχνες.</p>
+            <a href="https://www.positive.news/lifestyle/arts/landmark-illustration-museum-launches-in-the-capital/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+            </div>
         </div>
     </main>
 

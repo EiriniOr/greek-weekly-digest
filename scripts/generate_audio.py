@@ -95,13 +95,16 @@ class AudioGenerator:
         return "\n".join(lines)
 
     def _tts(self, text: str, cfg: dict) -> bytes:
+        tmp = self.audio_dir / "_chunk_tmp.mp3"
         resp = self.openai.audio.speech.create(
             model=cfg["model"],
             voice=cfg["voice"],
             input=text,
         )
-        # Use with_streaming_response to reliably get all bytes
-        return b"".join(resp.iter_bytes())
+        resp.stream_to_file(str(tmp))
+        data = tmp.read_bytes()
+        tmp.unlink(missing_ok=True)
+        return data
 
     def generate(self):
         curated_path = self.get_latest_curated()

@@ -64,6 +64,7 @@ def news_card(item):
 def build_html(curated, date_str, has_audio):
     now = datetime.now()
     greek_dt = greek_date(now)
+    cache_bust = now.strftime("%Y%m%d%H%M")
     intro = curated.get("weekly_intro", "")
     greek_news = curated.get("greek_news", [])
     world_news = curated.get("world_news", [])
@@ -78,7 +79,7 @@ def build_html(curated, date_str, has_audio):
                     <span class="audio-duration">~5 λεπτά · {greek_dt}</span>
                 </div>
                 <audio id="podcast-audio" preload="auto" playsinline>
-                    <source src="narration_{date_str}.mp3" type="audio/mpeg">
+                    <source src="narration_{date_str}.mp3?v={cache_bust}" type="audio/mpeg">
                 </audio>
                 <div class="progress-wrap" id="progress-wrap">
                     <div class="progress-bar" id="progress-bar"></div>

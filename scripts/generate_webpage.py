@@ -423,6 +423,21 @@ def build_html(curated, date_str, has_audio):
         }}
         .read-more:hover {{ text-decoration: underline; }}
 
+        /* ── Top extras (nameday + joke, shown between player and header) ── */
+        .top-extras {{
+            max-width: 900px;
+            margin: 1.25rem auto 0;
+            padding: 0 1.5rem;
+            display: flex;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+        }}
+        .top-extras .extra-block {{
+            flex: 1;
+            min-width: 260px;
+            margin-bottom: 0;
+        }}
+
         /* ── Nameday & Joke blocks ── */
         .extra-block {{
             border-radius: 16px;
@@ -479,6 +494,11 @@ def build_html(curated, date_str, has_audio):
 <body>
     {audio_player}
 
+    <div class="top-extras">
+        {nameday_html}
+        {joke_html}
+    </div>
+
     <header>
         <div class="meander"></div>
         <div class="header-inner">
@@ -513,8 +533,6 @@ def build_html(curated, date_str, has_audio):
             </div>
         </div>
 
-        {nameday_html}
-        {joke_html}
     </main>
 
     <footer>

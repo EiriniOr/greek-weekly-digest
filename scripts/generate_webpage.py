@@ -68,6 +68,8 @@ def build_html(curated, date_str, has_audio):
     intro = curated.get("weekly_intro", "")
     greek_news = curated.get("greek_news", [])
     world_news = curated.get("world_news", [])
+    namedays = curated.get("namedays", [])
+    joke = curated.get("joke", "")
 
     if has_audio:
         audio_player = f"""
@@ -123,6 +125,26 @@ def build_html(curated, date_str, has_audio):
 
     greek_cards = "\n".join(news_card(item) for item in greek_news)
     world_cards = "\n".join(news_card(item) for item in world_news)
+
+    nameday_html = ""
+    if namedays:
+        items_html = "".join(
+            f'<li><strong>{n["name"]}</strong> <span class="nd-date">— {n["date"]}</span></li>'
+            for n in namedays
+        )
+        nameday_html = f"""
+        <div class="extra-block nameday-block">
+            <h3>🎂 Ονομαστικές εορτές εβδομάδας</h3>
+            <ul class="nameday-list">{items_html}</ul>
+        </div>"""
+
+    joke_html = ""
+    if joke:
+        joke_html = f"""
+        <div class="extra-block joke-block">
+            <h3>😄 Το αστείο της εβδομάδας</h3>
+            <p class="joke-text">{joke}</p>
+        </div>"""
 
     return f"""<!DOCTYPE html>
 <html lang="el">
@@ -401,6 +423,43 @@ def build_html(curated, date_str, has_audio):
         }}
         .read-more:hover {{ text-decoration: underline; }}
 
+        /* ── Nameday & Joke blocks ── */
+        .extra-block {{
+            border-radius: 16px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 2.5rem;
+        }}
+        .extra-block h3 {{
+            font-family: 'Noto Serif', serif;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }}
+        .nameday-block {{
+            background: #e8f4fd;
+            border: 2px solid #90caf9;
+        }}
+        .nameday-block h3 {{ color: #1565c0; }}
+        .nameday-list {{
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1.5rem;
+            padding: 0;
+        }}
+        .nameday-list li {{ font-size: 1rem; }}
+        .nd-date {{ font-size: 0.82rem; color: var(--muted); }}
+        .joke-block {{
+            background: #fffde7;
+            border: 2px solid #ffe082;
+        }}
+        .joke-block h3 {{ color: #f57f17; }}
+        .joke-text {{
+            font-size: 1.05rem;
+            line-height: 1.7;
+            font-style: italic;
+            color: #37474f;
+        }}
+
         /* ── Footer ── */
         footer {{
             background: var(--blue);
@@ -453,6 +512,9 @@ def build_html(curated, date_str, has_audio):
                 {world_cards}
             </div>
         </div>
+
+        {nameday_html}
+        {joke_html}
     </main>
 
     <footer>

@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
 """
-Generates Greek narration using OpenAI TTS (tts-1-hd, nova voice).
-OpenAI TTS hard limit is 4096 chars per call. Script is split at sentence
-boundaries into chunks, each converted separately, then concatenated as raw
-MP3 bytes (safe for CBR streams from the same encoder/bitrate).
+Greek TTS via OpenAI tts-1-hd.
+
+Approach to avoid mid-sentence cutoff:
+- Split script at paragraph boundaries into chunks of ≤2000 chars each
+  (well under the 4096-char API limit, with margin)
+- Generate each chunk via with_streaming_response.create() → stream_to_file()
+  (the only fully-reliable way to get complete MP3 bytes from OpenAI)
+- Concatenate with ffmpeg (handles ID3 headers cleanly)
+- Fall back to raw byte concat if ffmpeg is absent
 """
 
 import json
 import re
+import subprocess
 import yaml
 import os
 import anthropic
@@ -15,55 +21,89 @@ from openai import OpenAI
 from pathlib import Path
 
 SCRIPT_PROMPT = """Είσαι η Βερόνικα, παρουσιάστρια του podcast «Τα νέα στα ελληνικά!».
-Γράψε ένα σενάριο διάρκειας περίπου 4 λεπτών (380-420 λέξεις — μην ξεπεράσεις τις 420 με κανένα τρόπο).
 
-Το σενάριο ξεκινά ΑΚΡΙΒΩΣ με αυτή τη φράση, χωρίς καμία αλλαγή:
+Γράψε ένα podcast σενάριο στα ελληνικά, περίπου 7 λεπτά (χωρίς αυστηρό όριο λέξεων).
+
+Ξεκίνα ΑΚΡΙΒΩΣ με:
 Γεια σας, είμαι η Βερόνικα και αυτά είναι τα νέα στα ελληνικά.
 
-Μετά πήγαινε ΑΜΕΣΩΣ στην πρώτη είδηση — χωρίς εισαγωγή, χωρίς «σήμερα θα μιλήσουμε για», χωρίς περίληψη.
-
-Στυλ: ζεστό, φυσικό, σαν συνομιλία. Συνεχές κείμενο, φυσικές μεταβάσεις.
+Μετά πήγαινε αμέσως στο πρώτο νέο — χωρίς εισαγωγή ή «σήμερα θα μιλήσουμε για».
 
 Δομή:
-- Χαιρετισμός (μία φράση)
-- Ελληνικά νέα (~2,5 λεπτά): τα σημαντικότερα, με πλαίσιο
-- Διεθνή θετικά νέα (~2 λεπτά): τα σημαντικότερα, με πλαίσιο
-- Κλείσιμο (μία φράση): «Καλή εβδομάδα!»
+1. Χαιρετισμός (μία φράση)
+2. Ελληνικά νέα (~3 λεπτά): όλα, με πλαίσιο και σημασία
+3. Παγκόσμια θετικά νέα (~3 λεπτά): όλα, με πλαίσιο
+4. Ονομαστικές εορτές: «Αυτή την εβδομάδα γιορτάζουν οι...» — ανέφερε όλα τα ονόματα
+5. Αστείο: πες το αστείο φυσικά, σαν να το λες σε παρέα
+6. Αποχαιρετισμός: «Καλή εβδομάδα σε όλους!»
+
+Στυλ: ζεστό, φυσικό, σαν να μιλάς σε φίλο. Συνεχές κείμενο με φυσικές μεταβάσεις.
+ΣΗΜΑΝΤΙΚΟ: χώρισε το κείμενο σε παραγράφους (κενή γραμμή μεταξύ τους).
 
 ΔΕΔΟΜΕΝΑ:
 {data}
 
-Επίστρεψε ΜΟΝΟ το κείμενο. Χωρίς τίτλους, ετικέτες ή σχόλια. Μέγιστο 650 λέξεις."""
+Επίστρεψε ΜΟΝΟ το κείμενο του σεναρίου."""
 
-# Stay comfortably under OpenAI's 4096-char hard limit
-TTS_LIMIT = 3800
+CHUNK_LIMIT = 2000  # chars — well under the 4096 hard limit
 
 
-def split_into_chunks(text: str, limit: int = TTS_LIMIT) -> list[str]:
-    """Split at sentence boundaries so no chunk exceeds limit chars."""
-    sentences = re.split(r"(?<=[.!?;])\s+", text)
+def split_paragraphs(text: str, limit: int = CHUNK_LIMIT) -> list[str]:
+    """Split at blank lines; merge short adjacent paragraphs; hard-split long ones."""
+    paras = [p.strip() for p in re.split(r"\n{2,}", text) if p.strip()]
     chunks, current = [], ""
-    for sentence in sentences:
-        if len(current) + len(sentence) + 1 <= limit:
-            current = (current + " " + sentence).strip()
+    for para in paras:
+        if len(current) + len(para) + 2 <= limit:
+            current = (current + "\n\n" + para).strip() if current else para
         else:
             if current:
                 chunks.append(current)
-            if len(sentence) > limit:
-                # sentence itself too long — split at word boundary
-                words = sentence.split()
+            if len(para) > limit:
+                # paragraph itself too long — split at sentence boundary
+                sentences = re.split(r"(?<=[.!?])\s+", para)
                 current = ""
-                for word in words:
-                    if len(current) + len(word) + 1 <= limit:
-                        current = (current + " " + word).strip()
+                for s in sentences:
+                    if len(current) + len(s) + 1 <= limit:
+                        current = (current + " " + s).strip() if current else s
                     else:
-                        chunks.append(current)
-                        current = word
+                        if current:
+                            chunks.append(current)
+                        current = s
             else:
-                current = sentence
+                current = para
     if current:
         chunks.append(current)
     return chunks
+
+
+def ffmpeg_concat(files: list[Path], output: Path) -> bool:
+    """Concatenate MP3 files with ffmpeg. Returns True on success."""
+    try:
+        list_txt = output.parent / "_concat_list.txt"
+        list_txt.write_text(
+            "\n".join(f"file '{f.resolve()}'" for f in files), encoding="utf-8"
+        )
+        result = subprocess.run(
+            [
+                "ffmpeg",
+                "-y",
+                "-f",
+                "concat",
+                "-safe",
+                "0",
+                "-i",
+                str(list_txt),
+                "-c",
+                "copy",
+                str(output),
+            ],
+            capture_output=True,
+            timeout=120,
+        )
+        list_txt.unlink(missing_ok=True)
+        return result.returncode == 0
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return False
 
 
 class AudioGenerator:
@@ -85,26 +125,32 @@ class AudioGenerator:
             )
         return files[0]
 
-    def _build_summary(self, curated):
-        lines = ["ΕΛΛΗΝΙΚΑ ΝΕΑ:"]
+    def _build_data(self, curated):
+        lines = []
+        namedays = curated.get("namedays", [])
+        if namedays:
+            lines.append("ΟΝΟΜΑΣΤΙΚΕΣ ΕΟΡΤΕΣ:")
+            for n in namedays:
+                lines.append(f"  {n['name']} — {n['date']}")
+        joke = curated.get("joke", "")
+        if joke:
+            lines.append(f"\nΑΣΤΕΙΟ: {joke}")
+        lines.append("\nΕΛΛΗΝΙΚΑ ΝΕΑ:")
         for item in curated.get("greek_news", []):
             lines.append(f"- {item['title']}: {item.get('summary', '')}")
-        lines.append("\nΔΙΕΘΝΗ ΘΕΤΙΚΑ ΝΕΑ:")
+        lines.append("\nΠΑΓΚΟΣΜΙΑ ΘΕΤΙΚΑ ΝΕΑ:")
         for item in curated.get("world_news", []):
             lines.append(f"- {item['title']}: {item.get('summary', '')}")
         return "\n".join(lines)
 
-    def _tts(self, text: str, cfg: dict) -> bytes:
-        tmp = self.audio_dir / "_chunk_tmp.mp3"
-        resp = self.openai.audio.speech.create(
+    def _tts_to_file(self, text: str, cfg: dict, path: Path) -> None:
+        """Stream TTS directly to file — the only fully-reliable method."""
+        with self.openai.audio.speech.with_streaming_response.create(
             model=cfg["model"],
             voice=cfg["voice"],
             input=text,
-        )
-        resp.stream_to_file(str(tmp))
-        data = tmp.read_bytes()
-        tmp.unlink(missing_ok=True)
-        return data
+        ) as response:
+            response.stream_to_file(str(path))
 
     def generate(self):
         curated_path = self.get_latest_curated()
@@ -115,40 +161,52 @@ class AudioGenerator:
         print("Generating narration script with Claude...")
         response = self.claude.messages.create(
             model=self.config["curation"]["model"],
-            max_tokens=2000,
+            max_tokens=4096,
             messages=[
                 {
                     "role": "user",
-                    "content": SCRIPT_PROMPT.format(data=self._build_summary(curated)),
+                    "content": SCRIPT_PROMPT.format(data=self._build_data(curated)),
                 }
             ],
         )
         script = response.content[0].text.strip()
-
-        # Hard cap at 3500 chars — truncate at last sentence boundary
-        if len(script) > 3500:
-            cut = script[:3500].rfind(".")
-            script = script[: cut + 1] if cut > 0 else script[:3500]
-            print(f"Script truncated to {len(script)} chars")
-
-        word_count = len(script.split())
-        print(f"Script: {len(script)} chars, {word_count} words")
+        print(f"Script: {len(script)} chars, {len(script.split())} words")
 
         script_path = self.audio_dir / f"script_{date_str}.txt"
         script_path.write_text(script, encoding="utf-8")
 
-        chunks = split_into_chunks(script)
-        print(f"TTS: {len(chunks)} chunk(s), sizes: {[len(c) for c in chunks]}")
+        chunks = split_paragraphs(script)
+        print(f"Chunks: {len(chunks)}, sizes: {[len(c) for c in chunks]}")
+        assert all(len(c) <= 4096 for c in chunks), "A chunk exceeds 4096 chars!"
 
         cfg = self.config["audio"]
-        mp3_bytes = b""
+        chunk_files = []
         for i, chunk in enumerate(chunks, 1):
-            print(f"  Chunk {i}/{len(chunks)} ({len(chunk)} chars)...")
-            mp3_bytes += self._tts(chunk, cfg)
+            p = self.audio_dir / f"_chunk_{i:03d}.mp3"
+            print(f"  TTS chunk {i}/{len(chunks)} ({len(chunk)} chars)...")
+            self._tts_to_file(chunk, cfg, p)
+            chunk_files.append(p)
 
         audio_path = self.audio_dir / f"narration_{date_str}.mp3"
-        audio_path.write_bytes(mp3_bytes)
-        print(f"Audio saved to {audio_path} ({len(mp3_bytes):,} bytes)")
+
+        if len(chunk_files) == 1:
+            chunk_files[0].rename(audio_path)
+        else:
+            print("Concatenating with ffmpeg...")
+            ok = ffmpeg_concat(chunk_files, audio_path)
+            if ok:
+                for f in chunk_files:
+                    f.unlink(missing_ok=True)
+            else:
+                print("ffmpeg not found — falling back to raw byte concat")
+                audio_path.write_bytes(b"".join(f.read_bytes() for f in chunk_files))
+                for f in chunk_files:
+                    f.unlink(missing_ok=True)
+
+        size = audio_path.stat().st_size
+        print(
+            f"Audio saved: {audio_path} ({size:,} bytes, ~{size // 16000 // 60}m{size // 16000 % 60}s at 128kbps)"
+        )
         return audio_path
 
 

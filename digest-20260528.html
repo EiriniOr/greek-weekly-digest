@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Τα νέα στα ελληνικά! — 28 Μαΐου 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --blue:    #0d47a1;
+            --blue-light: #1565c0;
+            --sky:     #e3f2fd;
+            --gold:    #f9a825;
+            --white:   #ffffff;
+            --text:    #1a1a2e;
+            --muted:   #546e7a;
+            --border:  #cfd8dc;
+            --card-bg: #ffffff;
+            --page-bg: #f0f4f8;
+        }
+
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            background: var(--page-bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── Header ── */
+        header {
+            background: linear-gradient(135deg, var(--blue) 0%, #1a237e 100%);
+            color: var(--white);
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 38px,
+                rgba(255,255,255,0.04) 38px,
+                rgba(255,255,255,0.04) 40px
+            );
+        }
+        .header-inner {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 2.5rem;
+            text-align: center;
+        }
+        .meander {
+            width: 100%;
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--gold) 0px, var(--gold) 8px,
+                transparent 8px, transparent 12px,
+                var(--gold) 12px, var(--gold) 16px,
+                transparent 16px, transparent 20px
+            );
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+        .site-label {
+            font-size: 0.75rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 0.75rem;
+        }
+        h1 {
+            font-family: 'Noto Serif', serif;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+        .header-date {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+        .intro {
+            font-family: 'Noto Serif', serif;
+            font-style: italic;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.9);
+            max-width: 640px;
+            margin: 0 auto;
+        }
+        .meander-bottom {
+            width: 100%;
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--gold) 0px, var(--gold) 8px,
+                transparent 8px, transparent 12px,
+                var(--gold) 12px, var(--gold) 16px,
+                transparent 16px, transparent 20px
+            );
+            margin-top: 2rem;
+            opacity: 0.9;
+        }
+
+        /* ── Audio bar ── */
+        .audio-bar {
+            background: var(--blue);
+            color: var(--white);
+            padding: 1.25rem 1.5rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.35);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .audio-bar--pending {
+            background: #37474f;
+            padding: 1rem 1.5rem;
+            justify-content: center;
+        }
+        .big-play-btn {
+            background: #FFD600;
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 560px;
+            padding: 1.1rem 1rem;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+            transition: transform 0.12s, background 0.12s;
+        }
+        .big-play-btn:active { transform: scale(0.97); background: #FFC400; }
+        .progress-wrap {
+            width: 100%;
+            max-width: 560px;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #FFD600;
+            border-radius: 4px;
+            transition: width 0.5s linear;
+        }
+        .audio-duration-label {
+            font-size: 0.78rem;
+            opacity: 0.7;
+        }
+        .audio-pending {
+            font-size: 1rem;
+            opacity: 0.85;
+            font-style: italic;
+        }
+
+        /* ── Main layout ── */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem 4rem;
+        }
+
+        /* ── Section heading ── */
+        .section-block {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem 1.5rem 1.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 2px 12px rgba(13,71,161,0.08);
+            border: 2px solid var(--border);
+        }
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 4px solid var(--blue);
+        }
+        .section-flag { font-size: 2rem; }
+        .section-heading h2 {
+            font-family: 'Noto Serif', serif;
+            font-size: 1.6rem;
+            color: var(--blue);
+            font-weight: 700;
+        }
+        .section-count {
+            margin-left: auto;
+            font-size: 0.8rem;
+            color: var(--muted);
+            background: var(--sky);
+            padding: 0.25rem 0.7rem;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        /* ── Card grid ── */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 3rem;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(13,71,161,0.12);
+            transform: translateY(-2px);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .badge {
+            color: #fff;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+        .source {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-left: auto;
+        }
+        .card-title {
+            font-family: 'Noto Serif', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.4;
+            color: var(--text);
+        }
+        .card-summary {
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: #374151;
+            flex: 1;
+        }
+        .read-more {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--blue);
+            text-decoration: none;
+            align-self: flex-start;
+        }
+        .read-more:hover { text-decoration: underline; }
+
+        /* ── Nameday & Joke blocks ── */
+        .extra-block {
+            border-radius: 16px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 2.5rem;
+        }
+        .extra-block h3 {
+            font-family: 'Noto Serif', serif;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .nameday-block {
+            background: #e8f4fd;
+            border: 2px solid #90caf9;
+        }
+        .nameday-block h3 { color: #1565c0; }
+        .nameday-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1.5rem;
+            padding: 0;
+        }
+        .nameday-list li { font-size: 1rem; }
+        .nd-date { font-size: 0.82rem; color: var(--muted); }
+        .joke-block {
+            background: #fffde7;
+            border: 2px solid #ffe082;
+        }
+        .joke-block h3 { color: #f57f17; }
+        .joke-text {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            font-style: italic;
+            color: #37474f;
+        }
+
+        /* ── Footer ── */
+        footer {
+            background: var(--blue);
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.8rem;
+        }
+        footer a { color: var(--gold); text-decoration: none; }
+
+        @media (max-width: 480px) {
+            .card-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+    
+        <div class="audio-bar" id="podcast-bar">
+            <audio id="podcast-audio" preload="auto" playsinline>
+                <source src="narration_20260528.mp3?v=202605281230" type="audio/mpeg">
+            </audio>
+            <button class="big-play-btn" id="play-btn">
+                🔊 ΠΑΤΑ ΕΔΩ ΓΙΑ ΝΑ ΠΑΙΞΕΙ
+            </button>
+            <div class="progress-wrap" id="progress-wrap">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <span class="audio-duration-label">🎙️ Τα νέα στα ελληνικά &nbsp;·&nbsp; ~5 λεπτά &nbsp;·&nbsp; 28 Μαΐου 2026</span>
+        </div>
+        <script>
+        (function() {
+            var audio = document.getElementById('podcast-audio');
+            var btn   = document.getElementById('play-btn');
+            var bar   = document.getElementById('progress-bar');
+            var wrap  = document.getElementById('progress-wrap');
+
+            function setBtn(playing) {
+                btn.textContent = playing ? '⏸ ΠΑΥΣΗ' : '🔊 ΠΑΤΑ ΕΔΩ ΓΙΑ ΝΑ ΠΑΙΞΕΙ';
+            }
+
+            btn.addEventListener('click', function() {
+                if (audio.paused) { audio.play(); } else { audio.pause(); }
+            });
+
+            wrap.addEventListener('click', function(e) {
+                var rect = wrap.getBoundingClientRect();
+                audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+            });
+
+            audio.addEventListener('play',  function() { setBtn(true);  });
+            audio.addEventListener('pause', function() { setBtn(false); });
+            audio.addEventListener('ended', function() { setBtn(false); bar.style.width='100%'; });
+            audio.addEventListener('timeupdate', function() {
+                if (audio.duration) {
+                    bar.style.width = (audio.currentTime / audio.duration * 100) + '%';
+                }
+            });
+
+            audio.play().catch(function() {});
+        })();
+        </script>
+
+    <header>
+        <div class="meander"></div>
+        <div class="header-inner">
+            <p class="site-label">Εβδομαδιαία Έκδοση · Podcast</p>
+            <h1>Τα νέα στα ελληνικά! 🇬🇷</h1>
+            <p class="header-date">28 Μαΐου 2026</p>
+            <p class="intro">Η εβδομάδα 25-31 Μαΐου 2026 έφερε εντυπωσιακά επιτεύγματα από την επιστήμη έως τον πολιτισμό. Ρεκόρ στο Έβερεστ, αρχαιολογικές ανακαλύψεις, περιβαλλοντικές επιτυχίες και ιατρικές καινοτομίες συνθέτουν μια εβδομάδα γεμάτη θετικές ειδήσεις. Η Ελλάδα ξεχωρίζει με αποκατάσταση μουσείων, ενεργειακές επενδύσεις και τουριστική αναγνώριση διεθνώς.</p>
+        </div>
+        <div class="meander-bottom"></div>
+    </header>
+
+    <main>
+        <div class="section-block">
+            <div class="section-heading">
+                <span class="section-flag">🇬🇷</span>
+                <h2>Νέα από την Ελλάδα</h2>
+                <span class="section-count">10 ειδήσεις</span>
+            </div>
+            <div class="card-grid">
+                
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">in.gr</span>
+            </div>
+            <h3 class="card-title">Αποκατάσταση και επαναλειτουργία του Αρχαιολογικού Μουσείου Άστρους</h3>
+            <p class="card-summary">Το ιστορικό Αρχαιολογικό Μουσείο Άστρους αποκαθίσταται και επαναλειτουργεί, ικανοποιώντας ένα διαχρονικό αίτημα της τοπικής κοινωνίας. Το έργο συνδέεται άμεσα με την ιστορική ταυτότητα της Βόρειας Κυνουρίας.</p>
+            <a href="https://www.in.gr/2026/05/28/politics/aftodioikisi/apokatastasi-kai-epanaleitourgia-arxaiologikou-mouseiou-astrous/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0369a1">Οικονομία</span>
+                <span class="source">Ναυτεμπορική</span>
+            </div>
+            <h3 class="card-title">Η Chevron μπαίνει στην έρευνα υδρογονανθράκων στην Ελλάδα – Νέο βήμα για την ενεργειακή θέση της χώρας</h3>
+            <p class="card-summary">Η Chevron εντάσσεται στο Block 10 για έρευνα υδρογονανθράκων, ενώ υπάρχει και αίτημα για τον Κυπαρισσιακό Κόλπο. Η Ελλάδα ισχυροποιεί τη θέση της στον ενεργειακό χάρτη της Ανατολικής Μεσογείου.</p>
+            <a href="https://news.google.com/rss/articles/CBMi0wFBVV95cUxPYjFDUTdfQzluNk1jUmtjUThPWGk4ZWRaUXB4MnREWkQtQVRnM211T0NySllVcURCQXBSbFp6VnQ3dVd4Z0ZxZ1c1TkJidVQyczBzWkc2QVRZWXppWkh6U1hYMlJIVXloeUNOZWxHbFo0a2V0YmpKNzdQSHB6WExsOXFkNFVUN0JoRS1CaWpZWnNuRDFDV2psS3hDd1J1RF92bUtrN1ZNU21wdXVOZFNuNUhsNnNRUVJnSk1JR0I3UWNTa21CYXhJWEtxSTJBV2dxZFVr" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">Εφημερίδα Συντακτών</span>
+            </div>
+            <h3 class="card-title">Μητσοτάκης στο Panathenea 2026: Στόχος η Ελλάδα να γίνει ηγέτης στην Τεχνητή Νοημοσύνη</h3>
+            <p class="card-summary">Ο πρωθυπουργός παρουσίασε το όραμα για την Ελλάδα ως ηγέτιδα χώρα στη χρήση της Τεχνητής Νοημοσύνης στην Ευρώπη. Η χώρα επενδύει στην ψηφιακή μετάβαση και στην καινοτομία.</p>
+            <a href="https://news.google.com/rss/articles/CBMizwFBVV95cUxNcmxfWGRRd0h0ZnIwY1dCdnYtMGRNeW5RY2E3dDlKTFNJbWJYdkRNd0RlLWtjOEdTc2tEV3Y0N1VacEZwbVlmNEdvcExqU3dpZG5hQURlN0RRLXdNUkd3dUlkRHZZSnRjbWltZVE5WE1NZVZ1T1pNWDBmTnktUjNpRF9tTzM0cl93SE9nTTBJUnRIeGFzVDkzOS1mdFEzMHFHQkZkZnJLNk4xaVVERG5qVHZJUmVNNFRFajFtUjVWMEl4REk4OFNSYTNTaUsybUk" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0e7490">Τουρισμός</span>
+                <span class="source">Travel And Tour World</span>
+            </div>
+            <h3 class="card-title">Ζάκυνθος: Ο κορυφαίος προορισμός πολυτελούς τουρισμού της Μεσογείου για το 2026</h3>
+            <p class="card-summary">Διεθνή ΜΜΕ αναδεικνύουν τη Ζάκυνθο ως τον κορυφαίο προορισμό πολυτελούς τουρισμού της Μεσογείου για το 2026. Η φυσική ομορφιά, ο οικοτουρισμός και ο αυθεντικός πολιτισμός της νήσου κερδίζουν παγκόσμια αναγνώριση.</p>
+            <a href="https://news.google.com/rss/articles/CBMibkFVX3lxTE1TTUJrRllwS2QwX2RqRW53Z19Mbl84aHVpN1E1UFNOTXh1Zm5qSk11S0ZIZm5zdGtrak02UzVfek05SkpUUkJSWXZ3S29fbUI5cDVPSEVES0taajhtVEcxYVR5NlA2bFZUcDljbjJB" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">Neos Kosmos</span>
+            </div>
+            <h3 class="card-title">«Cyclone Project»: Απομακρύνθηκαν 1.850 τόνοι σκουπιδιών από αρχαιολογικούς χώρους της Ελλάδας</h3>
+            <p class="card-summary">Ένα φιλόδοξο πρόγραμμα καθαρισμού απομάκρυνε σχεδόν 1.850 τόνους απορριμμάτων από αρχαιολογικούς χώρους της χώρας. Η πρωτοβουλία αποτελεί υπόδειγμα περιβαλλοντικής προστασίας της πολιτιστικής κληρονομιάς.</p>
+            <a href="https://news.google.com/rss/articles/CBMi2AFBVV95cUxPRm1Vekl4NXhoSEpscjJqcl9qZzJ6aURPeVZZVzVsNEdwc0JCeDY2Zkg1aVRQejZBS0RoX1NDdkIwR0FoanFUdDhGbUVjaVBYRWhhVzBKbTVmaF9GLTZxdzlJclA0VU1HdHNPWGZ3aDZVMjVVRkUtX1dmbW4zY25JSWYxRk9yVzluNHVJOWx6TWFNc0hrRkFVZnZxNU81Qlprci1vMXFMal80NmhtV2pFLWZXSTZsdUVvWGNYUGhpV0VhVV9qcklKX2xRZVBvcE5IR2p5SDJDV0s" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0e7490">Τουρισμός</span>
+                <span class="source">Travel And Tour World</span>
+            </div>
+            <h3 class="card-title">Βόρεια Ελλάδα: Υψηλές βαθμολογίες από τουρίστες για πολιτισμό, ακτογραμμή και αυθεντικές εμπειρίες</h3>
+            <p class="card-summary">Διεθνείς τουρίστες αξιολογούν με εξαιρετικά σκορ τη Βόρεια Ελλάδα για τον πλούσιο πολιτισμό, τις εντυπωσιακές ακτές και τις αυθεντικές εμπειρίες που προσφέρει. Η περιοχή αναδεικνύεται ως κορυφαίος προορισμός.</p>
+            <a href="https://news.google.com/rss/articles/CBMibkFVX3lxTFBWa29UREFOUEZoNHZBUm03YS00bWhicjBtQlNRSW1zaUlMSk1LX3FDUWY4Qy1ybEtzTDVKOGVoUTZYaUhna1JhTnJKWkxrcU5tellHM0Uzc09nMjZad2ZZcEF6Mi0tdnhlTGFTT1N3" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">ZME Science</span>
+            </div>
+            <h3 class="card-title">Αρχαιολόγοι αποκαλύπτουν τεράστιο τάφο συνδεδεμένο με τον Μέγα Αλέξανδρο</h3>
+            <p class="card-summary">Αρχαιολόγοι αποκάλυψαν την εντυπωσιακή κλίμακα ενός γιγαντιαίου ελληνικού τάφου που συνδέεται με τον Μέγα Αλέξανδρο. Η ανακάλυψη αναδεικνύει νέα στοιχεία για την ελληνιστική εποχή.</p>
+            <a href="https://news.google.com/rss/articles/CBMi0wFBVV95cUxPWlVGQno0VlpvaWNPbG10d09Dc09HZjNtSTdDT0NMRXJqclZuWmdpTVpZdmMtZjcxdEJkamJlNUxVX2tKUVFQWmJvdGs3WEZXdkpWcGs1MmJ2azVSTEJwaXVxYlE1WnJLYktRMGdaZVA0T0lZR1NxZzVGQ0pEc0pRR2ZSM1ZndU12UzZVY0xpS1RJbWZJYldNckp0T1QtMWV1dlY5cHZRWVktZVdhU2xtc2VhVlIwWHpWTV9BMnhMVmswOVFGUUpxdlRDc1piV1UyOE1R" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">GreekReporter.com</span>
+            </div>
+            <h3 class="card-title">Ελαιόλαδο Λέσβου: Οικονομία, γαστρονομία και πολιτισμός σε ένα προϊόν παγκόσμιας εμβέλειας</h3>
+            <p class="card-summary">Το ελαιόλαδο της Λέσβου αναδεικνύεται διεθνώς ως σύμβολο ελληνικής γαστρονομίας, οικονομίας και πολιτισμού. Η παραγωγή του νησιού κερδίζει αναγνώριση σε παγκόσμιο επίπεδο.</p>
+            <a href="https://news.google.com/rss/articles/CBMihAFBVV95cUxPbW1seFFjWXo4OVdYN3RSd0UwSU9iTnhXRDloSFd4REFjcFdvbWtTcERITjFnVnp1Z0p5Y2dZT2JPU2tLNlBydWY4MmpQeUtHekVlMzg0d3dpcU1yNi1OdjhSNVlibnU5VzFxMHlMWW9MdWhQZDlMbk9mNjd6Ny1fdEZCMVc" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#be185d">Υγεία</span>
+                <span class="source">in.gr</span>
+            </div>
+            <h3 class="card-title">Γιώργος Μυλωνάκης: Επέστρεψε στην Ελλάδα μετά τη θεραπεία στη Γερμανία – Αισιοδοξία για την υγεία του</h3>
+            <p class="card-summary">Ο αγαπητός ηθοποιός Γιώργος Μυλωνάκης επέστρεψε στην Ελλάδα μετά από θεραπεία στη Γερμανία και εντάχθηκε σε κέντρο αποκατάστασης. Οι πληροφορίες για την πορεία της υγείας του είναι αισιόδοξες.</p>
+            <a href="https://news.google.com/rss/articles/CBMi2AFBVV95cUxPeUFXZkRfQkZldm5OZ0tFenJPTlFsdUI4N0xIUGl1VkJVbkNjSW93LWJUS3RKampVaHQ3Ri1YemdodlhTOEMxaDJLSkdzb3ZnTDcxa2YyWHhGTHl4Y1NBUXhRVEhCVS1uVnpLcU9xRXpPajJoOGJWbXVQLTVFTFlPVnl3bE02cFZVeExQYUxaS2pkNkhXUkVuSHdOcjBNRGh0X2pLdlFndHhHTHh6T09OUDYzak9kTnNBdllQelo3ZGtoZnJBS0Z1Zm4ycUY4ZHZxb2VkQ1ZDNVbSAd4BQVVfeXFMUDFmQlN1V0tQREEtYVFNWm40UnBFdk1jU21xTDg5M2taZFRmZkZWV0ZCSEJqMXZYNnhfc01xNzRHWkF1ZG5OMnB1ZldZMWE4bXhrQWNUUV9kX3V6Q1RyLTFDRGxKbWJmM0xFQmQzNHMzYmFxZmhJQ014WVQ1djFudmgyNUxTUFd6YUs4a3BnRjNJSkhnalBnQzhsZ2tXSUF6RVgyVEszbHNlTWRISXVGTC1qQk5iVmkwUmJ1SF91dUtUc1V5aTZyTFNFUF93ZTVkc3BmaGxlVUlIYlFhdGpR" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
+                <span class="source">Proto Thema</span>
+            </div>
+            <h3 class="card-title">Ρεκόρ ταχύτητας στο Έβερεστ: Αμερικανός αλπινιστής ανέβηκε στην κορυφή σε κάτω από 10 ώρες</h3>
+            <p class="card-summary">Ο Τάιλερ Άντριους κατέρριψε το παγκόσμιο ρεκόρ ανάβασης στο Έβερεστ, φτάνοντας στην κορυφή σε μόλις 9 ώρες και 55 λεπτά. Το προηγούμενο ρεκόρ ανήκε στον Νεπαλέζο σέρπα Λάκπα Γκέλου από το 2003.</p>
+            <a href="https://www.protothema.gr/world/article/1825971/o-amerikanos-alpinistis-tailer-adrious-katerripse-to-rekor-tis-tahuteris-anavasis-sto-everest/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+            </div>
+        </div>
+
+        <div class="section-block">
+            <div class="section-heading">
+                <span class="section-flag">🌍</span>
+                <h2>Θετικά Νέα από τον Κόσμο</h2>
+                <span class="section-count">10 ειδήσεις</span>
+            </div>
+            <div class="card-grid">
+                
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#be185d">Υγεία</span>
+                <span class="source">NYT Health</span>
+            </div>
+            <h3 class="card-title">Επιστήμονες βρήκαν πιθανή θεραπεία για τη χρόνια Ηπατίτιδα Β</h3>
+            <p class="card-summary">Ένα νέο φάρμακο δείχνει να θεραπεύει 1 στους 5 ασθενείς με χρόνια Ηπατίτιδα Β, μια νόσο που επηρεάζει εκατομμύρια ανθρώπους παγκοσμίως. Τα αποτελέσματα των κλινικών δοκιμών είναι ιδιαίτερα ελπιδοφόρα.</p>
+            <a href="https://www.nytimes.com/2026/05/28/health/hepatitis-b-chronic-bepirovirsen.html" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#be185d">Υγεία</span>
+                <span class="source">NYT Health</span>
+            </div>
+            <h3 class="card-title">Μία μόνο έγχυση γονιδιακής θεραπείας μπορεί να μειώσει μακροπρόθεσμα την «κακή» χοληστερόλη</h3>
+            <p class="card-summary">Πειραματικό φάρμακο γονιδιακής επεξεργασίας σε μικρή κλινική δοκιμή έδειξε μακροχρόνια μείωση της LDL χοληστερόλης με μία μόνο έγχυση. Οι επιστήμονες μιλούν για πιθανή «θεραπεία» της καρδιακής νόσου.</p>
+            <a href="https://www.nytimes.com/2026/05/25/health/cholesterol-ldl-gene-therapy.html" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
+                <span class="source">BBC Science</span>
+            </div>
+            <h3 class="card-title">NASA: Επόμενα βήματα για μόνιμη βάση στη Σελήνη – Rovers και drones στο πρόγραμμα</h3>
+            <p class="card-summary">Η NASA ανακοίνωσε συμβόλαια για rovers και hopping drones ως μέρος του σχεδίου για μόνιμη ανθρώπινη παρουσία στη Σελήνη έως το 2032. Το φιλόδοξο πρόγραμμα αποτελεί ορόσημο για την εξερεύνηση του διαστήματος.</p>
+            <a href="https://www.bbc.com/news/articles/c39228nxyr4o" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
+                <span class="source">BBC Science</span>
+            </div>
+            <h3 class="card-title">Η πρώτη αστροναύτης από το Χονγκ Κονγκ εκτοξεύτηκε στο διάστημα με κινεζική αποστολή</h3>
+            <p class="card-summary">Η 43χρονη αστυνομικός και μητέρα τριών παιδιών έγινε η πρώτη αστροναύτης από το Χονγκ Κονγκ, συμμετέχοντας σε κινεζική διαστημική αποστολή ως επιστήμονας φορτίου. Ένα ιστορικό ορόσημο για την περιοχή.</p>
+            <a href="https://www.bbc.com/news/articles/cn7p87r56mgo" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#be185d">Υγεία</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Η ασθένεια Guinea Worm σε ιστορικό χαμηλό: Μόλις 10 κρούσματα το 2025</h3>
+            <p class="card-summary">Μόλις 10 κρούσματα της νόσου Guinea Worm καταγράφηκαν παγκοσμίως το 2025, ο χαμηλότερος αριθμός που έχει ποτέ καταγραφεί. Η αρχαία ασθένεια βρίσκεται πιο κοντά από ποτέ στην πλήρη εξάλειψη.</p>
+            <a href="https://www.goodnewsnetwork.org/guinea-worm-disease-reaches-all-time-low-only-10-human-cases-reported-in-2025/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Μείωση 70% στα «αιώνια χημικά» σε αυγά θαλασσοπουλιών – Επιτυχία των κανονισμών</h3>
+            <p class="card-summary">Επιστήμονες ανακάλυψαν μείωση 70% στα επίπεδα επικίνδυνων «αιώνιων χημικών» σε αυγά θαλασσοπουλιών τα τελευταία 55 χρόνια. Τα ευρήματα επιβεβαιώνουν την αποτελεσματικότητα των περιβαλλοντικών κανονισμών.</p>
+            <a href="https://www.goodnewsnetwork.org/70-drop-in-levels-of-forever-chemicals-observed-in-seabird-eggs-tracks-regulatory-success/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">30.000 εθελοντές φύτεψαν 1 εκατομμύριο δέντρα για να σταματήσουν την ερημοποίηση στην Κίνα</h3>
+            <p class="card-summary">Ένας άνδρας στην Κίνα κινητοποίησε 30.000 εθελοντές από τις πόλεις για να φυτέψουν 1 εκατομμύριο δέντρα στην αρχή της ερήμου Γκόμπι. Η ιογενής έκκλησή του έγινε πράξη και αποτελεί παράδειγμα κοινωνικής δράσης.</p>
+            <a href="https://www.goodnewsnetwork.org/30000-volunteers-respond-to-countys-call-to-help-combat-desertification-and-plant-1-million-trees/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Αποκατάσταση Everglades: 20 χρόνια επανάκτησης φύσης με εντυπωσιακά αποτελέσματα</h3>
+            <p class="card-summary">Το μεγαλύτερο πρόγραμμα αποκατάστασης υγροτόπων στις ΗΠΑ γιορτάζει 20 χρόνια επιτυχίας στα Everglades. Η περιοχή που είχε αποξηρανθεί για αστική ανάπτυξη επανήλθε σε φυσικό οικοσύστημα.</p>
+            <a href="https://www.goodnewsnetwork.org/everglades-restoration-project-ongoing-for-20-plus-years-sees-huge-rewilding-success/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
+                <span class="source">NYT Science</span>
+            </div>
+            <h3 class="card-title">Τα ψάρια κοιμούνται όπως εμείς – ακόμα και κάνουν σιέστα, αποκαλύπτει νέα έρευνα</h3>
+            <p class="card-summary">Παρακολουθώντας τις κινήσεις των ματιών σε ψάρια zebra, επιστήμονες ανακάλυψαν τέσσερις διαφορετικές φάσεις ύπνου, ανάλογες με αυτές των ανθρώπων. Η έρευνα ανοίγει νέους ορίζοντες στη μελέτη του ύπνου.</p>
+            <a href="https://www.nytimes.com/2026/05/27/science/fish-sleep-a-lot-like-us-they-even-nap.html" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#be185d">Υγεία</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Το γέλιο κάνει τον εγκέφαλο των παιδιών πιο ανθεκτικό και διευκολύνει τη μάθηση</h3>
+            <p class="card-summary">Νέα έρευνα αποδεικνύει ότι το να κάνουμε τα παιδιά να γελούν ενισχύει την ανθεκτικότητα του εγκεφάλου τους και διευκολύνει τη μαθησιακή διαδικασία. Το γέλιο αναδεικνύεται ως ισχυρό εργαλείο ανάπτυξης.</p>
+            <a href="https://www.goodnewsnetwork.org/making-children-laugh-can-help-make-their-brains-more-resilient/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+            </div>
+        </div>
+
+        
+        <div class="extra-block nameday-block">
+            <h3>🎂 Ονομαστικές εορτές εβδομάδας</h3>
+            <ul class="nameday-list"><li><strong>Ελένη, Κωνσταντίνος</strong> <span class="nd-date">— Δευτέρα 25 Μαΐου</span></li><li><strong>Αυγουστίνος</strong> <span class="nd-date">— Τρίτη 26 Μαΐου</span></li><li><strong>Ιωάννης (Ρώσος)</strong> <span class="nd-date">— Τετάρτη 27 Μαΐου</span></li><li><strong>Εμμανουήλ, Μανώλης</strong> <span class="nd-date">— Πέμπτη 28 Μαΐου</span></li><li><strong>Θεοδοσία</strong> <span class="nd-date">— Παρασκευή 29 Μαΐου</span></li><li><strong>Ισαάκ, Ιωσήφ</strong> <span class="nd-date">— Σάββατο 30 Μαΐου</span></li><li><strong>Ερμείας</strong> <span class="nd-date">— Κυριακή 31 Μαΐου</span></li></ul>
+        </div>
+        
+        <div class="extra-block joke-block">
+            <h3>😄 Το αστείο της εβδομάδας</h3>
+            <p class="joke-text">Ένας τουρίστας ρωτά έναν Έλληνα: «Πόσο μακριά είναι η παραλία;» Ο Έλληνας απαντά: «Πέντε λεπτά!» Μετά από μισή ώρα περπάτημα ο τουρίστας επιστρέφει ιδρωμένος: «Είπατε πέντε λεπτά!» «Ναι», λέει ο Έλληνας, «αλλά εγώ τρέχω!»</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>Δημιουργήθηκε αυτόματα με AI · Πηγές: ΑΠΕ-ΜΠΕ, Kathimerini, Positive.news, Good News Network κ.ά.</p>
+        <p style="margin-top:0.4rem">
+            <a href="index.html">Αρχική</a> ·
+            Τελευταία ενημέρωση: 28 Μαΐου 2026
+        </p>
+    </footer>
+</body>
+</html>

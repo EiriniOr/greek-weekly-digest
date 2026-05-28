@@ -204,7 +204,8 @@ def get_week_namedays(monday) -> list[dict]:
         # Moveable namedays
         extra = moveable.get(day, [])
 
-        for name in fixed + extra:
-            result.append({"name": name, "date": day_str})
+        all_names = fixed + extra
+        if all_names:
+            result.append({"name": ", ".join(all_names), "date": day_str})
 
     return result

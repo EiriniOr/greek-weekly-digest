@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 import json
+import sys
 import yaml
 import os
 import anthropic
 from datetime import datetime, timedelta
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
 
 
 SYSTEM_PROMPT = """Είσαι επιμελητής ειδήσεων που επιλέγει αποκλειστικά θετικές, εμπνευστικές ή ενδιαφέρουσες ειδήσεις.
@@ -82,6 +85,7 @@ class ContentCurator:
         return "\n\n".join(lines)
 
     def curate(self):
+
         raw_path = self.get_latest_raw()
         with open(raw_path, encoding="utf-8") as f:
             raw = json.load(f)
@@ -136,6 +140,16 @@ class ContentCurator:
             if raw_text.startswith("json"):
                 raw_text = raw_text[4:]
         curated = json.loads(raw_text.strip())
+
+        # Replace Claude-generated namedays with calendar-sourced ones
+        import importlib.util as _ilu
+
+        _spec = _ilu.spec_from_file_location(
+            "namedays", Path(__file__).parent / "namedays.py"
+        )
+        _mod = _ilu.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)
+        curated["namedays"] = _mod.get_week_namedays(monday)
 
         date_str = datetime.now().strftime("%Y%m%d")
         out_path = self.data_dir / f"curated_{date_str}.json"

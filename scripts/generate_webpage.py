@@ -83,7 +83,7 @@ def build_html(curated, date_str, has_audio):
             <div class="progress-wrap" id="progress-wrap">
                 <div class="progress-bar" id="progress-bar"></div>
             </div>
-            <span class="audio-duration-label">🎙️ Τα νέα στα ελληνικά &nbsp;·&nbsp; ~5 λεπτά &nbsp;·&nbsp; {greek_dt}</span>
+            <span class="audio-duration-label">🎙️ Τα νέα της μαμάς &nbsp;·&nbsp; ~5 λεπτά &nbsp;·&nbsp; {greek_dt}</span>
         </div>
         <script>
         (function() {{
@@ -151,7 +151,7 @@ def build_html(curated, date_str, has_audio):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Τα νέα στα ελληνικά! — {greek_dt}</title>
+    <title>Τα νέα της μαμάς — {greek_dt}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -503,7 +503,7 @@ def build_html(curated, date_str, has_audio):
         <div class="meander"></div>
         <div class="header-inner">
             <p class="site-label">Εβδομαδιαία Έκδοση · Podcast</p>
-            <h1>Τα νέα στα ελληνικά! 🇬🇷</h1>
+            <h1>Τα νέα της μαμάς 🇬🇷</h1>
             <p class="header-date">{greek_dt}</p>
             <p class="intro">{intro}</p>
         </div>

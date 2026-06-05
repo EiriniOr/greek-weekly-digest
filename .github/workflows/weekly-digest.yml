@@ -2,8 +2,9 @@ name: Greek Weekly Positive News
 
 on:
   schedule:
-    # Every Monday at 05:00 UTC = 08:00 Greece summer (EEST/UTC+3)
+    # Monday and Thursday at 05:00 UTC = 08:00 Greece summer (EEST/UTC+3)
     - cron: '0 5 * * 1'
+    - cron: '0 5 * * 4'
   workflow_dispatch:  # allow manual trigger from GitHub UI
 
 jobs:

@@ -24,8 +24,8 @@ SCRIPT_PROMPT = """Είσαι η Βερόνικα, παρουσιάστρια τ
 
 Γράψε ένα podcast σενάριο στα ελληνικά, περίπου 7 λεπτά (χωρίς αυστηρό όριο λέξεων).
 
-Ξεκίνα ΑΚΡΙΒΩΣ με:
-Γεια σας, είμαι η Βερόνικα και αυτά είναι τα νέα της μαμάς.
+Ξεκίνα ΑΚΡΙΒΩΣ με (χρησιμοποίησε την ΕΚΔΟΣΗ από τα δεδομένα):
+Γεια σας, είμαι η Βερόνικα και αυτά είναι τα νέα της μαμάς της [Δευτέρας ή Πέμπτης].
 
 Δομή:
 1. Χαιρετισμός (μία φράση)
@@ -124,7 +124,11 @@ class AudioGenerator:
         return files[0]
 
     def _build_data(self, curated):
-        lines = []
+        from datetime import datetime
+
+        weekday = datetime.now().weekday()
+        edition = "Πέμπτης" if weekday == 3 else "Δευτέρας"
+        lines = [f"ΕΚΔΟΣΗ: {edition}"]
         namedays = curated.get("namedays", [])
         if namedays:
             lines.append("ΟΝΟΜΑΣΤΙΚΕΣ ΕΟΡΤΕΣ:")

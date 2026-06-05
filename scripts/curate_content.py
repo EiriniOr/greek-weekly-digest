@@ -7,6 +7,26 @@ import anthropic
 from datetime import datetime, timedelta
 from pathlib import Path
 
+JOKE_TOPICS = [
+    "οικογένεια",
+    "παιδιά",
+    "φαγητό",
+    "ζώα",
+    "δουλειά",
+    "σχολείο",
+    "γιατρός",
+    "τεχνολογία",
+    "ταξίδια",
+    "αγορές",
+    "μαγείρεμα",
+    "γείτονες",
+    "καιρός",
+    "μουσική",
+    "κινηματογράφος",
+    "διακοπές",
+    "συνταξιούχοι",
+]
+
 sys.path.insert(0, str(Path(__file__).parent))
 
 
@@ -36,7 +56,7 @@ CURATION_PROMPT = """Έχεις τις παρακάτω ειδήσεις της 
   "namedays": [
     {{"name": "Ελληνικό όνομα", "date": "π.χ. Δευτέρα 2 Ιουνίου"}}
   ],
-  "joke": "Ένα αστείο στα ελληνικά. Πρέπει να είναι ΠΡΑΓΜΑΤΙΚΑ αστείο — με σαφή pointe, λογική αλληλουχία και απρόσμενη κατάληξη. Όχι παιδικά αστεία, όχι αστεία που δεν βγάζουν νόημα. Στυλ: έξυπνο χιούμορ, ανεκδοτάκι με ανατροπή. Χωρίς αναφορές σε θάνατο, αρρώστια ή προσβολές.",
+  "joke": "Αστείο με θέμα: {joke_topic}. Πρέπει να είναι ΠΡΑΓΜΑΤΙΚΑ αστείο — με σαφή pointe, λογική αλληλουχία και απρόσμενη κατάληξη. Όχι παιδικά αστεία. Στυλ: έξυπνο χιούμορ, ανεκδοτάκι με ανατροπή. Χωρίς αναφορές σε θάνατο, αρρώστια ή προσβολές.",
   "greek_news": [
     {{
       "title": "τίτλος στα ελληνικά",
@@ -116,6 +136,8 @@ class ContentCurator:
         week_start = f"{monday.day} {GREEK_MONTHS[monday.month]}"
         week_end = f"{sunday.day} {GREEK_MONTHS[sunday.month]} {sunday.year}"
 
+        import random
+
         cfg = self.config["curation"]
         prompt = CURATION_PROMPT.format(
             greek_n=cfg["greek_section_items"],
@@ -124,6 +146,7 @@ class ContentCurator:
             world_items=self._format_items(world_items),
             week_start=week_start,
             week_end=week_end,
+            joke_topic=random.choice(JOKE_TOPICS),
         )
 
         response = self.client.messages.create(

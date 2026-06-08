@@ -49,7 +49,7 @@ CURATION_PROMPT = """Έχεις τις παρακάτω ειδήσεις της 
 ## ΤΡΕΧΟΥΣΑ ΕΒΔΟΜΑΔΑ: {week_start} — {week_end}
 
 ## ΕΞΟΔΟΣ
-Επίστρεψε ΜΟΝΟ έγκυρο JSON (χωρίς markdown):
+Επίστρεψε ΜΟΝΟ έγκυρο JSON (χωρίς markdown). ΠΡΟΣΟΧΗ: μέσα σε strings, escape όλα τα εισαγωγικά (") ως \" και τις αλλαγές γραμμής ως \n — το JSON πρέπει να είναι έγκυρο και να μην περιέχει unescaped χαρακτήρες:
 
 {{
   "weekly_intro": "2-3 προτάσεις εισαγωγής που συνοψίζουν τα θέματα της εβδομάδας",
@@ -162,7 +162,34 @@ class ContentCurator:
             raw_text = raw_text.split("```")[1]
             if raw_text.startswith("json"):
                 raw_text = raw_text[4:]
-        curated = json.loads(raw_text.strip())
+        raw_text = raw_text.strip()
+
+        try:
+            curated = json.loads(raw_text)
+        except json.JSONDecodeError as e:
+            print(f"Invalid JSON from Claude ({e}); asking it to repair...")
+            repair = self.client.messages.create(
+                model=cfg["model"],
+                max_tokens=cfg["max_tokens"],
+                messages=[
+                    {"role": "user", "content": prompt},
+                    {"role": "assistant", "content": raw_text},
+                    {
+                        "role": "user",
+                        "content": (
+                            f"Το JSON σου έχει σφάλμα: {e}. "
+                            "Επίστρεψε ΜΟΝΟ το διορθωμένο, έγκυρο JSON — "
+                            'χωρίς markdown, με σωστό escaping εισαγωγικών (\\") και αλλαγών γραμμής (\\n).'
+                        ),
+                    },
+                ],
+            )
+            fixed_text = repair.content[0].text.strip()
+            if fixed_text.startswith("```"):
+                fixed_text = fixed_text.split("```")[1]
+                if fixed_text.startswith("json"):
+                    fixed_text = fixed_text[4:]
+            curated = json.loads(fixed_text.strip())
 
         # Replace Claude-generated namedays with calendar-sourced ones
         import importlib.util as _ilu

@@ -7,26 +7,6 @@ import anthropic
 from datetime import datetime, timedelta
 from pathlib import Path
 
-JOKE_TOPICS = [
-    "οικογένεια",
-    "παιδιά",
-    "φαγητό",
-    "ζώα",
-    "δουλειά",
-    "σχολείο",
-    "γιατρός",
-    "τεχνολογία",
-    "ταξίδια",
-    "αγορές",
-    "μαγείρεμα",
-    "γείτονες",
-    "καιρός",
-    "μουσική",
-    "κινηματογράφος",
-    "διακοπές",
-    "συνταξιούχοι",
-]
-
 sys.path.insert(0, str(Path(__file__).parent))
 
 
@@ -56,7 +36,6 @@ CURATION_PROMPT = """Έχεις τις παρακάτω ειδήσεις της 
   "namedays": [
     {{"name": "Ελληνικό όνομα", "date": "π.χ. Δευτέρα 2 Ιουνίου"}}
   ],
-  "joke": "Αστείο με θέμα: {joke_topic}. Πρέπει να είναι ΠΡΑΓΜΑΤΙΚΑ αστείο — με σαφή pointe, λογική αλληλουχία και απρόσμενη κατάληξη. Όχι παιδικά αστεία. Στυλ: έξυπνο χιούμορ, ανεκδοτάκι με ανατροπή. Χωρίς αναφορές σε θάνατο, αρρώστια ή προσβολές.",
   "greek_news": [
     {{
       "title": "τίτλος στα ελληνικά",
@@ -136,8 +115,6 @@ class ContentCurator:
         week_start = f"{monday.day} {GREEK_MONTHS[monday.month]}"
         week_end = f"{sunday.day} {GREEK_MONTHS[sunday.month]} {sunday.year}"
 
-        import random
-
         cfg = self.config["curation"]
         prompt = CURATION_PROMPT.format(
             greek_n=cfg["greek_section_items"],
@@ -146,7 +123,6 @@ class ContentCurator:
             world_items=self._format_items(world_items),
             week_start=week_start,
             week_end=week_end,
-            joke_topic=random.choice(JOKE_TOPICS),
         )
 
         response = self.client.messages.create(
@@ -201,6 +177,15 @@ class ContentCurator:
         _spec.loader.exec_module(_mod)
         curated["namedays"] = _mod.get_week_namedays(monday)
 
+        # Inject a vetted joke from the static bank (deterministic by date,
+        # so each run is new without persisted state). See jokes.py.
+        _jspec = _ilu.spec_from_file_location(
+            "jokes", Path(__file__).parent / "jokes.py"
+        )
+        _jmod = _ilu.module_from_spec(_jspec)
+        _jspec.loader.exec_module(_jmod)
+        curated["joke"] = _jmod.get_joke(now.date())
+
         date_str = datetime.now().strftime("%Y%m%d")
         out_path = self.data_dir / f"curated_{date_str}.json"
         with open(out_path, "w", encoding="utf-8") as f:
@@ -210,6 +195,7 @@ class ContentCurator:
             f"Curated: {len(curated['greek_news'])} Greek, {len(curated['world_news'])} world"
         )
         print(f"Namedays: {[n['name'] for n in curated.get('namedays', [])]}")
+        print(f"Joke: {curated.get('joke', '')[:80]}...")
         print(f"Saved to {out_path}")
         return out_path
 

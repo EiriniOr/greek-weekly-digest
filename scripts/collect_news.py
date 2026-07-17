@@ -15,7 +15,11 @@ class NewsCollector:
             self.config = yaml.safe_load(f)
         self.data_dir = self.base_dir / "data"
         self.data_dir.mkdir(exist_ok=True)
-        self.week_ago = datetime.now(timezone.utc) - timedelta(days=7)
+        # Look back only to the previous edition so Monday and Thursday
+        # digests don't overlap: Mon covers Thu-Mon (4d), Thu covers Mon-Thu (3d).
+        weekday = datetime.now(timezone.utc).weekday()
+        lookback = {0: 4, 3: 3}.get(weekday, 7)
+        self.week_ago = datetime.now(timezone.utc) - timedelta(days=lookback)
 
     def fetch_feed(self, feed_config):
         url = feed_config["url"]

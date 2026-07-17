@@ -1,110 +1,290 @@
 #!/usr/bin/env python3
 """
 Greek Orthodox nameday calendar.
-Fixed feasts are keyed by (month, day).
-Moveable feasts (Easter-relative) are computed at runtime.
+
+Fixed feasts come from namedays_data.json (vendored from
+github.com/stavros-melidoniotis/greek-namedays, scraped from eortologio.net)
+— names are never generated, only read from that dataset, so they cannot be
+hallucinated. The dataset lists every obscure variant (up to 88 names/day),
+so COMMON_NAMES filters announcements down to names people actually have.
+The filter can only omit a name, never invent one.
+
+Moveable feasts (Easter-relative) are computed at runtime from the same
+dataset's moving-namedays rules, expressed here as day offsets from Easter.
+
+USER_OVERRIDES holds corrections supplied by the listener's own calendar and
+always wins over the dataset.
 """
 
+import json
 from datetime import date, timedelta
+from pathlib import Path
 
-# (month, day) → list of names celebrated
-NAMEDAYS: dict[tuple[int, int], list[str]] = {
-    # January
-    (1, 1): ["Βασίλης", "Βασίλειος", "Βασιλική", "Βάσω"],
-    (1, 2): ["Σίλβεστρος"],
-    (1, 6): ["Φώτης", "Φωτεινή", "Φώτιος"],
-    (1, 7): ["Ιωάννης", "Γιάννης", "Ιωάννα", "Γιαννούλα"],
-    (1, 11): ["Θεοδόσιος", "Θεοδοσία"],
-    (1, 14): ["Σάββας"],
-    (1, 17): ["Αντώνης", "Αντώνιος", "Αντωνία"],
-    (1, 18): ["Αθανάσιος", "Αθανασία", "Θανάσης", "Κύριλλος"],
-    (1, 20): ["Ευθύμιος", "Ευθυμία"],
-    (1, 25): ["Γρηγόριος", "Γρηγόρης", "Γρηγορία"],
-    (1, 27): ["Ιωάννης Χρυσόστομος"],
-    (1, 28): ["Εφραίμ"],
-    (1, 30): ["Βασίλης", "Γρηγόρης", "Ιωάννης"],
-    # February
-    (2, 9): ["Νικηφόρος"],
-    (2, 10): ["Χαράλαμπος", "Χαραλαμπία", "Λάμπης"],
-    (2, 11): ["Βλάσιος", "Βλασία"],
-    # Θεόδωρος: Feb 17 is a fixed feast, but the main Greek nameday
-    # (St. Theodore Tyron) is the first Saturday of Great Lent — handled below.
-    (2, 17): ["Θεόδωρος", "Θεοδώρα", "Θοδωρής"],
-    # March
-    (3, 25): ["Ευάγγελος", "Ευαγγελία", "Βαγγέλης", "Βαγγελιώ", "Αγγελική", "Άγγελος"],
-    # April — Γεώργιος is April 23 unless it falls in Holy Week (see moveable section)
-    (4, 23): ["Γεώργιος", "Γιώργης", "Γιώργος", "Γεωργία", "Γεωργίνα"],
-    # May
-    (5, 2): ["Αθανάσιος", "Αθανασία"],
-    (5, 5): ["Ειρήνη", "Ειρηνούλα"],
-    (5, 8): ["Ιωάννης", "Γιάννης"],
-    (5, 9): ["Νικόλαος", "Νίκος"],
-    (5, 11): ["Κύριλλος", "Μεθόδιος"],
-    (5, 15): ["Αχίλλειος", "Αχίλλας"],
-    (5, 21): ["Κωνσταντίνος", "Κώστας", "Κωνσταντίνα", "Ελένη", "Νίνα"],
-    (5, 27): ["Ιωάννης ο Ρώσος", "Ιωάννης", "Γιάννης"],
-    (5, 29): ["Θεοδόσιος", "Θεοδοσία"],
-    (5, 31): ["Ερμείας", "Ερμής"],
-    # June
-    (6, 2): ["Νικηφόρος"],
-    (6, 3): ["Υπατία"],
-    (6, 4): ["Μάρθα"],
-    (6, 5): ["Δωροθέα", "Νίκη"],
-    (6, 8): ["Καλλιόπη"],
-    (6, 11): ["Βαρνάβας", "Λουκάς", "Ζαφειρία"],
-    (6, 19): ["Ζήσης"],
-    (6, 20): ["Έκτορας"],
-    (6, 22): ["Ευσέβιος"],
-    (6, 24): ["Ερρίκος"],
-    (6, 26): ["Μακάριος"],
-    (6, 28): ["Ανάργυρος"],
-    (6, 29): ["Πέτρος", "Πετρούλα", "Παύλος", "Παυλίνα"],
-    (6, 30): ["Απόστολος"],
-    # July
-    (7, 1): ["Κοσμάς", "Δαμιανός", "Δαμιανή"],
-    (7, 17): ["Μαρίνα", "Μαριλένα"],
-    (7, 20): ["Ηλίας", "Ηλιάνα"],
-    (7, 22): ["Μαρία Μαγδαληνή"],
-    (7, 24): ["Χριστίνα", "Χριστίνη"],
-    (7, 25): ["Άννα"],
-    (7, 26): ["Παρασκευή", "Βούλα"],
-    (7, 27): ["Παντελεήμων", "Παντελής"],
-    # August
-    (8, 6): ["Σωτήρης", "Σωτηρία", "Χριστόδουλος"],
-    (8, 15): ["Παναγιώτης", "Παναγιώτα", "Μαρία", "Δέσποινα", "Δέσπω", "Λίτσα"],
-    (8, 16): ["Γεράσιμος", "Γερασιμούλα"],
-    (8, 29): ["Ιωάννης"],
-    (8, 30): ["Αλέξανδρος", "Αλεξάνδρα", "Αλέξης", "Αλέκος"],
-    # September
-    (9, 8): ["Μαρία"],
-    (9, 14): ["Σταύρος", "Σταυρούλα"],
-    (9, 17): ["Σοφία", "Ελπίδα", "Πίστη", "Αγάπη"],
-    (9, 26): ["Ιωάννης"],
-    # October
-    (10, 6): ["Θωμάς"],
-    (10, 18): ["Λουκάς"],
-    (10, 26): ["Δημήτριος", "Δημήτρης", "Δήμητρα", "Δημητρία"],
-    # November
-    (11, 8): ["Μιχάλης", "Μιχαήλ", "Γαβριήλ", "Αγγελική", "Άγγελος", "Αγγελίνα"],
-    (11, 9): ["Νεκτάριος", "Νεκτάρια"],
-    (11, 11): ["Μηνάς", "Βίκτωρ"],
-    (11, 14): ["Φίλιππος", "Φιλίππα"],
-    (11, 21): ["Παναγιώτης", "Παναγιώτα"],
-    (11, 25): ["Αικατερίνη", "Κατερίνα"],
-    (11, 26): ["Στυλιανός", "Στέλιος"],
-    (11, 30): ["Ανδρέας", "Ανδρέα"],
-    # December
-    (12, 4): ["Βαρβάρα"],
-    (12, 5): ["Σάββας"],
-    (12, 6): ["Νικόλαος", "Νίκος", "Νικολέτα"],
-    (12, 9): ["Άννα"],
-    (12, 12): ["Σπυρίδων", "Σπύρος", "Σπυριδούλα"],
-    (12, 15): ["Ελευθέριος", "Ελευθερία", "Λευτέρης"],
-    (12, 17): ["Δανιήλ"],
-    (12, 25): ["Εμμανουήλ", "Μανώλης"],
-    (12, 27): ["Στέφανος", "Στεφανία"],
-    (12, 31): ["Μελάνη", "Μελανία"],
+_DATA_PATH = Path(__file__).parent / "namedays_data.json"
+with open(_DATA_PATH, encoding="utf-8") as _f:
+    _FIXED: dict[str, dict] = json.load(_f)
+
+# Names worth announcing on air. Extend freely; a name missing here is
+# silently skipped, never replaced with something else.
+COMMON_NAMES = {
+    # Α
+    "Αγάπη",
+    "Αγγελική",
+    "Άγγελος",
+    "Αγγελίνα",
+    "Αγαθή",
+    "Αθανάσιος",
+    "Αθανασία",
+    "Θανάσης",
+    "Αικατερίνη",
+    "Κατερίνα",
+    "Καίτη",
+    "Αλέξανδρος",
+    "Αλεξάνδρα",
+    "Αλέξης",
+    "Αλέκος",
+    "Αλέκα",
+    "Αλίκη",
+    "Αναστάσιος",
+    "Αναστασία",
+    "Τάσος",
+    "Τασούλα",
+    "Ανέστης",
+    "Νατάσα",
+    "Ανάργυρος",
+    "Ανδρέας",
+    "Ανδριανή",
+    "Άννα",
+    "Αντώνης",
+    "Αντώνιος",
+    "Αντωνία",
+    "Απόστολος",
+    "Αποστολία",
+    "Αχιλλέας",
+    "Αχίλλειος",
+    # Β
+    "Βαγγέλης",
+    "Βαγγελιώ",
+    "Ευάγγελος",
+    "Ευαγγελία",
+    "Βαρβάρα",
+    "Βαρνάβας",
+    "Βασίλειος",
+    "Βασίλης",
+    "Βασιλική",
+    "Βάσω",
+    "Βίκτωρ",
+    "Βικτωρία",
+    "Βλάσης",
+    "Βλάσιος",
+    "Βούλα",
+    # Γ
+    "Γαβριήλ",
+    "Γεράσιμος",
+    "Γεώργιος",
+    "Γιώργος",
+    "Γιώργης",
+    "Γεωργία",
+    "Γιάννης",
+    "Γιάννα",
+    "Ιωάννης",
+    "Ιωάννα",
+    "Γιαννούλα",
+    "Γρηγόρης",
+    "Γρηγόριος",
+    "Γρηγορία",
+    # Δ
+    "Δαβίδ",
+    "Δαμιανός",
+    "Δανιήλ",
+    "Δάφνη",
+    "Δέσποινα",
+    "Δημήτριος",
+    "Δημήτρης",
+    "Δήμητρα",
+    "Δημητρία",
+    "Δήμος",
+    "Δωρόθεος",
+    "Δωροθέα",
+    # Ε
+    "Ειρήνη",
+    "Ειρηναίος",
+    "Έκτορας",
+    "Ελένη",
+    "Έλενα",
+    "Ελευθέριος",
+    "Ελευθερία",
+    "Λευτέρης",
+    "Ελισάβετ",
+    "Ελπίδα",
+    "Εμμανουήλ",
+    "Μανώλης",
+    "Εμμανουέλα",
+    "Ερρίκος",
+    "Ευγενία",
+    "Ευγένιος",
+    "Ευθύμιος",
+    "Ευθυμία",
+    "Ευσέβιος",
+    "Ευστάθιος",
+    "Στάθης",
+    "Εφραίμ",
+    # Ζ
+    "Ζαφείρης",
+    "Ζαφειρία",
+    "Ζήσης",
+    "Ζωή",
+    "Ζώης",
+    # Η/Θ
+    "Ηλίας",
+    "Ηλιάνα",
+    "Θεόδωρος",
+    "Θοδωρής",
+    "Θεοδώρα",
+    "Δώρα",
+    "Ντόρα",
+    "Θεοδόσης",
+    "Θεοδοσία",
+    "Θεοφάνης",
+    "Φάνης",
+    "Θωμάς",
+    "Θωμαή",
+    # Κ
+    "Καλλιόπη",
+    "Πόπη",
+    "Κοσμάς",
+    "Κυριακή",
+    "Κυριάκος",
+    "Κύριλλος",
+    "Κωνσταντίνος",
+    "Κώστας",
+    "Κωνσταντίνα",
+    "Ντίνα",
+    "Κορίνα",
+    # Λ
+    "Λάζαρος",
+    "Λάμπρος",
+    "Λουκάς",
+    "Λουκία",
+    "Λυδία",
+    # Μ
+    "Μαγδαληνή",
+    "Μακάριος",
+    "Μανουήλ",
+    "Μαργαρίτα",
+    "Μαρία",
+    "Μάριος",
+    "Μαριάννα",
+    "Μαρίνα",
+    "Μαρίνος",
+    "Μάρθα",
+    "Μάρκος",
+    "Ματθαίος",
+    "Μελίνα",
+    "Μεθόδιος",
+    "Μηνάς",
+    "Μιχαήλ",
+    "Μιχάλης",
+    "Μυρτώ",
+    # Ν
+    "Νεκτάριος",
+    "Νεκταρία",
+    "Νεφέλη",
+    "Νίκη",
+    "Νικηφόρος",
+    "Νικόλαος",
+    "Νίκος",
+    "Νικολέτα",
+    "Νικόλας",
+    # Ξ/Ο/Π
+    "Ξένια",
+    "Ορέστης",
+    "Παναγιώτης",
+    "Πάνος",
+    "Παναγιώτα",
+    "Γιώτα",
+    "Παντελής",
+    "Παντελεήμων",
+    "Παρασκευή",
+    "Παύλος",
+    "Παυλίνα",
+    "Πελαγία",
+    "Πέτρος",
+    "Πετρούλα",
+    "Πηνελόπη",
+    "Πολύκαρπος",
+    # Ρ/Σ
+    "Ραφαήλ",
+    "Ραφαέλα",
+    "Ρωξάνη",
+    "Σάββας",
+    "Σεραφείμ",
+    "Σοφία",
+    "Σπυρίδων",
+    "Σπύρος",
+    "Σπυριδούλα",
+    "Σταμάτης",
+    "Σταματία",
+    "Σταύρος",
+    "Σταυρούλα",
+    "Στέλιος",
+    "Στέλλα",
+    "Στυλιανός",
+    "Στυλιανή",
+    "Στέφανος",
+    "Στεφανία",
+    "Σωτήρης",
+    "Σωτηρία",
+    # Τ/Υ/Φ
+    "Τατιάνα",
+    "Τιμόθεος",
+    "Τριάδα",
+    "Υπατία",
+    "Φίλιππος",
+    "Φιλίππα",
+    "Φωτεινή",
+    "Φώτης",
+    "Φώτιος",
+    # Χ
+    "Χαράλαμπος",
+    "Χάρης",
+    "Χαρά",
+    "Χαρούλα",
+    "Χρήστος",
+    "Χριστίνα",
+    "Χριστόδουλος",
+    "Χριστόφορος",
+    "Χρυσούλα",
+    "Χρύσα",
+    # moveable-only names
+    "Βάιος",
+    "Βάια",
 }
+
+# Listener-supplied corrections; always included for their day.
+USER_OVERRIDES: dict[tuple[int, int], list[str]] = {
+    (6, 20): ["Έκτορας"],
+    (6, 24): ["Ερρίκος"],
+}
+
+# Moveable feasts as offsets (days) from Orthodox Easter Sunday, taken from
+# the dataset's moving_namedays rules. Only commonly held names included.
+EASTER_OFFSET_NAMES: dict[int, list[str]] = {
+    -43: ["Θεόδωρος", "Θοδωρής", "Θεοδώρα", "Δώρα", "Ντόρα"],
+    -42: ["Μάριος", "Ρωξάνη"],
+    -8: ["Λάζαρος"],
+    -7: ["Βάιος", "Βάια", "Δάφνη"],
+    0: ["Αναστάσιος", "Τάσος", "Ανέστης", "Αναστασία", "Τασούλα", "Νατάσα"],
+    2: ["Ραφαήλ", "Ραφαέλα"],
+    5: ["Ζώης", "Ζωή"],
+    7: ["Θωμάς", "Θωμαή"],
+    50: ["Τριάδα", "Κορίνα"],
+}
+
+_GEORGE_NAMES = ["Γεώργιος", "Γιώργος", "Γιώργης", "Γεωργία"]
+_MARKOS_NAMES = ["Μάρκος"]
+
+MAX_NAMES_PER_DAY = 8
 
 GREEK_DAYS = [
     "Δευτέρα",
@@ -132,11 +312,6 @@ GREEK_MONTHS = [
     "Δεκεμβρίου",
 ]
 
-_GEORGE_NAMES = ["Γεώργιος", "Γιώργης", "Γιώργος", "Γεωργία", "Γεωργίνα"]
-_THEODORE_NAMES = ["Θεόδωρος", "Θεοδώρα", "Θοδωρής"]
-_ANASTASIOS_NAMES = ["Αναστάσιος", "Αναστασία", "Τάσος", "Τασία"]
-_LAZAROS_NAMES = ["Λάζαρος", "Λαζαρίνα"]
-
 
 def _orthodox_easter(year: int) -> date:
     """Compute Orthodox (Julian→Gregorian) Easter for the given year."""
@@ -157,63 +332,60 @@ def _moveable_namedays(year: int) -> dict[date, list[str]]:
     easter = _orthodox_easter(year)
     result: dict[date, list[str]] = {}
 
-    # Easter Sunday → Αναστάσιος/Αναστασία
-    result[easter] = _ANASTASIOS_NAMES
+    for offset, names in EASTER_OFFSET_NAMES.items():
+        d = easter + timedelta(days=offset)
+        result.setdefault(d, []).extend(names)
 
-    # Lazarus Saturday (Easter - 8 days)
-    result[easter - timedelta(days=8)] = _LAZAROS_NAMES
-
-    # First Saturday of Great Lent (Easter - 43 days)
-    lent_saturday = easter - timedelta(days=43)
-    result[lent_saturday] = _THEODORE_NAMES
-
-    # St. George: April 23, but shifts to Bright Monday (Easter+1) if Holy Week
-    george_date = date(year, 4, 23)
-    palm_sunday = easter - timedelta(days=7)
-    holy_saturday = easter - timedelta(days=1)
-    if palm_sunday <= george_date <= holy_saturday:
-        george_date = easter + timedelta(days=1)
-        # Remove from fixed calendar for this year (handled here instead)
-        result[george_date] = result.get(george_date, []) + _GEORGE_NAMES
-    # If April 23 is NOT in Holy Week, the fixed entry in NAMEDAYS handles it.
-    # We still emit it here when it's moved so the caller can skip the fixed entry.
+    # St. George: April 23, moved to Bright Monday when Easter falls on/after it.
+    # St. Mark: April 25, moved to Bright Tuesday under the same condition.
+    george = date(year, 4, 23)
+    if easter >= george:
+        result.setdefault(easter + timedelta(days=1), []).extend(_GEORGE_NAMES)
+        result.setdefault(easter + timedelta(days=2), []).extend(_MARKOS_NAMES)
+    else:
+        result.setdefault(george, []).extend(_GEORGE_NAMES)
+        result.setdefault(date(year, 4, 25), []).extend(_MARKOS_NAMES)
 
     return result
 
 
+def _names_for_day(day: date, moveable: dict[date, list[str]]) -> list[str]:
+    """Common names celebrating on this day, dataset order, deduped."""
+    raw = list(_FIXED.get(f"{day.day}/{day.month}", {}).get("names", []))
+    raw += moveable.get(day, [])
+    raw += USER_OVERRIDES.get((day.month, day.day), [])
+
+    seen = set()
+    names = []
+    for n in raw:
+        if n in COMMON_NAMES and n not in seen:
+            seen.add(n)
+            names.append(n)
+    return names[:MAX_NAMES_PER_DAY]
+
+
 def get_week_namedays(monday) -> list[dict]:
     """Return nameday entries for the 7 days starting from monday."""
-    result = []
-    # Compute moveable feasts for all years that could appear in this week
+    if hasattr(monday, "date"):
+        monday = monday.date()
+
     years = {(monday + timedelta(days=i)).year for i in range(7)}
     moveable: dict[date, list[str]] = {}
     for yr in years:
         moveable.update(_moveable_namedays(yr))
 
-    # Dates where George was moved — skip the fixed April 23 entry for those years
-    george_moved_years = set()
-    for yr in years:
-        easter = _orthodox_easter(yr)
-        george_fixed = date(yr, 4, 23)
-        palm_sunday = easter - timedelta(days=7)
-        holy_saturday = easter - timedelta(days=1)
-        if palm_sunday <= george_fixed <= holy_saturday:
-            george_moved_years.add(yr)
-
+    result = []
     for i in range(7):
         day = monday + timedelta(days=i)
-        day_str = f"{GREEK_DAYS[i]} {day.day} {GREEK_MONTHS[day.month]}"
-
-        # Fixed namedays (skip George on April 23 when it moved this year)
-        fixed = list(NAMEDAYS.get((day.month, day.day), []))
-        if day.month == 4 and day.day == 23 and day.year in george_moved_years:
-            fixed = [n for n in fixed if n not in _GEORGE_NAMES]
-
-        # Moveable namedays
-        extra = moveable.get(day, [])
-
-        all_names = fixed + extra
-        if all_names:
-            result.append({"name": ", ".join(all_names), "date": day_str})
-
+        names = _names_for_day(day, moveable)
+        if names:
+            day_str = f"{GREEK_DAYS[i]} {day.day} {GREEK_MONTHS[day.month]}"
+            result.append({"name": ", ".join(names), "date": day_str})
     return result
+
+
+if __name__ == "__main__":
+    d = date.today()
+    monday = d - timedelta(days=d.weekday())
+    for entry in get_week_namedays(monday):
+        print(f"{entry['date']}: {entry['name']}")

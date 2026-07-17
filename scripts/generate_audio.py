@@ -30,7 +30,7 @@ SCRIPT_PROMPT = """Είσαι η Βερόνικα, παρουσιάστρια τ
 Δομή:
 1. Χαιρετισμός (μία φράση)
 2. Ονομαστικές εορτές (~20 δευτ.): ΜΟΝΟ αν υπάρχουν δεδομένα στην ενότητα ΟΝΟΜΑΣΤΙΚΕΣ ΕΟΡΤΕΣ — αναφέρτες τους. Αν ΔΕΝ υπάρχει αυτή η ενότητα στα δεδομένα, ΠΑΡΑΛΕΙΨΕ εντελώς αυτό το βήμα.
-3. Αστείο (~30 δευτ.): πες το αστείο φυσικά, σαν να το λες σε παρέα
+3. Αστείο: ΜΟΝΟ αν τα δεδομένα περιέχουν τη γραμμή «ΑΣΤΕΙΟ: ΝΑΙ» — γράψε μια σύντομη φυσική εισαγωγή (π.χ. «Και τώρα, το ανέκδοτο της ημέρας!») και αμέσως μετά, σε ΔΙΚΗ ΤΟΥ παράγραφο, γράψε ΑΚΡΙΒΩΣ τον δείκτη [ΑΣΤΕΙΟ] και τίποτα άλλο. ΜΗΝ γράψεις εσύ αστείο — το κείμενο θα εισαχθεί αυτόματα. Αν δεν υπάρχει «ΑΣΤΕΙΟ: ΝΑΙ», παράλειψε το βήμα.
 4. Ελληνικά νέα (~3 λεπτά): τα 4-5 σημαντικότερα, με πλαίσιο και σημασία
 5. Παγκόσμια θετικά νέα (~2,5 λεπτά): τα 4-5 σημαντικότερα, με πλαίσιο
 6. Αποχαιρετισμός: «Καλή εβδομάδα σε όλους!»
@@ -134,9 +134,11 @@ class AudioGenerator:
             lines.append("ΟΝΟΜΑΣΤΙΚΕΣ ΕΟΡΤΕΣ:")
             for n in namedays:
                 lines.append(f"  {n['name']} — {n['date']}")
-        joke = curated.get("joke", "")
-        if joke:
-            lines.append(f"\nΑΣΤΕΙΟ: {joke}")
+        # The joke text itself is deliberately NOT given to Claude — it would
+        # paraphrase it. Claude only writes a [ΑΣΤΕΙΟ] placeholder; the exact
+        # text is spliced in after script generation (see generate()).
+        if curated.get("joke", ""):
+            lines.append("\nΑΣΤΕΙΟ: ΝΑΙ")
         lines.append("\nΕΛΛΗΝΙΚΑ ΝΕΑ:")
         for item in curated.get("greek_news", []):
             lines.append(f"- {item['title']}: {item.get('summary', '')}")
@@ -144,6 +146,20 @@ class AudioGenerator:
         for item in curated.get("world_news", []):
             lines.append(f"- {item['title']}: {item.get('summary', '')}")
         return "\n".join(lines)
+
+    def _insert_joke(self, script: str, joke: str) -> str:
+        """Splice the curated joke verbatim where Claude left the placeholder."""
+        if not joke:
+            return script.replace("[ΑΣΤΕΙΟ]", "").strip()
+        if "[ΑΣΤΕΙΟ]" in script:
+            script = script.replace("[ΑΣΤΕΙΟ]", joke, 1)
+            return script.replace("[ΑΣΤΕΙΟ]", "").strip()
+        # Placeholder missing — insert the joke as its own paragraph after the
+        # second paragraph (greeting + namedays), so it still airs verbatim.
+        paras = re.split(r"\n{2,}", script)
+        pos = min(2, len(paras))
+        paras.insert(pos, f"Και τώρα, το ανέκδοτο της ημέρας! {joke}")
+        return "\n\n".join(paras)
 
     def _tts_to_file(self, text: str, cfg: dict, path: Path) -> None:
         """Stream TTS directly to file — the only fully-reliable method."""
@@ -172,6 +188,7 @@ class AudioGenerator:
             ],
         )
         script = response.content[0].text.strip()
+        script = self._insert_joke(script, curated.get("joke", ""))
         print(f"Script: {len(script)} chars, {len(script.split())} words")
 
         script_path = self.audio_dir / f"script_{date_str}.txt"

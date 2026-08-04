@@ -167,18 +167,13 @@ class ContentCurator:
                     fixed_text = fixed_text[4:]
             curated = json.loads(fixed_text.strip())
 
-        # Replace Claude-generated namedays with calendar-sourced ones
-        import importlib.util as _ilu
-
-        _spec = _ilu.spec_from_file_location(
-            "namedays", Path(__file__).parent / "namedays.py"
-        )
-        _mod = _ilu.module_from_spec(_spec)
-        _spec.loader.exec_module(_mod)
-        curated["namedays"] = _mod.get_week_namedays(monday)
+        # Namedays temporarily disabled (accuracy work pending) — do not inject.
+        curated.pop("namedays", None)
 
         # Inject a vetted joke from the static bank (deterministic by date,
         # so each run is new without persisted state). See jokes.py.
+        import importlib.util as _ilu
+
         _jspec = _ilu.spec_from_file_location(
             "jokes", Path(__file__).parent / "jokes.py"
         )
@@ -194,7 +189,6 @@ class ContentCurator:
         print(
             f"Curated: {len(curated['greek_news'])} Greek, {len(curated['world_news'])} world"
         )
-        print(f"Namedays: {[n['name'] for n in curated.get('namedays', [])]}")
         print(f"Joke: {curated.get('joke', '')[:80]}...")
         print(f"Saved to {out_path}")
         return out_path

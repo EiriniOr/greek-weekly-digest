@@ -68,7 +68,7 @@ def build_html(curated, date_str, has_audio):
     intro = curated.get("weekly_intro", "")
     greek_news = curated.get("greek_news", [])
     world_news = curated.get("world_news", [])
-    namedays = curated.get("namedays", [])
+    namedays = []  # namedays temporarily disabled (accuracy work pending)
     joke = curated.get("joke", "")
 
     if has_audio:

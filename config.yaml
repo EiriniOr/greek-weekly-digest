@@ -54,7 +54,7 @@ curation:
 
 audio:
   enabled: true
-  model: "tts-1-hd"
+  model: "gpt-4o-mini-tts"  # cheaper + better than tts-1-hd; same speech endpoint
   voice: "nova"
 
 github:

@@ -1,5 +1,8 @@
-anthropic>=0.40.0
-openai>=1.50.0
+# Major versions capped: anthropic 1.0.0 dropped the `temperature` kwarg and
+# broke the pipeline (2026-08-24). Cap majors so a breaking release can't land
+# silently via the unpinned install on each CI run.
+anthropic>=0.40.0,<1.0.0
+openai>=1.50.0,<4.0.0
 feedparser>=6.0.11
 requests>=2.31.0
 pyyaml>=6.0.1

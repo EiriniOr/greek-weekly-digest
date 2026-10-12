@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Τα νέα της μαμάς — 12 Οκτωβρίου 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --blue:    #0d47a1;
+            --blue-light: #1565c0;
+            --sky:     #e3f2fd;
+            --gold:    #f9a825;
+            --white:   #ffffff;
+            --text:    #1a1a2e;
+            --muted:   #546e7a;
+            --border:  #cfd8dc;
+            --card-bg: #ffffff;
+            --page-bg: #f0f4f8;
+        }
+
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            background: var(--page-bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── Header ── */
+        header {
+            background: linear-gradient(135deg, var(--blue) 0%, #1a237e 100%);
+            color: var(--white);
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 38px,
+                rgba(255,255,255,0.04) 38px,
+                rgba(255,255,255,0.04) 40px
+            );
+        }
+        .header-inner {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 2.5rem;
+            text-align: center;
+        }
+        .meander {
+            width: 100%;
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--gold) 0px, var(--gold) 8px,
+                transparent 8px, transparent 12px,
+                var(--gold) 12px, var(--gold) 16px,
+                transparent 16px, transparent 20px
+            );
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+        .site-label {
+            font-size: 0.75rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 0.75rem;
+        }
+        h1 {
+            font-family: 'Noto Serif', serif;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+        .header-date {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+        .intro {
+            font-family: 'Noto Serif', serif;
+            font-style: italic;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.9);
+            max-width: 640px;
+            margin: 0 auto;
+        }
+        .meander-bottom {
+            width: 100%;
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--gold) 0px, var(--gold) 8px,
+                transparent 8px, transparent 12px,
+                var(--gold) 12px, var(--gold) 16px,
+                transparent 16px, transparent 20px
+            );
+            margin-top: 2rem;
+            opacity: 0.9;
+        }
+
+        /* ── Audio bar ── */
+        .audio-bar {
+            background: var(--blue);
+            color: var(--white);
+            padding: 1.25rem 1.5rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.35);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .audio-bar--pending {
+            background: #37474f;
+            padding: 1rem 1.5rem;
+            justify-content: center;
+        }
+        .big-play-btn {
+            background: #FFD600;
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 560px;
+            padding: 1.1rem 1rem;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+            transition: transform 0.12s, background 0.12s;
+        }
+        .big-play-btn:active { transform: scale(0.97); background: #FFC400; }
+        .progress-wrap {
+            width: 100%;
+            max-width: 560px;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #FFD600;
+            border-radius: 4px;
+            transition: width 0.5s linear;
+        }
+        .audio-duration-label {
+            font-size: 0.78rem;
+            opacity: 0.7;
+        }
+        .audio-pending {
+            font-size: 1rem;
+            opacity: 0.85;
+            font-style: italic;
+        }
+
+        /* ── Main layout ── */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem 4rem;
+        }
+
+        /* ── Section heading ── */
+        .section-block {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem 1.5rem 1.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 2px 12px rgba(13,71,161,0.08);
+            border: 2px solid var(--border);
+        }
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 4px solid var(--blue);
+        }
+        .section-flag { font-size: 2rem; }
+        .section-heading h2 {
+            font-family: 'Noto Serif', serif;
+            font-size: 1.6rem;
+            color: var(--blue);
+            font-weight: 700;
+        }
+        .section-count {
+            margin-left: auto;
+            font-size: 0.8rem;
+            color: var(--muted);
+            background: var(--sky);
+            padding: 0.25rem 0.7rem;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        /* ── Card grid ── */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 3rem;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(13,71,161,0.12);
+            transform: translateY(-2px);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .badge {
+            color: #fff;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+        .source {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-left: auto;
+        }
+        .card-title {
+            font-family: 'Noto Serif', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.4;
+            color: var(--text);
+        }
+        .card-summary {
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: #374151;
+            flex: 1;
+        }
+        .read-more {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--blue);
+            text-decoration: none;
+            align-self: flex-start;
+        }
+        .read-more:hover { text-decoration: underline; }
+
+        /* ── Top extras (nameday + joke, shown between player and header) ── */
+        .top-extras {
+            max-width: 900px;
+            margin: 1.25rem auto 0;
+            padding: 0 1.5rem;
+            display: flex;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+        }
+        .top-extras .extra-block {
+            flex: 1;
+            min-width: 260px;
+            margin-bottom: 0;
+        }
+
+        /* ── Nameday & Joke blocks ── */
+        .extra-block {
+            border-radius: 16px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 2.5rem;
+        }
+        .extra-block h3 {
+            font-family: 'Noto Serif', serif;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .nameday-block {
+            background: #e8f4fd;
+            border: 2px solid #90caf9;
+        }
+        .nameday-block h3 { color: #1565c0; }
+        .nameday-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1.5rem;
+            padding: 0;
+        }
+        .nameday-list li { font-size: 1rem; }
+        .nd-date { font-size: 0.82rem; color: var(--muted); }
+        .joke-block {
+            background: #fffde7;
+            border: 2px solid #ffe082;
+        }
+        .joke-block h3 { color: #f57f17; }
+        .joke-text {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            font-style: italic;
+            color: #37474f;
+        }
+
+        /* ── Footer ── */
+        footer {
+            background: var(--blue);
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.8rem;
+        }
+        footer a { color: var(--gold); text-decoration: none; }
+
+        @media (max-width: 480px) {
+            .card-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+    
+        <div class="audio-bar" id="podcast-bar">
+            <audio id="podcast-audio" preload="auto" playsinline>
+                <source src="narration_20261012.mp3?v=202610121245" type="audio/mpeg">
+            </audio>
+            <button class="big-play-btn" id="play-btn">
+                🔊 ΠΑΤΑ ΕΔΩ ΓΙΑ ΝΑ ΠΑΙΞΕΙ
+            </button>
+            <div class="progress-wrap" id="progress-wrap">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <span class="audio-duration-label">🎙️ Τα νέα της μαμάς &nbsp;·&nbsp; ~5 λεπτά &nbsp;·&nbsp; 12 Οκτωβρίου 2026</span>
+        </div>
+        <script>
+        (function() {
+            var audio = document.getElementById('podcast-audio');
+            var btn   = document.getElementById('play-btn');
+            var bar   = document.getElementById('progress-bar');
+            var wrap  = document.getElementById('progress-wrap');
+
+            function setBtn(playing) {
+                btn.textContent = playing ? '⏸ ΠΑΥΣΗ' : '🔊 ΠΑΤΑ ΕΔΩ ΓΙΑ ΝΑ ΠΑΙΞΕΙ';
+            }
+
+            btn.addEventListener('click', function() {
+                if (audio.paused) { audio.play(); } else { audio.pause(); }
+            });
+
+            wrap.addEventListener('click', function(e) {
+                var rect = wrap.getBoundingClientRect();
+                audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+            });
+
+            audio.addEventListener('play',  function() { setBtn(true);  });
+            audio.addEventListener('pause', function() { setBtn(false); });
+            audio.addEventListener('ended', function() { setBtn(false); bar.style.width='100%'; });
+            audio.addEventListener('timeupdate', function() {
+                if (audio.duration) {
+                    bar.style.width = (audio.currentTime / audio.duration * 100) + '%';
+                }
+            });
+
+            audio.play().catch(function() {});
+        })();
+        </script>
+
+    <div class="top-extras">
+        
+        
+        <div class="extra-block joke-block">
+            <h3>😄 Το αστείο της εβδομάδας</h3>
+            <p class="joke-text">Ο Σέρλοκ Χολμς και ο Ουάτσον πήγαν για κάμπινγκ. Έστησαν τη σκηνή κι έπεσαν για ύπνο. Μέσα στη νύχτα ο Χολμς ξυπνάει τον φίλο του: «Ουάτσον, κοίτα τον ουρανό και πες μου τι βλέπεις.» «Βλέπω εκατομμύρια αστέρια.» «Και τι σου λέει αυτό;» Ο Ουάτσον σκέφτεται: «Αστρονομικά, ότι υπάρχουν εκατομμύρια γαλαξίες. Ωρολογιακά, ότι η ώρα είναι περίπου τρεις παρά τέταρτο. Μετεωρολογικά, ότι αύριο θα έχουμε ωραία μέρα. Κι εσένα τι σου λέει;» «Ουάτσον… κάποιος μας έκλεψε τη σκηνή!»</p>
+        </div>
+    </div>
+
+    <header>
+        <div class="meander"></div>
+        <div class="header-inner">
+            <p class="site-label">Εβδομαδιαία Έκδοση · Podcast</p>
+            <h1>Τα νέα της μαμάς 🇬🇷</h1>
+            <p class="header-date">12 Οκτωβρίου 2026</p>
+            <p class="intro">Η εβδομάδα 12-18 Οκτωβρίου 2026 φέρνει ενδιαφέρουσες εξελίξεις από την Ελλάδα και τον κόσμο. Από διαστημικές επιτυχίες και πολιτιστικές πρωτοβουλίες έως επιστημονικές ανακαλύψεις και περιβαλλοντικές νίκες, υπάρχουν πολλοί λόγοι αισιοδοξίας. Ας ρίξουμε μια ματιά στα καλύτερα νέα της εβδομάδας!</p>
+        </div>
+        <div class="meander-bottom"></div>
+    </header>
+
+    <main>
+        <div class="section-block">
+            <div class="section-heading">
+                <span class="section-flag">🇬🇷</span>
+                <h2>Νέα από την Ελλάδα</h2>
+                <span class="section-count">10 ειδήσεις</span>
+            </div>
+            <div class="card-grid">
+                
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
+                <span class="source">ProtoThema</span>
+            </div>
+            <h3 class="card-title">Ελλάδα και Κύπρος έσωσαν το «οικόπεδό» τους στο διάστημα</h3>
+            <p class="card-summary">Η Ελλάδα και η Κύπρος κατάφεραν την τελευταία στιγμή να διασφαλίσουν τη διαστημική τους θέση. Μια συναρπαστική ιστορία επιτυχίας και διπλωματίας στο διάστημα.</p>
+            <a href="https://news.google.com/rss/articles/CBMi1gFBVV95cUxPRllGN3pmTkFQb0haNTdwRVVLQUxnbWlOc0JVb2RvQlAwT3BWa3VKdXhFWmNKM3hOcHliTmsxNEx4bVl5OWU5U1NpYzhwTTM0a2ZfdGk4dmZHc21Tc1BjZUVqYlpoUF9lcnBldy1uV1B0dnNEN0RVYWo3cXpOTjM2UmdzRG5hTnlRanNNQlU5NnVuVHc2TE9HQTZoQThibU95ZHU3U2tIanZkeEFnTmVxSzVXdGVxSG4wVEQ0dDFVNFo3YktTd3cxdW5uQkVJVzRHb0lfM3F30gHbAUFVX3lxTFByTTF5Sjhsa1hjMFp0UnhTUGdpcEdBTXB5WU1vTUlrUGVwdjV0MTlna3hIMHV4cXpaNDZzOVpHVXFscEJSWHFCU3YtQUdyc1V1WVFidzgtRlZXNG9OMmVmM1NFZExsMTFrb2liVUtqdDVBSUtCaGQ1aW5uWnFGYk1BYmliNHJwTUt6eGpXaG9XTW45V0hERTRXRjdUNTNKZUlNdElELVNpekhrMnc1ZGJ2T2lpTVpldDc2RTdNQzBPVlkzbTJvOEEtUHBWWkJNWEZJZHJfOHFrSjNVaw" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">Proto Thema</span>
+            </div>
+            <h3 class="card-title">Η ζωντανή ιστορία των μεταλλείων Σερίφου διασώζεται</h3>
+            <p class="card-summary">Το Cycladic Identity διασώζει τη βιωματική ιστορία των Μεταλλείων της Σερίφου μέσα από ένα μοναδικό πολιτιστικό πρόγραμμα. Η πολιτιστική κληρονομιά του νησιού αποκτά νέα ζωή.</p>
+            <a href="https://www.protothema.gr/culture/article/1893554/i-zodani-istoria-ton-metalleion-serifou/?utm_source=rss" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#6d28d9">Εκπαίδευση</span>
+                <span class="source">Proto Thema</span>
+            </div>
+            <h3 class="card-title">Νέος επιστημονικός ορισμός δυσλεξίας αλλάζει τα δεδομένα για τα παιδιά</h3>
+            <p class="card-summary">Ο νέος ορισμός δίνει έμφαση στην έγκαιρη αναγνώριση των δυσκολιών χωρίς εξάρτηση από τεστ νοημοσύνης. Σημαντικές αλλαγές αναμένονται στα ελληνικά σχολεία.</p>
+            <a href="https://www.protothema.gr/greece/article/1893532/o-neos-epistimonikos-orismos-gia-tin-duslexia-allazei-ta-dedomena-ti-simainei-gia-ta-paidia-kai-ta-sholeia-stin-ellada/?utm_source=rss" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0369a1">Οικονομία</span>
+                <span class="source">Liberal.gr</span>
+            </div>
+            <h3 class="card-title">Η Ελλάδα ως νέος ενεργειακός κόμβος της ΝΑ Ευρώπης</h3>
+            <p class="card-summary">Μεγάλες επενδύσεις αλλάζουν τον ενεργειακό χάρτη της περιοχής με την Ελλάδα στο επίκεντρο. Νέες ευκαιρίες ανάπτυξης και ενεργειακής ανεξαρτησίας για τη χώρα.</p>
+            <a href="https://news.google.com/rss/articles/CBMitwFBVV95cUxOSzJjQVIwcmRlNldrNXpwczV4bnlNX200SzFmaVZBWkpkU19aTXMxNDBLUGVUNThZTzlVUjNJZDVFa1ZwS1Awd053Y2tDb0VIb3NucHpVRXFmcmlPNVhvV0MxbGpON084d0pqNG5hR016cnFWQVBpVG9IaTg0OThNMnRaMnJDNG1DSXd6QmZwOWoxTzdiMUZQS2RMeExjeGprYXQzSEhZZGxtWVJkcW01RnhSckdJZkk" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0e7490">Τουρισμός</span>
+                <span class="source">ΕΟΤ / ΑΠΕ</span>
+            </div>
+            <h3 class="card-title">Διεθνής διάκριση για τη σύγχρονη ελληνική γαστρονομία</h3>
+            <p class="card-summary">Ο Ελληνικός Οργανισμός Τουρισμού ανακοίνωσε διεθνή διάκριση για τη σύγχρονη ελληνική κουζίνα. Η ελληνική γαστρονομία κερδίζει συνεχώς έδαφος στη διεθνή σκηνή.</p>
+            <a href="https://news.google.com/rss/articles/CBMiqwFBVV95cUxObzBLRU53d0F1TnBWcXpHR2VreTBkLVJNT29BVjVETGZrN0daU05acHBmR1N5LXY0MU1KanMyWkM2M3I0UU9XSkQ1ejBqVi1zZXAyLWpDdDhfcFhIaVVyb0tCY0pSTzZLdGc5N3ZBWjBLQy1vazFOYlZHeFNpVVZLNmRsbUZwOW9WNGI2cGMtb05XbHVETWxrYjBfWklsWWNnb1F4Sy1kaHZTc3M" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">newmoney</span>
+            </div>
+            <h3 class="card-title">Μετά την «Οδύσσεια» του Νόλαν και το Νόμπελ: Η αρχαία Ελλάδα παράγει πλούτο</h3>
+            <p class="card-summary">Η αρχαία ελληνική κληρονομιά συνεχίζει να εμπνέει παγκοσμίως, από το Νόμπελ Λογοτεχνίας της Αν Κάρσον έως την ταινία του Νόλαν. Ένα αφιέρωμα στη διαχρονική αξία του ελληνικού πολιτισμού.</p>
+            <a href="https://news.google.com/rss/articles/CBMi8wFBVV95cUxOZWVyR01yN2ppLUlESGVta0NmSlVnNHNNcTJQSmZGMEY3bkhKWFNnSGJXX01SUzVIcUdJcjlQQXpGRlBTZzFuaDFXY2x3MFJXSjdKTzBpcnlTRXhkell5WmtOemZhWGQ1V05XS1VwUUdDZTMzdERxUjZHeTN6cm96RXNqVGlfbFc0R3VCQW0wZUVLVm5JY3FNVmh6bnBMS2hheU9KZEVGT1dxbzlFSzRTMy1ES1BER25IRHNKRV9uU3ltb1BYVWI2MXlOTE5mUzh3LWdheThxX0x3MlRpcGRLSkNPcGxJbk9iQldhTWt6MVVQY1XSAfgBQVVfeXFMTm5rTk15UjRzVWR4b3Vqa0Fha2U5dGUtUFA1QnZIa25UX3NrYUU5bFJSVG5Pb1plMUdnMXNhVkw2aEFVSC03SklGaHUxckg4c0t0M3BiR2t1MU1FVlltMnZCR3lZclRfLWs1TDRCeFBxcXAweTNmV1R2S3NsYWtnUWFDTk1iaVFlUnBMQ1E2NFFEZllvR2VyeDVyN1hKbkhpUW9LWGtTTTJLQllyLWxOa1I2cVlibEVBVUdSeE8wXzBkNXF5ZUM4d19WRlV3OEs5ajR5emV6QmRnZTFhVEltZDRYRWtQbGFKNkRsOW5LcnpxbU1aSGVWcm4" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">Skai.gr</span>
+            </div>
+            <h3 class="card-title">AUTO ATHINA 2026: Τεράστια επιτυχία για τη μεγαλύτερη έκθεση αυτοκινήτου στην Ελλάδα</h3>
+            <p class="card-summary">Η μεγαλύτερη έκθεση αυτοκινήτου στην Ελλάδα ολοκληρώθηκε με μεγάλη επιτυχία. Χιλιάδες επισκέπτες είδαν από κοντά τις τελευταίες καινοτομίες της αυτοκινητοβιομηχανίας.</p>
+            <a href="https://news.google.com/rss/articles/CBMiugFBVV95cUxPMTBtbUJHbm95aENZWVFXV1ZuWnd3RkktMU11T1IwNDhyRFVBM0VvQmNDMGJmdms4X1gwajhoNjBjVjI4c3UtZEIxclViSHpuZlExRFNwRndzRXdCcDQ0d0dkOXlTMk1XTmJScHVxNlJQRFp3TkktQXg2aV80a3FrcTYydXFySlRkOUtIMDk4TVJwMjN5Z3VNX3BBTThzLUMzT2ZSWlVrNEU4NlE5TzFaQUc5aHE5bFpxZkHSAb8BQVVfeXFMT25PRDBzbE9rdW1HTVNkUjRlQTBSLVh2WnZ3ZjRNSElOb1RKa0FDWDBJeGhka05SXzJlSUduQk9wbklCdzRWYWQ5di1KUDhZb2tZZ1pXX3hYRE12VFU2NmQ0elptRUo2ejc5SlVLcTZKTnZBUnBBemdRMWpQOUJMLUtIOGtKUi1SSFFsNkdTazBGQkRmRDR0RTdhQjc2TGY2dWRUNHo3Vmd2N25jVVFxcVI2TVRHemM0MVBDb0Vvdzg" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">eKathimerini</span>
+            </div>
+            <h3 class="card-title">Ελληνική εβδομάδα ελληνικού πολιτισμού στην Καμπέρα της Αυστραλίας</h3>
+            <p class="card-summary">Η Καμπέρα ετοιμάζεται να γιορτάσει τον ελληνικό πολιτισμό με ένα εβδομαδιαίο φεστιβάλ γεμάτο εκδηλώσεις. Η ελληνική διασπορά της Αυστραλίας αναδεικνύει την πλούσια κληρονομιά της.</p>
+            <a href="https://news.google.com/rss/articles/CBMiwAFBVV95cUxNY2t4NHM0Vzl1LTZINlVjMVFSTEh1bjVaalFrSnFMYTluaENnaUxpZUw0VE5QamtxN3FIVkhEN0pjZFJRZkpPMmlEWTh2RmozZEdBUDdkejl3a2RMeklJLWQzRFJiR1gycnlmS3BSdGlqTmYwLWVqZEVGUVZOYTcxRUpQRm9YaE0yTEV0S2JDaUo2OXRkdGQzS1JzWGRaQWw1bWhjb2kxWng1V2hTMUNqUlRZUkNNZjBKeDIzSGNQbVY" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">The National Herald</span>
+            </div>
+            <h3 class="card-title">Πολιτιστική συνεργασία ενισχύει τις σχέσεις Ελλάδας με Αλβανία και Β. Μακεδονία</h3>
+            <p class="card-summary">Η υπουργός Πολιτισμού Μενδώνη τόνισε ότι η πολιτιστική συνεργασία αποτελεί γέφυρα για τις διμερείς σχέσεις. Κοινά προγράμματα και ανταλλαγές ενισχύουν τους δεσμούς στην περιοχή.</p>
+            <a href="https://news.google.com/rss/articles/CBMi2wFBVV95cUxQZzNURW5yUjdZZzZvRVJ3UnhpRGdwQjRhNncxcDNWYVVtcS04Nm15bnpGUm84dzk5U3Fuc1hUUnFyTGhtSDRWUHZLNGpiTUdrRzZ3S2xCb3J6RHJLZ0xTNTUxSmVPLTlRY3AwZnhiTElxRjJCRTNlQXBSV19ZWndWZzl0VEY2OGJIaXpDZThfTjdFM2d2QmNTZzJHamVjSFo4SFViT3NneFd6RnVjUnlKTmFRaTZKZDdhZzFiZGRLcVY1QnV4cUs4QXFYMkRpVGRpNGlwa243b1RKT0k" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">Moneyreview.gr</span>
+            </div>
+            <h3 class="card-title">«Καύσιμα» για μικρά πυρηνικά στην Ελλάδα από Ευρωπαϊκή Τράπεζα Επενδύσεων</h3>
+            <p class="card-summary">Η ΕΤΕπ χρηματοδοτεί την ανάπτυξη μικρών πυρηνικών αντιδραστήρων στην Ελλάδα. Μια σημαντική εξέλιξη για το ενεργειακό μέλλον της χώρας.</p>
+            <a href="https://news.google.com/rss/articles/CBMinAFBVV95cUxNSVg0bW1zdHRDYWJBYWVHX05xYjVNZ3RsVWszVGY1aTRtd2dKTWREckFHUEFvcEc3NkpraFJRa2NrU1hjRFJSWEEwTldtZkRFS1gyMjlnMlpUcnhqS00zb3NLVVZCWWNCQTVqQXhLTXVlV0ZjaF9VOW95bl9GVVJoS0h5Wm5NbmRaZ2VNZWRfNTl6TXk4UjEtN1o1ckg" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+            </div>
+        </div>
+
+        <div class="section-block">
+            <div class="section-heading">
+                <span class="section-flag">🌍</span>
+                <h2>Θετικά Νέα από τον Κόσμο</h2>
+                <span class="section-count">10 ειδήσεις</span>
+            </div>
+            <div class="card-grid">
+                
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#be185d">Υγεία</span>
+                <span class="source">NYT Science</span>
+            </div>
+            <h3 class="card-title">Εμβόλια κατά του καρκίνου: Το επόμενο «μεγάλο στοίχημα» των ΝΙΗ</h3>
+            <p class="card-summary">Νέα λεπτομέρεια για πρωτοβουλία ταχείας ανάπτυξης εμβολίων κατά του καρκίνου, παρόμοια με την επιτυχία του εμβολίου Covid-19. Το πρόγραμμα ξεκινά τον Δεκέμβριο.</p>
+            <a href="https://www.nytimes.com/2026/10/09/science/cancer-vaccines-nih-big-bet.html" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">NYT Science</span>
+            </div>
+            <h3 class="card-title">Τεχνητή Νοημοσύνη φέρνει επανάσταση στα μαθηματικά σε μία μέρα</h3>
+            <p class="card-summary">Εκατοντάδες νέα αποτελέσματα από την OpenAI μετακίνησαν τα σύνορα των ανώτερων μαθηματικών σε μία μόνο μέρα. Οι μαθηματικοί παγκοσμίως αναγνωρίζουν ότι ο κλάδος άλλαξε για πάντα.</p>
+            <a href="https://www.nytimes.com/2026/10/08/science/mathematicians-respond-openai-release.html" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Γιγάντιες χελώνες: 180.000 άτομα ευδοκιμούν στις Σεϋχέλλες</h3>
+            <p class="card-summary">Ορόσημο έρευνα αποκαλύπτει ότι ο πληθυσμός των γιγάντιων χελωνών, κάποτε υπό εξαφάνιση, ανακάμπτει εντυπωσιακά. Μια μεγάλη περιβαλλοντική επιτυχία για τη βιοποικιλότητα.</p>
+            <a href="https://www.goodnewsnetwork.org/giant-tortoise-population-is-thriving-survey-finds-180000-on-one-island-chain/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Αυστραλία: 3 νέα εθνικά πάρκα για την προστασία σπάνιων ειδών</h3>
+            <p class="card-summary">Πάνω από 650 τετραγωνικά χιλιόμετρα δασών στη Βικτώρια έγιναν εθνικά πάρκα για την προστασία γλαυκών, κουκουβαγιών και άλλων ειδών. Μια σημαντική νίκη για τη διατήρηση της φύσης.</p>
+            <a href="https://www.goodnewsnetwork.org/australia-announces-3-new-national-parks-to-protect-gliders-owls-and-other-victoria-wildlife/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#be185d">Υγεία</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Νέος τρόπος ανακούφισης αρθρίτιδας γονάτου χωρίς φάρμακα ή χειρουργείο</h3>
+            <p class="card-summary">Επιστήμονες ανακάλυψαν ότι μια απλή αλλαγή στον τρόπο βαδίσματος ανακουφίζει τον πόνο της αρθρίτιδας εξίσου αποτελεσματικά με τα φάρμακα. Επιπλέον επιβραδύνει τη φθορά του χόνδρου.</p>
+            <a href="https://www.goodnewsnetwork.org/new-way-to-relieve-arthritic-knees-without-drugs-or-surgery-by-changing-your-gait/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#be185d">Υγεία</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Στατίνες: Μπορεί να προστατεύουν από γλαύκωμα και τύφλωση</h3>
+            <p class="card-summary">Νέα έρευνα από το Πανεπιστήμιο της Καλιφόρνιας δείχνει ότι οι στατίνες επιβραδύνουν τον θάνατο νευρικών κυττάρων στο γλαύκωμα. Μια απρόσμενη ωφέλεια για εκατομμύρια ασθενείς.</p>
+            <a href="https://www.goodnewsnetwork.org/statin-drugs-may-protect-people-from-glaucoma/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">Positive News</span>
+            </div>
+            <h3 class="card-title">Σχέδιο «πράσινου δακτυλίου» για να αναζωογονηθεί το Λονδίνο</h3>
+            <p class="card-summary">Ένα φιλόδοξο έργο αποσκοπεί να συνδέσει τους άγριους χώρους του Λονδίνου δημιουργώντας έναν πράσινο δακτύλιο. Δέκα εκατομμύρια κάτοικοι θα επωφεληθούν από μια πιο βιοποικίλη πρωτεύουσα.</p>
+            <a href="https://www.positive.news/society/putting-a-ring-on-it-the-plan-to-green-londons-beloved-edges/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">BBC Science</span>
+            </div>
+            <h3 class="card-title">Ουτανγκοτάν επιστρέφουν στο δάσος του Βόρνεο μετά τις φωτιές</h3>
+            <p class="card-summary">Κρίσιμα απειλούμενοι ουτανγκοτάν που διασώθηκαν από καταστροφικές πυρκαγιές αφέθηκαν ελεύθεροι στη φύση. Μια συγκινητική ιστορία επιτυχούς διάσωσης και αποκατάστασης.</p>
+            <a href="https://www.bbc.co.uk/news/articles/cwvgde0m2d73o?at_medium=RSS&at_campaign=rss" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#b45309">Τέχνη</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Χαμένο άγαλμα του δημιουργού της Φοντάνα ντι Τρέβι ανακαλύφθηκε σε αποθήκη</h3>
+            <p class="card-summary">Ένα αριστούργημα του Ιταλού γλύπτη που δημιούργησε τη διάσημη Φοντάνα ντι Τρέβι βρέθηκε σε αποθήκη παλαιών αντικειμένων για μόλις 400 δολάρια. Μια εκπληκτική ανακάλυψη για τον κόσμο της τέχνης.</p>
+            <a href="https://www.goodnewsnetwork.org/lost-italian-statue-by-trevi-fountain-artist-discovered-in-salvage-yard/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Αρχαιολόγοι ανακτούν 48 βέλη Εποχής του Λίθου από παγετώνες Νορβηγίας</h3>
+            <p class="card-summary">Η μεγαλύτερη αρχαιολογική αποστολή παγετώνων στον κόσμο ανέσυρε 48 βέλη και στελέχη από την Εποχή του Λίθου. Μια σπάνια ανακάλυψη που φωτίζει τη ζωή των προϊστορικών κυνηγών.</p>
+            <a href="https://www.goodnewsnetwork.org/worlds-largest-glacial-archeology-expedition-recovers-48-stone-age-arrowheads-and-shafts/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>Δημιουργήθηκε αυτόματα με AI · Πηγές: ΑΠΕ-ΜΠΕ, Kathimerini, Positive.news, Good News Network κ.ά.</p>
+        <p style="margin-top:0.4rem">
+            <a href="index.html">Αρχική</a> ·
+            Τελευταία ενημέρωση: 12 Οκτωβρίου 2026
+        </p>
+    </footer>
+</body>
+</html>

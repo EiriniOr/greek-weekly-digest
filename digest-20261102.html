@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Τα νέα της μαμάς — 2 Νοεμβρίου 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --blue:    #0d47a1;
+            --blue-light: #1565c0;
+            --sky:     #e3f2fd;
+            --gold:    #f9a825;
+            --white:   #ffffff;
+            --text:    #1a1a2e;
+            --muted:   #546e7a;
+            --border:  #cfd8dc;
+            --card-bg: #ffffff;
+            --page-bg: #f0f4f8;
+        }
+
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            background: var(--page-bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── Header ── */
+        header {
+            background: linear-gradient(135deg, var(--blue) 0%, #1a237e 100%);
+            color: var(--white);
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 38px,
+                rgba(255,255,255,0.04) 38px,
+                rgba(255,255,255,0.04) 40px
+            );
+        }
+        .header-inner {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 2.5rem;
+            text-align: center;
+        }
+        .meander {
+            width: 100%;
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--gold) 0px, var(--gold) 8px,
+                transparent 8px, transparent 12px,
+                var(--gold) 12px, var(--gold) 16px,
+                transparent 16px, transparent 20px
+            );
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+        .site-label {
+            font-size: 0.75rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 0.75rem;
+        }
+        h1 {
+            font-family: 'Noto Serif', serif;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+        .header-date {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+        .intro {
+            font-family: 'Noto Serif', serif;
+            font-style: italic;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.9);
+            max-width: 640px;
+            margin: 0 auto;
+        }
+        .meander-bottom {
+            width: 100%;
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--gold) 0px, var(--gold) 8px,
+                transparent 8px, transparent 12px,
+                var(--gold) 12px, var(--gold) 16px,
+                transparent 16px, transparent 20px
+            );
+            margin-top: 2rem;
+            opacity: 0.9;
+        }
+
+        /* ── Audio bar ── */
+        .audio-bar {
+            background: var(--blue);
+            color: var(--white);
+            padding: 1.25rem 1.5rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.35);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .audio-bar--pending {
+            background: #37474f;
+            padding: 1rem 1.5rem;
+            justify-content: center;
+        }
+        .big-play-btn {
+            background: #FFD600;
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 560px;
+            padding: 1.1rem 1rem;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+            transition: transform 0.12s, background 0.12s;
+        }
+        .big-play-btn:active { transform: scale(0.97); background: #FFC400; }
+        .progress-wrap {
+            width: 100%;
+            max-width: 560px;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #FFD600;
+            border-radius: 4px;
+            transition: width 0.5s linear;
+        }
+        .audio-duration-label {
+            font-size: 0.78rem;
+            opacity: 0.7;
+        }
+        .audio-pending {
+            font-size: 1rem;
+            opacity: 0.85;
+            font-style: italic;
+        }
+
+        /* ── Main layout ── */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem 4rem;
+        }
+
+        /* ── Section heading ── */
+        .section-block {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem 1.5rem 1.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 2px 12px rgba(13,71,161,0.08);
+            border: 2px solid var(--border);
+        }
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 4px solid var(--blue);
+        }
+        .section-flag { font-size: 2rem; }
+        .section-heading h2 {
+            font-family: 'Noto Serif', serif;
+            font-size: 1.6rem;
+            color: var(--blue);
+            font-weight: 700;
+        }
+        .section-count {
+            margin-left: auto;
+            font-size: 0.8rem;
+            color: var(--muted);
+            background: var(--sky);
+            padding: 0.25rem 0.7rem;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        /* ── Card grid ── */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 3rem;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(13,71,161,0.12);
+            transform: translateY(-2px);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .badge {
+            color: #fff;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+        .source {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-left: auto;
+        }
+        .card-title {
+            font-family: 'Noto Serif', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.4;
+            color: var(--text);
+        }
+        .card-summary {
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: #374151;
+            flex: 1;
+        }
+        .read-more {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--blue);
+            text-decoration: none;
+            align-self: flex-start;
+        }
+        .read-more:hover { text-decoration: underline; }
+
+        /* ── Top extras (nameday + joke, shown between player and header) ── */
+        .top-extras {
+            max-width: 900px;
+            margin: 1.25rem auto 0;
+            padding: 0 1.5rem;
+            display: flex;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+        }
+        .top-extras .extra-block {
+            flex: 1;
+            min-width: 260px;
+            margin-bottom: 0;
+        }
+
+        /* ── Nameday & Joke blocks ── */
+        .extra-block {
+            border-radius: 16px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 2.5rem;
+        }
+        .extra-block h3 {
+            font-family: 'Noto Serif', serif;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .nameday-block {
+            background: #e8f4fd;
+            border: 2px solid #90caf9;
+        }
+        .nameday-block h3 { color: #1565c0; }
+        .nameday-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1.5rem;
+            padding: 0;
+        }
+        .nameday-list li { font-size: 1rem; }
+        .nd-date { font-size: 0.82rem; color: var(--muted); }
+        .joke-block {
+            background: #fffde7;
+            border: 2px solid #ffe082;
+        }
+        .joke-block h3 { color: #f57f17; }
+        .joke-text {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            font-style: italic;
+            color: #37474f;
+        }
+
+        /* ── Footer ── */
+        footer {
+            background: var(--blue);
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.8rem;
+        }
+        footer a { color: var(--gold); text-decoration: none; }
+
+        @media (max-width: 480px) {
+            .card-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+    
+        <div class="audio-bar" id="podcast-bar">
+            <audio id="podcast-audio" preload="auto" playsinline>
+                <source src="narration_20261102.mp3?v=202611021305" type="audio/mpeg">
+            </audio>
+            <button class="big-play-btn" id="play-btn">
+                🔊 ΠΑΤΑ ΕΔΩ ΓΙΑ ΝΑ ΠΑΙΞΕΙ
+            </button>
+            <div class="progress-wrap" id="progress-wrap">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <span class="audio-duration-label">🎙️ Τα νέα της μαμάς &nbsp;·&nbsp; ~5 λεπτά &nbsp;·&nbsp; 2 Νοεμβρίου 2026</span>
+        </div>
+        <script>
+        (function() {
+            var audio = document.getElementById('podcast-audio');
+            var btn   = document.getElementById('play-btn');
+            var bar   = document.getElementById('progress-bar');
+            var wrap  = document.getElementById('progress-wrap');
+
+            function setBtn(playing) {
+                btn.textContent = playing ? '⏸ ΠΑΥΣΗ' : '🔊 ΠΑΤΑ ΕΔΩ ΓΙΑ ΝΑ ΠΑΙΞΕΙ';
+            }
+
+            btn.addEventListener('click', function() {
+                if (audio.paused) { audio.play(); } else { audio.pause(); }
+            });
+
+            wrap.addEventListener('click', function(e) {
+                var rect = wrap.getBoundingClientRect();
+                audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+            });
+
+            audio.addEventListener('play',  function() { setBtn(true);  });
+            audio.addEventListener('pause', function() { setBtn(false); });
+            audio.addEventListener('ended', function() { setBtn(false); bar.style.width='100%'; });
+            audio.addEventListener('timeupdate', function() {
+                if (audio.duration) {
+                    bar.style.width = (audio.currentTime / audio.duration * 100) + '%';
+                }
+            });
+
+            audio.play().catch(function() {});
+        })();
+        </script>
+
+    <div class="top-extras">
+        
+        
+        <div class="extra-block joke-block">
+            <h3>😄 Το αστείο της εβδομάδας</h3>
+            <p class="joke-text">Στέκεται ένας νυχτιάτικα έξω από ένα σπίτι και φωνάζει: «Μωρήηη… μωρήηη…» Πλησιάζει ένας περαστικός: «Συγγνώμη, ποιον φωνάζετε;» «Τη γυναίκα μου, ξέχασα τα κλειδιά.» «Δεν θέλω να σας κάνω παρατήρηση, αλλά είναι σωστό να φωνάζετε «μωρή» τη γυναίκα σας;» «Άμα θες, φώναξέ την εσύ… Ελευθερία τη λένε!»</p>
+        </div>
+    </div>
+
+    <header>
+        <div class="meander"></div>
+        <div class="header-inner">
+            <p class="site-label">Εβδομαδιαία Έκδοση · Podcast</p>
+            <h1>Τα νέα της μαμάς 🇬🇷</h1>
+            <p class="header-date">2 Νοεμβρίου 2026</p>
+            <p class="intro">Η εβδομάδα 2-8 Νοεμβρίου 2026 φέρνει ενδιαφέρουσες εξελίξεις από την Ελλάδα και τον κόσμο. Η χώρα μας αναδεικνύεται ως πόλος έλξης επενδύσεων τεχνολογίας, ενώ στο εξωτερικό επιστήμη και ανθρώπινες ιστορίες αλληλοσυμπληρώνονται με τον καλύτερο τρόπο.</p>
+        </div>
+        <div class="meander-bottom"></div>
+    </header>
+
+    <main>
+        <div class="section-block">
+            <div class="section-heading">
+                <span class="section-flag">🇬🇷</span>
+                <h2>Νέα από την Ελλάδα</h2>
+                <span class="section-count">10 ειδήσεις</span>
+            </div>
+            <div class="card-grid">
+                
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">Kathimerini</span>
+            </div>
+            <h3 class="card-title">Μαγνήτης η Ελλάδα για data centers — Νέες επενδύσεις στον ψηφιακό τομέα</h3>
+            <p class="card-summary">Η Ελλάδα αναδεικνύεται σε διεθνή πόλο έλξης για κέντρα δεδομένων, με αυξανόμενο επενδυτικό ενδιαφέρον από μεγάλες εταιρείες τεχνολογίας.</p>
+            <a href="https://news.google.com/rss/articles/CBMihwFBVV95cUxNVTdVQzF4UjlKS2pwc1BJRUdRRy1GN0RaTGpMVnFON2VJQ1o0OEhaZVV6MjFvUW1RYWNGWXpIeDZEUXRQemJWSElQbmx0YkNBWncxclhyWVlXNWcybndwMTIxZzdrRF9ha2R1cmZwTmtvMGMydThDZ2FlYkh4ajBIamFuUFZDXzQ" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0369a1">Οικονομία</span>
+                <span class="source">PowerGame</span>
+            </div>
+            <h3 class="card-title">Branded Residences: Επενδύσεις που βάζουν την Ελλάδα στον παγκόσμιο χάρτη</h3>
+            <p class="card-summary">Νέες υψηλού επιπέδου επενδύσεις branded residences τοποθετούν την Ελλάδα δίπλα στους κορυφαίους διεθνείς προορισμούς πολυτελούς ακινήτου.</p>
+            <a href="https://news.google.com/rss/articles/CBMiugFBVV95cUxQcUNDVjk5OUhWRmRTMWJqZnJJWl9TY2plUms1UzhEYzdyY2lNcm9ZdmlrenJrTDZMVDJ3MWlHc1dRRlEwbmd0UDZGSGMwUzJXN3ZHakZLdXNUSGczUUllbjZrRE5WWEFmYWtQZllZejkwTjNMZl9sTFc2VDd5bzJJWEk5ZjJ1MmRFM3ZIYThLcDBua18xcEcxWi1fZkp2NVJXNWVGcW1MMmhzTUM3MU1yelBGZFFuc05NSFE" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">Skai.gr</span>
+            </div>
+            <h3 class="card-title">Ελλάδα — Πορτογαλία: Συμφωνία για τρία μεταγωγικά αεροσκάφη KC-390</h3>
+            <p class="card-summary">Υπογράφηκε σημαντική αμυντική συμφωνία με την Πορτογαλία για την προμήθεια τριών αεροσκαφών KC-390, δίνοντας για πρώτη φορά στην Ελλάδα δυνατότητα εναέριου ανεφοδιασμού.</p>
+            <a href="https://news.google.com/rss/articles/CBMitwFBVV95cUxQN1FrNDF0eVcxTmVndXB6TWJJUi1hMDFWcENuQXpDcTc1a1RWUThCRjhrcnVuZEVLSXQyU1B0MExKZzFTTkQ0UzNmeFhTbWVXMG5zSEFZZXVjSkhfWm9IcUFaSUtJUVhCOHZwWkM1R2tLVlpGTXJMNDc4Mjl0NUk0N19XNXF5c0xLeWpESTVEc0F6WnNPQ3poSjBFTGJ2aU40NjFEUDVNcTNvTjhnU3BHejFVYmxhSWvSAbwBQVVfeXFMTS1sZHRhV0lHeUlTclZLblg0YVRwUWh4cXNCd3IxVDNjNlBndmtnZ3hfSTM3ZS04dlRybmdUU1dMLWE5OGpSak1FQjhOTTFzTndRb3plUmRQVTFYMndVaDVLUG1qMV9TdkxYbGdSLWNpNHdkczdnSWxTQW9zSVFMUWRtWXJhcDZyQVkxSTNzWUY5NG0ybC1ueUNCdmo4VFpRQUU5TnM0eE5aakJzdlFfOFYwZ2VmaUVWbFRlNHk" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">Proto Thema</span>
+            </div>
+            <h3 class="card-title">Ο Γεώργιος Δροσίνης τιμάται στον Φιλολογικό Σύλλογο Παρνασσός</h3>
+            <p class="card-summary">Εκδήλωση αφιερωμένη στον σπουδαίο Έλληνα ποιητή Γεώργιο Δροσίνη διοργανώνεται από την Εθνική Εταιρεία Ελλήνων Λογοτεχνών, αναδεικνύοντας την πλούσια λογοτεχνική μας κληρονομιά.</p>
+            <a href="https://www.protothema.gr/culture/article/1904243/o-georgios-drosinis-sto-diava-tis-zois-ston-filologiko-sullogo-parnassos/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">in.gr</span>
+            </div>
+            <h3 class="card-title">Οδυσσέας Ελύτης: Σταγόνες φως μες στο σκοτάδι — Αφιέρωμα στον Νομπελίστα ποιητή</h3>
+            <p class="card-summary">Αφιέρωμα στον μεγάλο Έλληνα ποιητή Οδυσσέα Ελύτη υπενθυμίζει τη διαχρονική αξία της ποίησης και της ελληνικής λογοτεχνικής παράδοσης.</p>
+            <a href="https://www.in.gr/2026/11/02/istoriko-arxeio/odysseas-elytis-stagones-fos-mes-sto-skotadi/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">in.gr</span>
+            </div>
+            <h3 class="card-title">Τα «Ταξίδια του Γκιούλιβερ» κλείνουν 300 χρόνια — Μια σάτιρα πιο επίκαιρη από ποτέ</h3>
+            <p class="card-summary">Το κλασικό έργο του Τζόναθαν Σουίφτ γιορτάζει τα 300 χρόνια από την έκδοσή του, με αναλυτές να τονίζουν πόσο επίκαιρη παραμένει η σάτιρά του για τη σύγχρονη εποχή.</p>
+            <a href="https://www.in.gr/2026/11/02/life/culture-live/ta-taksidia-tou-gkiouliver-eginan-300-eton-oi-anthropoi-paramenoun-apaisioi/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#d97706">Κοινωνία</span>
+                <span class="source">in.gr</span>
+            </div>
+            <h3 class="card-title">Πέμπτος παιδικός σταθμός στα Άνω Λιόσια από τον Δήμο Φυλής</h3>
+            <p class="card-summary">Ο Δήμος Φυλής κατασκευάζει τον πέμπτο παιδικό σταθμό στα Άνω Λιόσια, με δυνατότητα φιλοξενίας 28 βρεφών, ενισχύοντας τις υποδομές φροντίδας για τις οικογένειες της περιοχής.</p>
+            <a href="https://www.in.gr/2026/11/02/politics/aftodioikisi/pempto-paidiko-stathmo-kataskeyazei-o-dimos-fylis-sta-ano-liosia/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#d97706">Κοινωνία</span>
+                <span class="source">Μακεδονικό Πρακτορείο Ειδήσεων</span>
+            </div>
+            <h3 class="card-title">Ποδηλάτες από όλη την Ελλάδα στο πρώτο TT Cycling Series στη Νεμέα</h3>
+            <p class="card-summary">Το πρώτο TT Cycling Series πραγματοποιήθηκε με επιτυχία στη Νεμέα, με συμμετοχή ποδηλατών από όλη τη χώρα και νικητές τους Σ. Εξαρχόπουλο και Ελ. Γράτσου.</p>
+            <a href="https://news.google.com/rss/articles/CBMi9wFBVV95cUxQRzlhRzlKVmI3bzBtaXBNdkJTR05NaFpEdy1XelBobEs1VGhwUXhrcExzZ0ZuLUJuUVRXTlRhWGNKVTJXRnpqUHk3REdGMndjMERIZWx3S1JMTGxDdnZmeGNMSV9iNVNmZGVPdHdfZWtVVlVFbnVxTlVZWUZrREZ2cldaVFZCTWF3cWpkTllJS2E3OE5hdm9JLU83X0w5YzJYVHVOQmRSc3BOVmpodThMTXpkT1hxRnJKSWdrMEhicEZHRXRwS21fUks4X3BacGZHMFF1RGVseUN3OGhreEJCZmNNWEY3QTIzT0RHVkFpUDRkYWdneDlR" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">The Greek Herald</span>
+            </div>
+            <h3 class="card-title">Πάνω από 1.000 άτομα γιόρτασαν τον ελληνικό πολιτισμό στο Panigiri της Αυστραλίας</h3>
+            <p class="card-summary">Μεγάλη επιτυχία σημείωσε το Panigiri στο Salisbury της Νότιας Αυστραλίας, με πάνω από 1.000 επισκέπτες να τιμούν την ελληνική κουλτούρα και παράδοση.</p>
+            <a href="https://news.google.com/rss/articles/CBMioAFBVV95cUxOcC1ONUl5anNyUlFDeFA0Z1FtV3lEOUxDcU1aYjdQTHEtazNuQTNVV2xfalMtU0M5bks0M1FkVVFWR3BvTDh2cUtMalhWd3A3dU81Sl9uMHNIaWJiNkNvNVBBWkJORDlqWkxzZWdaUDBHWVlKaEE1WGs4YWhaeEpDSGFJMlVEYnZoTF9KOVVfc1ByMHlwc21HMnhSRE16MVpV" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#d97706">Κοινωνία</span>
+                <span class="source">Fortunegreece.com</span>
+            </div>
+            <h3 class="card-title">Δημογραφικό: Στις 65.000 οι γεννήσεις στην Ελλάδα το 2026</h3>
+            <p class="card-summary">Νέα στοιχεία για τις γεννήσεις στην Ελλάδα το 2026 δίνουν μια εικόνα της δημογραφικής πορείας της χώρας, με αναλύσεις για τις προβλέψεις της επόμενης εικοσαετίας.</p>
+            <a href="https://news.google.com/rss/articles/CBMizgFBVV95cUxQQi1MVXFmcTNPb0tIbTdwUTdpdy1XYTNocHhwN3ZQdXZ0UWVfNzljOGE2NTJyVzNzek9TSUstWUlGX3VuX2x6eWVhbDBXRzRxQ0NPYUU0OUltaVc1OUFUTDFHclVxM0FwMHZPQlhQaEx6emhVNmlOSVhQTVlva21mOWpEUWdkTUZIS1hHb1JwOHhpdlFwc0p5MXlacXF4Szk2c2JhSzF6SUN6bTZIaUFVelNERDh5VlVJZ0ZJeElLaE5OcWJQMm1lbzY0SVBCdw" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+            </div>
+        </div>
+
+        <div class="section-block">
+            <div class="section-heading">
+                <span class="section-flag">🌍</span>
+                <h2>Θετικά Νέα από τον Κόσμο</h2>
+                <span class="section-count">10 ειδήσεις</span>
+            </div>
+            <div class="card-grid">
+                
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Νησί κοντά στην Πορτογαλία σβήνει τα φώτα κάθε Οκτώβριο για να σώσει θαλασσοπούλια</h3>
+            <p class="card-summary">Στο νησί Κόρβο των Αζορών, 400 κάτοικοι διακόπτουν εθελοντικά τον φωτισμό κάθε φθινόπωρο για να προστατεύσουν νεαρά θαλασσοπούλια. Μέχρι σήμερα έχουν σωθεί πάνω από 30.000 πουλιά.</p>
+            <a href="https://www.goodnewsnetwork.org/islands-near-portugal-turn-off-lights-to-protect-seabird-fledglings-every-oct/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">BBC Science</span>
+            </div>
+            <h3 class="card-title">Σπάνιο σκαθάρι εντοπίστηκε ξανά στην Ουαλία μετά από 60 χρόνια</h3>
+            <p class="card-summary">Το σπάνιο Short-Necked Oil Beetle, που θεωρούνταν εξαφανισμένο από την Ουαλία, εντοπίστηκε ξανά, προκαλώντας ενθουσιασμό στην επιστημονική κοινότητα.</p>
+            <a href="https://www.bbc.co.uk/news/articles/cry8317pdp5yo" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">BBC Science</span>
+            </div>
+            <h3 class="card-title">Παγκόσμια συμφωνία για την προστασία της φύσης στις διεθνείς συνομιλίες COP17</h3>
+            <p class="card-summary">Χώρες από όλο τον κόσμο ανανέωσαν τις δεσμεύσεις τους για την προστασία της βιοποικιλότητας στις συνομιλίες του ΟΗΕ στο Γερεβάν, σε μια σημαντική περιβαλλοντική συμφωνία.</p>
+            <a href="https://www.bbc.co.uk/news/articles/cw1l32qyj8pqo" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#d97706">Κοινωνία</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Σκύλος-ήρωας έσωσε τη ζωή άνδρα αφού ειδοποίησε την κωφή ιδιοκτήτριά του</h3>
+            <p class="card-summary">Ένας σκύλος υποστήριξης ξύπνησε την κωφή ιδιοκτήτριά του για να της γνωστοποιήσει ότι ο σύζυγός της είχε πέσει από τις σκάλες, σώζοντας τελικά τη ζωή του.</p>
+            <a href="https://www.goodnewsnetwork.org/hero-support-dog-saves-husbands-life-after-alerting-deaf-owner-to-deadly-fall/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#be185d">Υγεία</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Βιταμίνη Β μπορεί να αντιμετωπίσει την ψωρίαση, μια ασθένεια χωρίς θεραπεία</h3>
+            <p class="card-summary">Νέα έρευνα δείχνει ότι ένα παράγωγο βιταμίνης Β μπορεί να μειώσει σημαντικά τα συμπτώματα της ψωρίασης, ανοίγοντας νέους δρόμους για τη θεραπεία της δερματικής νόσου.</p>
+            <a href="https://www.goodnewsnetwork.org/b-vitamin-supplement-can-treat-psoriasis/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#d97706">Κοινωνία</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Ερωτεύτηκαν ξανά στα 88 τους, αφού γνωρίστηκαν στο γυμναστήριο</h3>
+            <p class="card-summary">Δύο συνταξιούχοι που είχαν χάσει τους συντρόφους τους βρήκαν ξανά την αγάπη στα 88 τους χρόνια, αφού γνωρίστηκαν στο γυμναστήριο — μια ιστορία που εμπνέει.</p>
+            <a href="https://www.goodnewsnetwork.org/retirees-who-lost-spouses-fall-in-love-again-at-88-meeting-in-gym/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
+                <span class="source">NYT Science</span>
+            </div>
+            <h3 class="card-title">Μετεωρίτης από τον Άρη ηλικίας 4,1 δισεκατομμυρίων ετών βρέθηκε στη Σαχάρα</h3>
+            <p class="card-summary">Επιστήμονες ανακάλυψαν έναν μετεωρίτη από τον Άρη στη Σαχάρα, ηλικίας 4,1 δισ. ετών, που δίνει πολύτιμες πληροφορίες για την εποχή που υπήρχε νερό στον Κόκκινο Πλανήτη.</p>
+            <a href="https://www.nytimes.com/2026/10/30/science/space/mars-meteorite-teghaza.html" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">BBC Science</span>
+            </div>
+            <h3 class="card-title">Η ΑΙ χρησιμοποιείται για τη μεγαλύτερη καταγραφή νυχτερίδων στη Βρετανία</h3>
+            <p class="card-summary">Χρησιμοποιώντας τεχνητή νοημοσύνη, επιστήμονες κατέγραψαν μερικές από τις σπανιότερες νυχτερίδες της Βρετανίας στη νοτιοδυτική Αγγλία, σε μια «υπέροχη ιστορία ΑΙ για καλό σκοπό».</p>
+            <a href="https://www.bbc.co.uk/news/articles/cqm24kgr1jz4o" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#be185d">Υγεία</span>
+                <span class="source">NYT Science</span>
+            </div>
+            <h3 class="card-title">Νέα ελπίδα για ασθενείς με σπάνια γενετική νόσο που προκαλεί ανεξέλεγκτη ανάπτυξη οστών</h3>
+            <p class="card-summary">Νέα φάρμακα δείχνουν υποσχόμενα αποτελέσματα για την FOP, μια σπάνια γενετική πάθηση που προκαλεί ανεξέλεγκτη οστεοποίηση μαλακών ιστών, δίνοντας ελπίδα σε ασθενείς παγκοσμίως.</p>
+            <a href="https://www.nytimes.com/2026/10/29/science/fop-bones-drugs.html" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">NYT Science</span>
+            </div>
+            <h3 class="card-title">Λεοπάρδαλη Καυκάσου με τρία πόδια διένυσε 200 μίλια — Ελπίδα για το είδος</h3>
+            <p class="card-summary">Μια τραυματισμένη λεοπάρδαλη Καυκάσου στην Αρμενία διένυσε εκπληκτική απόσταση 200 μιλίων, αποδεικνύοντας ότι τα προγράμματα διατήρησης του απειλούμενου είδους αποδίδουν καρπούς.</p>
+            <a href="https://www.nytimes.com/2026/10/30/climate/injured-leopards-200-mile-trek-suggests-hope-for-a-species.html" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>Δημιουργήθηκε αυτόματα με AI · Πηγές: ΑΠΕ-ΜΠΕ, Kathimerini, Positive.news, Good News Network κ.ά.</p>
+        <p style="margin-top:0.4rem">
+            <a href="index.html">Αρχική</a> ·
+            Τελευταία ενημέρωση: 2 Νοεμβρίου 2026
+        </p>
+    </footer>
+</body>
+</html>

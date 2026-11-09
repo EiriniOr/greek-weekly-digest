@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Τα νέα της μαμάς — 9 Νοεμβρίου 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --blue:    #0d47a1;
+            --blue-light: #1565c0;
+            --sky:     #e3f2fd;
+            --gold:    #f9a825;
+            --white:   #ffffff;
+            --text:    #1a1a2e;
+            --muted:   #546e7a;
+            --border:  #cfd8dc;
+            --card-bg: #ffffff;
+            --page-bg: #f0f4f8;
+        }
+
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            background: var(--page-bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── Header ── */
+        header {
+            background: linear-gradient(135deg, var(--blue) 0%, #1a237e 100%);
+            color: var(--white);
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 38px,
+                rgba(255,255,255,0.04) 38px,
+                rgba(255,255,255,0.04) 40px
+            );
+        }
+        .header-inner {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 2.5rem;
+            text-align: center;
+        }
+        .meander {
+            width: 100%;
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--gold) 0px, var(--gold) 8px,
+                transparent 8px, transparent 12px,
+                var(--gold) 12px, var(--gold) 16px,
+                transparent 16px, transparent 20px
+            );
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+        .site-label {
+            font-size: 0.75rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 0.75rem;
+        }
+        h1 {
+            font-family: 'Noto Serif', serif;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+        .header-date {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+        .intro {
+            font-family: 'Noto Serif', serif;
+            font-style: italic;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.9);
+            max-width: 640px;
+            margin: 0 auto;
+        }
+        .meander-bottom {
+            width: 100%;
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--gold) 0px, var(--gold) 8px,
+                transparent 8px, transparent 12px,
+                var(--gold) 12px, var(--gold) 16px,
+                transparent 16px, transparent 20px
+            );
+            margin-top: 2rem;
+            opacity: 0.9;
+        }
+
+        /* ── Audio bar ── */
+        .audio-bar {
+            background: var(--blue);
+            color: var(--white);
+            padding: 1.25rem 1.5rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.35);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .audio-bar--pending {
+            background: #37474f;
+            padding: 1rem 1.5rem;
+            justify-content: center;
+        }
+        .big-play-btn {
+            background: #FFD600;
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 560px;
+            padding: 1.1rem 1rem;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+            transition: transform 0.12s, background 0.12s;
+        }
+        .big-play-btn:active { transform: scale(0.97); background: #FFC400; }
+        .progress-wrap {
+            width: 100%;
+            max-width: 560px;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #FFD600;
+            border-radius: 4px;
+            transition: width 0.5s linear;
+        }
+        .audio-duration-label {
+            font-size: 0.78rem;
+            opacity: 0.7;
+        }
+        .audio-pending {
+            font-size: 1rem;
+            opacity: 0.85;
+            font-style: italic;
+        }
+
+        /* ── Main layout ── */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem 4rem;
+        }
+
+        /* ── Section heading ── */
+        .section-block {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem 1.5rem 1.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 2px 12px rgba(13,71,161,0.08);
+            border: 2px solid var(--border);
+        }
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 4px solid var(--blue);
+        }
+        .section-flag { font-size: 2rem; }
+        .section-heading h2 {
+            font-family: 'Noto Serif', serif;
+            font-size: 1.6rem;
+            color: var(--blue);
+            font-weight: 700;
+        }
+        .section-count {
+            margin-left: auto;
+            font-size: 0.8rem;
+            color: var(--muted);
+            background: var(--sky);
+            padding: 0.25rem 0.7rem;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        /* ── Card grid ── */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 3rem;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(13,71,161,0.12);
+            transform: translateY(-2px);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .badge {
+            color: #fff;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+        .source {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-left: auto;
+        }
+        .card-title {
+            font-family: 'Noto Serif', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.4;
+            color: var(--text);
+        }
+        .card-summary {
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: #374151;
+            flex: 1;
+        }
+        .read-more {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--blue);
+            text-decoration: none;
+            align-self: flex-start;
+        }
+        .read-more:hover { text-decoration: underline; }
+
+        /* ── Top extras (nameday + joke, shown between player and header) ── */
+        .top-extras {
+            max-width: 900px;
+            margin: 1.25rem auto 0;
+            padding: 0 1.5rem;
+            display: flex;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+        }
+        .top-extras .extra-block {
+            flex: 1;
+            min-width: 260px;
+            margin-bottom: 0;
+        }
+
+        /* ── Nameday & Joke blocks ── */
+        .extra-block {
+            border-radius: 16px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 2.5rem;
+        }
+        .extra-block h3 {
+            font-family: 'Noto Serif', serif;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .nameday-block {
+            background: #e8f4fd;
+            border: 2px solid #90caf9;
+        }
+        .nameday-block h3 { color: #1565c0; }
+        .nameday-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1.5rem;
+            padding: 0;
+        }
+        .nameday-list li { font-size: 1rem; }
+        .nd-date { font-size: 0.82rem; color: var(--muted); }
+        .joke-block {
+            background: #fffde7;
+            border: 2px solid #ffe082;
+        }
+        .joke-block h3 { color: #f57f17; }
+        .joke-text {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            font-style: italic;
+            color: #37474f;
+        }
+
+        /* ── Footer ── */
+        footer {
+            background: var(--blue);
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.8rem;
+        }
+        footer a { color: var(--gold); text-decoration: none; }
+
+        @media (max-width: 480px) {
+            .card-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+    
+        <div class="audio-bar" id="podcast-bar">
+            <audio id="podcast-audio" preload="auto" playsinline>
+                <source src="narration_20261109.mp3?v=202611091336" type="audio/mpeg">
+            </audio>
+            <button class="big-play-btn" id="play-btn">
+                🔊 ΠΑΤΑ ΕΔΩ ΓΙΑ ΝΑ ΠΑΙΞΕΙ
+            </button>
+            <div class="progress-wrap" id="progress-wrap">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <span class="audio-duration-label">🎙️ Τα νέα της μαμάς &nbsp;·&nbsp; ~5 λεπτά &nbsp;·&nbsp; 9 Νοεμβρίου 2026</span>
+        </div>
+        <script>
+        (function() {
+            var audio = document.getElementById('podcast-audio');
+            var btn   = document.getElementById('play-btn');
+            var bar   = document.getElementById('progress-bar');
+            var wrap  = document.getElementById('progress-wrap');
+
+            function setBtn(playing) {
+                btn.textContent = playing ? '⏸ ΠΑΥΣΗ' : '🔊 ΠΑΤΑ ΕΔΩ ΓΙΑ ΝΑ ΠΑΙΞΕΙ';
+            }
+
+            btn.addEventListener('click', function() {
+                if (audio.paused) { audio.play(); } else { audio.pause(); }
+            });
+
+            wrap.addEventListener('click', function(e) {
+                var rect = wrap.getBoundingClientRect();
+                audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+            });
+
+            audio.addEventListener('play',  function() { setBtn(true);  });
+            audio.addEventListener('pause', function() { setBtn(false); });
+            audio.addEventListener('ended', function() { setBtn(false); bar.style.width='100%'; });
+            audio.addEventListener('timeupdate', function() {
+                if (audio.duration) {
+                    bar.style.width = (audio.currentTime / audio.duration * 100) + '%';
+                }
+            });
+
+            audio.play().catch(function() {});
+        })();
+        </script>
+
+    <div class="top-extras">
+        
+        
+        <div class="extra-block joke-block">
+            <h3>😄 Το αστείο της εβδομάδας</h3>
+            <p class="joke-text">Δύο συνάδελφοι. Ο ένας βλέπει τον άλλον — συντηρητικότατο τύπο — να φοράει σκουλαρίκι. «Καλά ρε συ, σκουλαρικάκι;» «Ναι, ναι…», απαντάει ενοχλημένος. «Από πότε εσύ; Δεν το φανταζόμουν ποτέ!» «Ούτε εγώ το φανταζόμουν… αλλά έλα που το βρήκε η γυναίκα μου στο αυτοκίνητο!»</p>
+        </div>
+    </div>
+
+    <header>
+        <div class="meander"></div>
+        <div class="header-inner">
+            <p class="site-label">Εβδομαδιαία Έκδοση · Podcast</p>
+            <h1>Τα νέα της μαμάς 🇬🇷</h1>
+            <p class="header-date">9 Νοεμβρίου 2026</p>
+            <p class="intro">Η εβδομάδα 9-15 Νοεμβρίου 2026 φέρνει ενθαρρυντικά νέα από την Ελλάδα και τον κόσμο. Η χώρα μας ξεχωρίζει με σημαντικές επενδύσεις στην τεχνολογία και αναβαθμίσεις υποδομών, ενώ διεθνώς η επιστήμη και η φύση μας χαρίζουν εμπνευστικές ιστορίες. Χριστουγεννιάτικη ατμόσφαιρα ήδη στην Αθήνα, με τον στολισμό της πλατείας Συντάγματος να ξεκινά!</p>
+        </div>
+        <div class="meander-bottom"></div>
+    </header>
+
+    <main>
+        <div class="section-block">
+            <div class="section-heading">
+                <span class="section-flag">🇬🇷</span>
+                <h2>Νέα από την Ελλάδα</h2>
+                <span class="section-count">10 ειδήσεις</span>
+            </div>
+            <div class="card-grid">
+                
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">Proto Thema</span>
+            </div>
+            <h3 class="card-title">Χριστούγεννα από τον Νοέμβριο: Ξεκίνησε ο στολισμός στην πλατεία Συντάγματος</h3>
+            <p class="card-summary">Συνεργεία τοποθετούν ήδη τα χριστουγεννιάτικα λαμπιόνια στα δέντρα της πλατείας Συντάγματος, φέρνοντας νωρίς τη γιορτινή ατμόσφαιρα στην Αθήνα.</p>
+            <a href="https://www.protothema.gr/greece/article/1907967/hristougenna-apo-ton-noemvrio-stin-athina-arhise-o-stolismos-stin-plateia-sudagmatos-deite-video-kai-fotografies/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">Insider.gr</span>
+            </div>
+            <h3 class="card-title">Η Ελλάδα επενδύει 120 εκατ. ευρώ στο European Tech Champions Initiative της ΕΤΕπ</h3>
+            <p class="card-summary">Η Ελλάδα συμμετέχει με 120 εκατομμύρια ευρώ στο ευρωπαϊκό πρόγραμμα για την ανάδειξη των επόμενων τεχνολογικών πρωταθλητών, ενισχύοντας τη θέση της στον ψηφιακό χάρτη της Ευρώπης.</p>
+            <a href="https://news.google.com/rss/articles/CBMivAFBVV95cUxOSWZzM0czZVlaQTBBTkFQaEhRYjEySlFiNDdOSFhWSm96V3JEYkc3d1JaRkJtSlNtWTM3WlhfcWtNdFBfQ0RibXlvaUpPYVBHeWZaUzdIWkg4VWp2MDFqMFJ3aHFqU3pkV0huTkRONEYwaHItRDlOWHRTcHhrUk9seXZhTmNDWU90RjMzUHowczBiOWpXcTBSZ1dBOUd1Wms2YTJrMGxJYVVyZ2JCaVdLRjM0aGpTMFdBLUdxTNIBwgFBVV95cUxQWU5iajRZQzVoVzBNck9CdFNoNFNGVGU5RnFLemtnQzZ4QW9IR0lQVUpHZ3g2SGJZeFoxbEdKR0Nhai1xRzl3Sk9pang0OE5FUDliTmZyV3N4TnBxTFpnU0FBUXgzRklQMTZmeXhUeExfcnhsc0FVakoxODhodm1qY1FKZTRtSWxfb0dtNTlqSHFEam5fLUdzWFVjWTZwcVRBZzBkUG4yS01sWW10Mm95c01KS0pOd0t5RUxNcWZFdzgyUQ" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0369a1">Οικονομία</span>
+                <span class="source">Fortunegreece.com</span>
+            </div>
+            <h3 class="card-title">Eurostat: Δεύτερη στην ΕΕ η Ελλάδα στην αύξηση παραγωγής υπηρεσιών</h3>
+            <p class="card-summary">Σύμφωνα με τα στοιχεία της Eurostat, η Ελλάδα καταλαμβάνει τη δεύτερη θέση στην Ευρωπαϊκή Ένωση όσον αφορά την αύξηση της παραγωγής υπηρεσιών, σε μια σημαντική οικονομική επίδοση.</p>
+            <a href="https://news.google.com/rss/articles/CBMirAFBVV95cUxPWEVlc2hYZTRQd01NNHBtTVdwNzBZU2JFZUx2a3FiNXRyeC1CdGpVMG1ockpyRXhrZXFWQmMzLTJqOUhHNTFYdTdMXzl5R3ZSS3FXcFhTU051aGNzVzNEcGdYajJFcHlBMHFxc0ppMGQ1ai1sU2V3bXROTUVTVm1DZnE1R3MtbGNheGhUdXk5RlZCUVozbnpCemNEQ080OUVnZFRhNVlWdVFJTEZv" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0369a1">Οικονομία</span>
+                <span class="source">Capital.gr</span>
+            </div>
+            <h3 class="card-title">UBS: Η Ελλάδα έχει την καλύτερη δυναμική χρέους διεθνώς</h3>
+            <p class="card-summary">Η UBS αναδεικνύει την Ελλάδα ως τη χώρα με την καλύτερη δυναμική χρέους παγκοσμίως, στέλνοντας θετικό μήνυμα στους επενδυτές ενόψει των εκλογών του 2027.</p>
+            <a href="https://news.google.com/rss/articles/CBMi5gFBVV95cUxNWlZjYU1NeDJPZk85SnFodzJsR1JJNTgzWDhuRzkyckx1VXZVVHdDc29DbUQ3endQVkRyczdJRU1xTGpGRFNrOW9lcWZrM01sdlczeHg2Y3R4LU9qSHdMNXhVTlptY0dZMzY4TVRWek56aTk5RDFqaGlQNFJzNTBfd3ZyNmNWWDhCXzhiYnp3NjJLU2p6ZWdWT3hiUU00ZnpPejVfaG9zUERJOFdyU3hFd1Jub2NhMTZkUTRKZUlvcE9vaGt0ZlpGa1FhZS1yS2MzME1FZDJZQ3N3OGJSWVF5aF9HeGNkUdIB8gFBVV95cUxQTlNBN0xWeG40c0FWdlNtaFJBRDhodDNUZmdNd0tHNUxfWDVqUlF0TDdHMDVkdVlzMUxlZW9xY0R4dmVDTVhOelhiR1N6aVpDckxkVDFoVVdlUHZrdHJGUHF0ck9FN1RpUVNUazluSFlyV1lNN3paV2k0Qm9CVVN4VGoydTI2QTA5dTExaVZHNTI0RkZxNTVwdDdNeFhlcVVzVWFOMHRUeEdHX0hVMVk1Yk11UFpZcnpwU3JGSzR3X3NTanA0cFlUWlJqdGRERnFNZDZnVXZaOGtNbWNRaGlBYVpncmw0amtfcHpSODBmYTl5QQ" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0e7490">Τουρισμός</span>
+                <span class="source">in.gr</span>
+            </div>
+            <h3 class="card-title">Ολοκληρώθηκαν οι εργασίες εκβάθυνσης σε πέντε λιμανάκια της Σαντορίνης</h3>
+            <p class="card-summary">Αποκαταστάθηκε το απαραίτητο λειτουργικό βάθος των λιμενικών υποδομών στη Σαντορίνη, βελτιώνοντας τις συνθήκες πρόσβασης για σκάφη και επισκέπτες στο δημοφιλές νησί.</p>
+            <a href="https://www.in.gr/2026/11/09/politics/aftodioikisi/oloklirothikan-oi-ergasies-ekvathynsis-se-pente-limanakia-tis-santorinis/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#d97706">Κοινωνία</span>
+                <span class="source">in.gr</span>
+            </div>
+            <h3 class="card-title">Νέος χώρος φροντίδας και υποστήριξης μητρότητας ετοιμάζεται στα Ιωάννινα</h3>
+            <p class="card-summary">Ένα νέο κέντρο αναφοράς για ενημέρωση, καθοδήγηση και ουσιαστική υποστήριξη των μητέρων δημιουργείται στα Ιωάννινα, καλύπτοντας σημαντικό κοινωνικό κενό.</p>
+            <a href="https://www.in.gr/2026/11/09/politics/aftodioikisi/enas-neos-xoros-frontidas-gnosis-kai-ypostiriksis-tis-mitrotitas-etoimazetai-sta-ioannina/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">Proto Thema</span>
+            </div>
+            <h3 class="card-title">Τζένσεν Χουάνγκ: Από ένα δωμάτιο και δύο κάρτες γραφικών στην αυτοκρατορία των 4,5 τρισ. δολαρίων</h3>
+            <p class="card-summary">Η εντυπωσιακή ιστορία του ιδρυτή της Nvidia, που από ένα μικρό δωμάτιο έχτισε μια από τις πιο πολύτιμες εταιρείες τεχνολογίας στον κόσμο, με περιουσία 155 δισ. δολαρίων.</p>
+            <a href="https://www.protothema.gr/economy/article/1907981/tzensen-houang-apo-ena-domatio-kai-duo-kartes-grafikon-stin-autokratoria-ton-45-tris-i-anodos-ptosi-souper-star-chips/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">Global Times</span>
+            </div>
+            <h3 class="card-title">Κίνα και Ελλάδα: Πρώτο κοινό αρχαιολογικό έργο αποκαλύπτει αρχαία αστικά κατάλοιπα</h3>
+            <p class="card-summary">Το πρώτο κοινό αρχαιολογικό πρόγραμμα Κίνας-Ελλάδας φέρνει στο φως αρχαία αστικά κατάλοιπα και σημαντικά ευρήματα, ανοίγοντας νέους ορίζοντες στη διεθνή αρχαιολογική έρευνα.</p>
+            <a href="https://news.google.com/rss/articles/CBMiYkFVX3lxTFB5MHp3UmpMS0pLSVN1N0xvMUdEQmRmRE9XOUpQc3BrbG9STzlJX0I3NThwcTJMdUtqSlRzSEZ2S3M4Wk90eW5ycEtnUnAxMjFjYTZDaWFSVDlHbGF1N1RNQ0Rn" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#6d28d9">Εκπαίδευση</span>
+                <span class="source">Ναυτεμπορική</span>
+            </div>
+            <h3 class="card-title">Εισαγωγή στα ΑΕΙ: Ποιος από τους τρεις διεθνείς τρόπους ταιριάζει στην Ελλάδα</h3>
+            <p class="card-summary">Ανάλυση των τριών διεθνών μοντέλων εισαγωγής στα πανεπιστήμια και αξιολόγηση του ποιο ταιριάζει καλύτερα στην ελληνική εκπαιδευτική πραγματικότητα.</p>
+            <a href="https://news.google.com/rss/articles/CBMigwFBVV95cUxQQTJwcW5lRUxkUUZvM0lNYjMzQmpiMkZBUlVvSFFRR2h4RTl1QUNJSnFmRzVuZGp6N21abDJ5a3JLSHdKN3lrcmx6TU1ud2k0c0pnaFpqSVl6S1h6WkM2V0pwTTliS25mb3NWSTJ4ZkhOWDZvTUsydEstRnZOMzYyemRQQQ" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0369a1">Οικονομία</span>
+                <span class="source">ET HospitalityWorld</span>
+            </div>
+            <h3 class="card-title">Coffee Island: Η ελληνική αλυσίδα καφέ ανοίγει το πρώτο της κατάστημα στην Ινδία</h3>
+            <p class="card-summary">Η ελληνική Coffee Island επεκτείνεται στο Μπενγκαλούρου της Ινδίας, φέρνοντας τη γεύση της Ελλάδας σε μια από τις μεγαλύτερες αγορές του κόσμου.</p>
+            <a href="https://news.google.com/rss/articles/CBMi9AFBVV95cUxPLXROVFFmS0tyRXlocXVoeHZlaVhpNEdJdWZHbmg4ZXlmMW52MWpDM21kYmRhaE1weWxhZkFBUTkySlRHYXh2ZWlQUDBXc0NySEl3d2lXYTREY1lNSnItR2RvWVdaUExxMGtNWFFNMVdkenp5dHc0VkI2WGo2ZjM4SkZDcVpqbWdMa0Rnd00yM0F5X0MyalRVZUNmMm95ZHhRWWhTQWJldms4dWNvTEZzaWx6N1FjR0tpZmFsb0F5RUVUN2FCVmV5QmhocEVFN04zRFlKc255ZU9LQTlDZWNHM1Nkamp4enRzZFlITjd3TU1IV2kw0gH4AUFVX3lxTFBKMTFIRXZxWklWVl82RzhiR05qNzdtMG9SVy1hdk11ZTA5aDJJMTBoM01IaHN6TTU3MXNtWXl1TU51S3RYLTVpck0tYnhVX1dHMnQ2bE5qekhtOUZkNkVveWZ3MVJxdkEwRWU2bWhyRkRwLTNraDliejVTNkdKS2R4RTB3VFVqSWp0b2s4SUh6d3FtMlVmbnI5YVVOeXZocjRhd2pmRzJER0FQLTZVNl9BU3ZEcS1BMjBmbmFEejVCaFJLcU5VLTlNa3NfS1RZRWlsaEY2T3ZjMjJLRm44U25mQXRDQUFRbGlXdHc1d28zQUpKNzJrWWl0" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+            </div>
+        </div>
+
+        <div class="section-block">
+            <div class="section-heading">
+                <span class="section-flag">🌍</span>
+                <h2>Θετικά Νέα από τον Κόσμο</h2>
+                <span class="section-count">10 ειδήσεις</span>
+            </div>
+            <div class="card-grid">
+                
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">Positive News</span>
+            </div>
+            <h3 class="card-title">Τι πήγε καλά αυτή την εβδομάδα: Αποκατάσταση φύσης σε πρωτοφανή κλίμακα και τέλος στη μετάδοση HIV σε βρέφη</h3>
+            <p class="card-summary">Η φύση αποκαταστάθηκε σε πρωτοφανή κλίμακα, τα Μπαρμπέιντος σταμάτησαν τη μετάδοση HIV από μητέρα σε παιδί και η επανάσταση στα καύσιμα επιταχύνεται.</p>
+            <a href="https://www.positive.news/society/good-news-stories-from-week-45-of-2026/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
+                <span class="source">Positive News</span>
+            </div>
+            <h3 class="card-title">Πεταλούδες εμπνέουν νέα γενιά χρωμάτων χωρίς χημικές ουσίες</h3>
+            <p class="card-summary">Ερευνητές μελετούν τη δομή των φτερών πεταλούδων για να δημιουργήσουν επικαλύψεις και χρώματα χωρίς επιβλαβείς χημικές χρωστικές, σε μια πρωτοποριακή περιβαλλοντική καινοτομία.</p>
+            <a href="https://www.positive.news/science/the-butterfly-effect-a-brighter-way-to-make-paint/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Εκπαιδευμένα σκυλιά ανιχνεύουν επιβλαβή χωροκατακτητικά φυτά με εντυπωσιακή ακρίβεια</h3>
+            <p class="card-summary">Επιστήμονες στη Γερμανία εκπαιδεύουν σκύλους να εντοπίζουν επιβλαβή χωροκατακτητικά φυτά που απειλούν τη βιοποικιλότητα, με ποσοστό επιτυχίας που ξεπερνά το 75%.</p>
+            <a href="https://www.goodnewsnetwork.org/dogs-can-sniff-out-invasive-plant-species-with-75pt-accuracy/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Γλυκόφωτα επέστρεψαν στη Βρετανία χάρη σε εθελοντή που τα εκτρέφει στο υπόστεγό του</h3>
+            <p class="card-summary">Ο Peter Cooper, λάτρης της άγριας ζωής, εκτρέφει προνύμφες glowworm στο υπόστεγό του και τις απελευθερώνει στη φύση, βοηθώντας στην επανεμφάνιση του αγαπημένου εντόμου στη Βρετανία.</p>
+            <a href="https://www.goodnewsnetwork.org/glowworms-shine-again-in-the-uk-from-larvae-reared-pro-bono-in-garden-shed/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Άνθρωποι από όλο τον κόσμο αγόρασαν βασιλικό κτήμα για τη διατήρηση της άγριας ζωής</h3>
+            <p class="card-summary">Χιλιάδες άνθρωποι από κάθε γωνιά του πλανήτη συνεισέφεραν για να αγοραστεί ένα ιστορικό βασιλικό κτήμα και να μετατραπεί σε καταφύγιο για σπάνια πουλιά και έντομα.</p>
+            <a href="https://www.goodnewsnetwork.org/people-around-the-world-help-buy-royal-estate-for-wildlife-conservation/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">New York Times</span>
+            </div>
+            <h3 class="card-title">Η ΑΙ ανέτρεψε θεμελιώδες αξίωμα της επιστήμης των υπολογιστών</h3>
+            <p class="card-summary">Η OpenAI κατάφερε να διαψεύσει μια δεκαετίες παλιά υπόθεση που έλεγε ότι ορισμένα προβλήματα θα είναι πάντα δύσκολα για τους υπολογιστές, ανοίγοντας τον δρόμο για ριζικές νέες αποδόσεις.</p>
+            <a href="https://www.nytimes.com/2026/11/06/science/ai-exponential-time-hypothesis.html" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
+                <span class="source">New York Times</span>
+            </div>
+            <h3 class="card-title">Η NASA αναζητά τους επόμενους αστροναύτες της — Δείτε πώς να κάνετε αίτηση</h3>
+            <p class="card-summary">Η NASA ανακοίνωσε νέο κύκλο επιλογής αστροναυτών για αποστολές σε τροχιά χαμηλής Γης και στη Σελήνη. Οι αιτήσεις γίνονται δεκτές έως τις 3 Δεκεμβρίου.</p>
+            <a href="https://www.nytimes.com/2026/11/07/science/nasa-recruiting-astronauts.html" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#059669">Καινοτομία</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Γεωθερμική ενέργεια φέρνει 40% εξοικονόμηση σε προσιτές κατοικίες στις ΗΠΑ</h3>
+            <p class="card-summary">Μια εταιρεία φυσικού αερίου στο Βερμόντ υπέγραψε πρωτοποριακή συμφωνία γεωθερμικής ενέργειας που εξοικονομεί στους κατοίκους έως 40% στον λογαριασμό ρεύματος.</p>
+            <a href="https://www.goodnewsnetwork.org/geothermal-utilities-power-wave-of-us-affordable-housing-with-40-energy-savings/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Αίνιγμα 400 ετών λύθηκε: Επιστήμονες αποκρυπτογράφησαν κλειδαριά από ναυάγιο</h3>
+            <p class="card-summary">Με τη βοήθεια αξονικού τομογράφου νοσοκομείου, επιστήμονες αποκρυπτογράφησαν έναν 400χρονο κωδικό κλειδαριάς που βρέθηκε σε θησαυροφόρο ναυάγιο στην Ουαλία.</p>
+            <a href="https://www.goodnewsnetwork.org/400-yo-padlock-code-finally-cracked-more-than-20-years-after-being-found-in-shipwreck-treasure/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#d97706">Κοινωνία</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Βρετανός περιπλανητής αγκαλιάζει τη μητέρα του μετά από 28χρονη πεζοπορία γύρω από τον κόσμο</h3>
+            <p class="card-summary">Ο Karl Bushby ολοκλήρωσε μια πεζοπορία 31.000 μιλίων γύρω από τον κόσμο που διήρκεσε 28 χρόνια, επιστρέφοντας στη γενέτειρά του Hull και αγκαλιάζοντας τη συγκινημένη μητέρα του.</p>
+            <a href="https://www.goodnewsnetwork.org/adventurer-finally-hugs-mom-after-28-year-walk-around-the-world-from-home-in-uk/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>Δημιουργήθηκε αυτόματα με AI · Πηγές: ΑΠΕ-ΜΠΕ, Kathimerini, Positive.news, Good News Network κ.ά.</p>
+        <p style="margin-top:0.4rem">
+            <a href="index.html">Αρχική</a> ·
+            Τελευταία ενημέρωση: 9 Νοεμβρίου 2026
+        </p>
+    </footer>
+</body>
+</html>

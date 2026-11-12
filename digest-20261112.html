@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Τα νέα της μαμάς — 12 Νοεμβρίου 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --blue:    #0d47a1;
+            --blue-light: #1565c0;
+            --sky:     #e3f2fd;
+            --gold:    #f9a825;
+            --white:   #ffffff;
+            --text:    #1a1a2e;
+            --muted:   #546e7a;
+            --border:  #cfd8dc;
+            --card-bg: #ffffff;
+            --page-bg: #f0f4f8;
+        }
+
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            background: var(--page-bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── Header ── */
+        header {
+            background: linear-gradient(135deg, var(--blue) 0%, #1a237e 100%);
+            color: var(--white);
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 38px,
+                rgba(255,255,255,0.04) 38px,
+                rgba(255,255,255,0.04) 40px
+            );
+        }
+        .header-inner {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 2.5rem;
+            text-align: center;
+        }
+        .meander {
+            width: 100%;
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--gold) 0px, var(--gold) 8px,
+                transparent 8px, transparent 12px,
+                var(--gold) 12px, var(--gold) 16px,
+                transparent 16px, transparent 20px
+            );
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+        .site-label {
+            font-size: 0.75rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 0.75rem;
+        }
+        h1 {
+            font-family: 'Noto Serif', serif;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+        .header-date {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+        .intro {
+            font-family: 'Noto Serif', serif;
+            font-style: italic;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.9);
+            max-width: 640px;
+            margin: 0 auto;
+        }
+        .meander-bottom {
+            width: 100%;
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--gold) 0px, var(--gold) 8px,
+                transparent 8px, transparent 12px,
+                var(--gold) 12px, var(--gold) 16px,
+                transparent 16px, transparent 20px
+            );
+            margin-top: 2rem;
+            opacity: 0.9;
+        }
+
+        /* ── Audio bar ── */
+        .audio-bar {
+            background: var(--blue);
+            color: var(--white);
+            padding: 1.25rem 1.5rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.35);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .audio-bar--pending {
+            background: #37474f;
+            padding: 1rem 1.5rem;
+            justify-content: center;
+        }
+        .big-play-btn {
+            background: #FFD600;
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 560px;
+            padding: 1.1rem 1rem;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+            transition: transform 0.12s, background 0.12s;
+        }
+        .big-play-btn:active { transform: scale(0.97); background: #FFC400; }
+        .progress-wrap {
+            width: 100%;
+            max-width: 560px;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #FFD600;
+            border-radius: 4px;
+            transition: width 0.5s linear;
+        }
+        .audio-duration-label {
+            font-size: 0.78rem;
+            opacity: 0.7;
+        }
+        .audio-pending {
+            font-size: 1rem;
+            opacity: 0.85;
+            font-style: italic;
+        }
+
+        /* ── Main layout ── */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem 4rem;
+        }
+
+        /* ── Section heading ── */
+        .section-block {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem 1.5rem 1.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 2px 12px rgba(13,71,161,0.08);
+            border: 2px solid var(--border);
+        }
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 4px solid var(--blue);
+        }
+        .section-flag { font-size: 2rem; }
+        .section-heading h2 {
+            font-family: 'Noto Serif', serif;
+            font-size: 1.6rem;
+            color: var(--blue);
+            font-weight: 700;
+        }
+        .section-count {
+            margin-left: auto;
+            font-size: 0.8rem;
+            color: var(--muted);
+            background: var(--sky);
+            padding: 0.25rem 0.7rem;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        /* ── Card grid ── */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 3rem;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(13,71,161,0.12);
+            transform: translateY(-2px);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .badge {
+            color: #fff;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+        .source {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-left: auto;
+        }
+        .card-title {
+            font-family: 'Noto Serif', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.4;
+            color: var(--text);
+        }
+        .card-summary {
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: #374151;
+            flex: 1;
+        }
+        .read-more {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--blue);
+            text-decoration: none;
+            align-self: flex-start;
+        }
+        .read-more:hover { text-decoration: underline; }
+
+        /* ── Top extras (nameday + joke, shown between player and header) ── */
+        .top-extras {
+            max-width: 900px;
+            margin: 1.25rem auto 0;
+            padding: 0 1.5rem;
+            display: flex;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+        }
+        .top-extras .extra-block {
+            flex: 1;
+            min-width: 260px;
+            margin-bottom: 0;
+        }
+
+        /* ── Nameday & Joke blocks ── */
+        .extra-block {
+            border-radius: 16px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 2.5rem;
+        }
+        .extra-block h3 {
+            font-family: 'Noto Serif', serif;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .nameday-block {
+            background: #e8f4fd;
+            border: 2px solid #90caf9;
+        }
+        .nameday-block h3 { color: #1565c0; }
+        .nameday-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1.5rem;
+            padding: 0;
+        }
+        .nameday-list li { font-size: 1rem; }
+        .nd-date { font-size: 0.82rem; color: var(--muted); }
+        .joke-block {
+            background: #fffde7;
+            border: 2px solid #ffe082;
+        }
+        .joke-block h3 { color: #f57f17; }
+        .joke-text {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            font-style: italic;
+            color: #37474f;
+        }
+
+        /* ── Footer ── */
+        footer {
+            background: var(--blue);
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.8rem;
+        }
+        footer a { color: var(--gold); text-decoration: none; }
+
+        @media (max-width: 480px) {
+            .card-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+    
+        <div class="audio-bar" id="podcast-bar">
+            <audio id="podcast-audio" preload="auto" playsinline>
+                <source src="narration_20261112.mp3?v=202611121337" type="audio/mpeg">
+            </audio>
+            <button class="big-play-btn" id="play-btn">
+                🔊 ΠΑΤΑ ΕΔΩ ΓΙΑ ΝΑ ΠΑΙΞΕΙ
+            </button>
+            <div class="progress-wrap" id="progress-wrap">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <span class="audio-duration-label">🎙️ Τα νέα της μαμάς &nbsp;·&nbsp; ~5 λεπτά &nbsp;·&nbsp; 12 Νοεμβρίου 2026</span>
+        </div>
+        <script>
+        (function() {
+            var audio = document.getElementById('podcast-audio');
+            var btn   = document.getElementById('play-btn');
+            var bar   = document.getElementById('progress-bar');
+            var wrap  = document.getElementById('progress-wrap');
+
+            function setBtn(playing) {
+                btn.textContent = playing ? '⏸ ΠΑΥΣΗ' : '🔊 ΠΑΤΑ ΕΔΩ ΓΙΑ ΝΑ ΠΑΙΞΕΙ';
+            }
+
+            btn.addEventListener('click', function() {
+                if (audio.paused) { audio.play(); } else { audio.pause(); }
+            });
+
+            wrap.addEventListener('click', function(e) {
+                var rect = wrap.getBoundingClientRect();
+                audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+            });
+
+            audio.addEventListener('play',  function() { setBtn(true);  });
+            audio.addEventListener('pause', function() { setBtn(false); });
+            audio.addEventListener('ended', function() { setBtn(false); bar.style.width='100%'; });
+            audio.addEventListener('timeupdate', function() {
+                if (audio.duration) {
+                    bar.style.width = (audio.currentTime / audio.duration * 100) + '%';
+                }
+            });
+
+            audio.play().catch(function() {});
+        })();
+        </script>
+
+    <div class="top-extras">
+        
+        
+        <div class="extra-block joke-block">
+            <h3>😄 Το αστείο της εβδομάδας</h3>
+            <p class="joke-text">«Γιατρέ, μόλις βγάλω τον επίδεσμο, θα μπορώ να παίζω πιάνο;» «Φυσικά και θα μπορείς!» «Περίεργο… γιατί πριν δεν ήξερα!»</p>
+        </div>
+    </div>
+
+    <header>
+        <div class="meander"></div>
+        <div class="header-inner">
+            <p class="site-label">Εβδομαδιαία Έκδοση · Podcast</p>
+            <h1>Τα νέα της μαμάς 🇬🇷</h1>
+            <p class="header-date">12 Νοεμβρίου 2026</p>
+            <p class="intro">Η εβδομάδα 9-15 Νοεμβρίου 2026 φέρνει σπουδαία νέα για την Ελλάδα: η χώρα αναδεικνύεται σε κορυφαίο τουριστικό προορισμό, ενώ μεγάλες επενδύσεις σε data centers και ανανεώσιμες πηγές ενέργειας διαμορφώνουν ένα νέο τεχνολογικό και πράσινο τοπίο. Παράλληλα, εμπνευστικές ιστορίες από την Ελλάδα και τον κόσμο θυμίζουν ότι η ανθρώπινη δημιουργικότητα και αλληλεγγύη δεν σταματούν ποτέ.</p>
+        </div>
+        <div class="meander-bottom"></div>
+    </header>
+
+    <main>
+        <div class="section-block">
+            <div class="section-heading">
+                <span class="section-flag">🇬🇷</span>
+                <h2>Νέα από την Ελλάδα</h2>
+                <span class="section-count">10 ειδήσεις</span>
+            </div>
+            <div class="card-grid">
+                
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0e7490">Τουρισμός</span>
+                <span class="source">Μακεδονικό Πρακτορείο Ειδήσεων</span>
+            </div>
+            <h3 class="card-title">Η Ελλάδα «Διεθνής Ταξιδιωτικός Προορισμός της Χρονιάς 2026» στο Finnish Travel Gala</h3>
+            <p class="card-summary">Ο ΕΟΤ ανακοίνωσε ότι η Ελλάδα τιμήθηκε με τον τίτλο του κορυφαίου διεθνούς τουριστικού προορισμού για το 2026 στο κύρος Finnish Travel Gala, επιβεβαιώνοντας τη διεθνή της ακτινοβολία.</p>
+            <a href="https://news.google.com/rss/articles/CBMixwFBVV95cUxPMnJaWUdHN0piNjhPLWhKcWJQU215T1lzeV9fU3B3X1NFbzQybF8wOFBmb3JXOGwtejlhcXlMVkl4SE5jV3hPRm43UmFCYkFaS1k0OUgzX0E0Z2dvV1VscGNqQkFRWU5aX3ZIM3hMbmZ5QzZzRjd1OFRDaWpIM2llb1ZVSllpVnhDWW5UMks1LWw3ZlcxN2oxSmcxdkV6VW5uRHRtb0tVaHZsYk1PdTR1dEh4QjJldEtuM3FBSENSY183YmdWV0ow?oc=5" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">CNN.gr</span>
+            </div>
+            <h3 class="card-title">Data centers: Επενδυτικό ενδιαφέρον έως 10 δισ. ευρώ στην Ελλάδα</h3>
+            <p class="card-summary">Η Ελλάδα προσελκύει επενδύσεις έως 10 δισεκατομμύρια ευρώ για την ανάπτυξη data centers, με στόχο τα 200 MW χωρητικότητας, καθιστώντας τη χώρα σημαντικό κόμβο ψηφιακής υποδομής στην Ευρώπη.</p>
+            <a href="https://news.google.com/rss/articles/CBMizwFBVV95cUxOZUt3LXQyWHdIQWZQWHNzaV9iVlBERWRvQkJ5R2R5dkJ4NjZpZEZoNXd4SGdaVDJJVTVRS1g4TThWSkRhNFVWaHI2MEg2SkNxMDVNMXNzWjNMd3pEOFJ4TzVsZTNBM0pHWXJJV3U2Um0tVFlULTNhNlFCblFCLWpjSVRyckZKaFNCUFM0U004enJpVWoweTZjNVRBakNiZ2RiaTZvRkJJdnJVaFNIbE5OUE1hMUY3T05QS2g0NXdLUG5za0tUNHJQUVBpTGpPbXM?oc=5" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">Capital.gr</span>
+            </div>
+            <h3 class="card-title">METLEN και Όμιλος Τσάκου: Εκκίνηση για ένα από τα μεγαλύτερα υβριδικά έργα ΑΠΕ στην Ελλάδα</h3>
+            <p class="card-summary">Ξεκίνησαν οι εργασίες για ένα από τα μεγαλύτερα υβριδικά έργα ανανεώσιμων πηγών ενέργειας στη χώρα, σε συνεργασία METLEN και Ομίλου Τσάκου, σηματοδοτώντας νέα εποχή για την πράσινη ενέργεια.</p>
+            <a href="https://news.google.com/rss/articles/CBMi2AFBVV95cUxOWUZFYk55YjR2dTN2ajJzQURCRmNITHZMQkpFSUQ4YkF0dlNOOHhjTHVQRGtXenFNTVAwUTVrRDZfU0Y2aktfUGZNSkV6N1dOZWR0QklFTmU2dWdLSENYWUpESTgxX2JSWGYwRmhOcWxock5qOXJfTDJoOWx3MUF6ZkRBM2FhY190c2xlakNYell2YUlya2JSRXFFUGtBcG1lc1FCM1ItY1pNV0ZhLVVyY2xlRkd1SlM3eS1jRWFHYTZmd0lQbHFzS2hKNVl0YjlUckdkbEJBLWHSAeQBQVVfeXFMTjFTZTdsMWY2YUtYRTRxQ20wQnRXWmZ6SS1QWE9QZGFDNmhFTldjbDhMN1ZyaFRPbDh3am9POElPWEtTRF9UcklDbjhrcDRDeF9ic3M2OHN6QlVWRU1NWE84Tm42NzJPOFJfUTJFR281MmMwcnhfQjlUS1plbVk2UE9LdXhlVXRDbV9zVGxoX3JGVGZsSG93TGo3Si1OVmNwZXBNUkwxcVBFSWhXTnRUaVFSWkpHTkwyQ2x2dTROSXJfVmhGWXVER25GV2EyMmFZbGZMdGdSMllSMGhLT3BlalN3TnJW?oc=5" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">eKathimerini.com</span>
+            </div>
+            <h3 class="card-title">Σπάνια βυζαντινά εικονίσματα από την Ελλάδα εκτίθενται στην Ουάσινγκτον</h3>
+            <p class="card-summary">Εικοσιτέσσερα σπάνια βυζαντινά εικονίσματα από ελληνικά μοναστήρια ταξιδεύουν στην Ουάσινγκτον, φέρνοντας τον πλούτο της ελληνικής πολιτιστικής κληρονομιάς στο αμερικανικό κοινό.</p>
+            <a href="https://news.google.com/rss/articles/CBMiogFBVV95cUxPNEJ6eTZ4bUZSOWRMT0RQOVN5RVlsMGt0MV94S0J3YzJFek5BUWlnTUxncGszVXJJNUJ4bDZUTG1rRGFTSkNfZ2JLZzkzeFlTRXZwcWlBYkRQUDJVSjNQeXROMHRtdk5Tb0wxcXBjaFBiWXhodFB0c1Z2REZuRGZBRlVJclpvWDFCMjJQdWttdS1GN2J1d2M1YXVXME9YNUNjQXc?oc=5" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">Greek City Times</span>
+            </div>
+            <h3 class="card-title">Η Ελλάδα θα κατασκευάσει 150 δορυφόρους σε μεγάλη επέκταση της διαστημικής βιομηχανίας</h3>
+            <p class="card-summary">Η Ελλάδα ανακοίνωσε φιλόδοξο πρόγραμμα κατασκευής 150 δορυφόρων, εγκαινιάζοντας μια νέα εποχή για την ελληνική διαστημική βιομηχανία και ενισχύοντας τη θέση της χώρας στον τομέα της τεχνολογίας.</p>
+            <a href="https://news.google.com/rss/articles/CBMipAFBVV95cUxPVjdFZzZkOTJadGR6Y3I1QjdjVWY0ODJfMF9paWI0cnFuN3p5V2U3NkhYMTNCdGc2c2JpTmNRd050anEzUW5ZUWdKSEoxTVRlZngxWGlFMjNiOEwzU1BnS2JkWDN3Q21tN2V3LUhvWFhPLTk2ekRJUW9vSFEtMDk0MHVnVjBRVUwwbThZTGZjRmV2dHl4dlp5VFM2aWktTThtTUYtNw?oc=5" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">Proto Thema</span>
+            </div>
+            <h3 class="card-title">Foo Fighters: Έρχονται στην Αθήνα για εκρηκτικό live στο ΟΑΚΑ</h3>
+            <p class="card-summary">Οι θρυλικοί Foo Fighters επιστρέφουν στην Ελλάδα το επόμενο καλοκαίρι για συναυλία στο ΟΑΚΑ, μετά την αξέχαστη εμφάνισή τους στο Ηρώδειο, χαρίζοντας στους Έλληνες θαυμαστές μια νέα μουσική εμπειρία.</p>
+            <a href="https://www.protothema.gr/culture/article/1909747/foo-fighters-erhodai-stin-athina-gia-ena-ekriktiko-live/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">Proto Thema</span>
+            </div>
+            <h3 class="card-title">Les Trois Femmes: Τα Χριστούγεννα συναντούν τη μαγεία του swing στο Half Note</h3>
+            <p class="card-summary">Οι Les Trois Femmes επιστρέφουν στο Half Note Jazz Club στις 3 Δεκεμβρίου για μια ξεχωριστή βραδιά jazz, swing και χριστουγεννιάτικης λάμψης με άρωμα άλλης εποχής.</p>
+            <a href="https://www.protothema.gr/culture/article/1909753/les-trois-femmes-ta-hristougenna-sunadoun-ti-mageia-tou-swing/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#d97706">Κοινωνία</span>
+                <span class="source">in.gr</span>
+            </div>
+            <h3 class="card-title">Αίσιο τέλος στην αναζήτηση 3,5χρονου κοριτσιού στην Ιεράπετρα</h3>
+            <p class="card-summary">Το μικρό κοριτσάκι που είχε χαθεί στην Ιεράπετρα βρέθηκε σώο και αβλαβές, φέρνοντας ανακούφιση στην οικογένεια και στις αρχές που συμμετείχαν στην έρευνα.</p>
+            <a href="https://www.in.gr/2026/11/12/greece/ierapetra-aisio-telos-stin-anazitisi-35xronou-koritsiou-pos-ksefyge-apo-tin-giagia-tou/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0e7490">Τουρισμός</span>
+                <span class="source">Travel.gr</span>
+            </div>
+            <h3 class="card-title">Ρέτσος και Μήτσης: Η αυθεντικότητα της ελληνικής φιλοξενίας και το στοίχημα της παγκόσμιας κορυφής</h3>
+            <p class="card-summary">Στο Greece Talks, κορυφαία στελέχη του τουρισμού συζήτησαν για το μέλλον της ελληνικής φιλοξενίας και τη στρατηγική που θα φέρει τη χώρα στην παγκόσμια κορυφή των τουριστικών προορισμών.</p>
+            <a href="https://news.google.com/rss/articles/CBMioAFBVV95cUxPdXprZzB4SDNOUllQR3VhTWdJNk16Nk1FSC1xRmczME5jS3R5VE5ESzY2MXR6V1VUNEZhMzBDUVVmdzdBVDEwZTVSUk1qenBwMzc4YVVSSU5nYmpFcGttclpoWG5WMGh0TzB6NW5XNTQwMEwxYWJvdE41amZIQ1lVVFVQMGpVSDdQWm9KWVlFaWZqb2dROUN6TEFWRlEwZ3ZC?oc=5" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">in.gr</span>
+            </div>
+            <h3 class="card-title">Το ντοκιμαντέρ NAZA γίνεται η έκπληξη της χρονιάς με 1,5 εκατ. θεατές σε 47 χώρες</h3>
+            <p class="card-summary">Το ελληνικό ντοκιμαντέρ NAZA εξελίσσεται σε μία από τις μεγαλύτερες εισπρακτικές επιτυχίες του 2026 στην κατηγορία του, με πάνω από 1,5 εκατομμύριο θεατές σε 47 χώρες παγκοσμίως.</p>
+            <a href="https://www.in.gr/2026/11/12/life/culture-live/to-naza-ekselissetai-stin-ekpliksi-tis-xronias-perissoteroi-apo-1-5-ekat-theates-to-exoun-dei-se-47-xores/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+            </div>
+        </div>
+
+        <div class="section-block">
+            <div class="section-heading">
+                <span class="section-flag">🌍</span>
+                <h2>Θετικά Νέα από τον Κόσμο</h2>
+                <span class="section-count">10 ειδήσεις</span>
+            </div>
+            <div class="card-grid">
+                
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Ο πληθυσμός της καφέ αρκούδας στην Ισπανία διπλασιάστηκε σε 20 χρόνια</h3>
+            <p class="card-summary">Από τα 140 άτομα που απέμεναν, οι καφέ αρκούδες της Καντάβρια έφτασαν τα 370, καλύπτοντας πλέον 6.500 τετραγωνικά μίλια. Μια εντυπωσιακή περιβαλλοντική επιτυχία για την Ισπανία.</p>
+            <a href="https://www.goodnewsnetwork.org/spain-sees-incredible-doubling-of-her-brown-bear-population-and-its-breeding-range/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">280 ζωγραφιές της Εποχής των Παγετώνων ανακαλύφθηκαν κρυμμένες στα μάτια όλων</h3>
+            <p class="card-summary">Η τρίτη μεγαλύτερη συλλογή χαρακτικών της Εποχής των Παγετώνων στη Μεσογειακή Ισπανία βρισκόταν ορατή για αιώνες, χωρίς κανείς να την παρατηρήσει. Μια ανακάλυψη που αναγράφει εκ νέου την ιστορία.</p>
+            <a href="https://www.goodnewsnetwork.org/for-centuries-visitors-walked-right-by-280-unseen-ice-age-cave-paintings/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#059669">Καινοτομία</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Εφηβος δημιούργησε εφαρμογή που βοηθά εκατοντάδες οικογένειες παιδιών με αυτισμό</h3>
+            <p class="card-summary">Ένας 15χρονος έμαθε μόνος του machine learning για να φτιάξει εφαρμογή που αποκωδικοποιεί τα σήματα επικοινωνίας αυτιστικών παιδιών. Η εφαρμογή έχει ήδη πάνω από 700 χρήστες σε 12 χώρες.</p>
+            <a href="https://www.goodnewsnetwork.org/15-yo-teaches-himself-machine-learning-to-build-app-that-interprets-autistic-communication/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">NYT Science</span>
+            </div>
+            <h3 class="card-title">Η ΑΙ ανέτρεψε θεμελιώδη αρχή της επιστήμης των υπολογιστών</h3>
+            <p class="card-summary">Η OpenAI απέδειξε ότι προβλήματα που θεωρούνταν αδύνατο να λυθούν γρήγορα από υπολογιστές μπορούν πλέον να αντιμετωπιστούν, ανοίγοντας τον δρόμο για ριζικά νέες δυνατότητες στην τεχνολογία.</p>
+            <a href="https://www.nytimes.com/2026/11/06/science/ai-exponential-time-hypothesis.html" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Ηφαιστειακή ανακάλυψη στον Άρη ανοίγει νέες ελπίδες για εξωγήινη ζωή</h3>
+            <p class="card-summary">Επιστήμονες ανακάλυψαν ίχνη ηφαιστειακών αερίων στον Άρη που θα μπορούσαν να αποτελούν το «κλειδί» για την ανεύρεση ζωής στον Κόκκινο Πλανήτη, σε μια ανακάλυψη που χαρακτηρίστηκε «καπνίζον όπλο».</p>
+            <a href="https://www.goodnewsnetwork.org/martian-volcanic-discovery-could-be-smoking-gun-in-search-for-life/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Η έρημος Ατακάμα ανθίζει με ρεκόρ ανθοφορίας — εικόνες που κόβουν την ανάσα</h3>
+            <p class="card-summary">Η πιο ξηρή έρημος του κόσμου μεταμορφώθηκε σε έναν πολύχρωμο παράδεισο λουλουδιών, με την ανθοφορία στη χιλιανή Ατακάμα να σπάει κάθε ρεκόρ και να εκπλήσσει επιστήμονες και επισκέπτες.</p>
+            <a href="https://www.goodnewsnetwork.org/worlds-driest-desert-erupts-into-record-breaking-bloom-boom-look/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">BBC Science</span>
+            </div>
+            <h3 class="card-title">Σημαντική μείωση τοξικών χημικών «forever chemicals» στα ποτάμια της Αγγλίας</h3>
+            <p class="card-summary">Αυστηροί περιορισμοί στη χρήση επικίνδυνων χημικών ουσιών οδήγησαν σε σημαντική μείωση της παρουσίας τους στα ποτάμια της Αγγλίας, σε μια ενθαρρυντική περιβαλλοντική επιτυχία.</p>
+            <a href="https://www.bbc.co.uk/news/articles/cmze75r55g3jo?at_medium=RSS&at_campaign=rss" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#d97706">Κοινωνία</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">84χρονη παράλυτη τήρησε την υπόσχεσή της: Επέστρεψε να παίξει πιάνο για ασθενείς</h3>
+            <p class="card-summary">Η Bonnie Fay, 84 ετών, είχε υποσχεθεί ότι θα επέστρεφε να παίξει πιάνο στο κέντρο αποκατάστασης που της χάρισε ξανά την υγεία. Χρόνια αργότερα, τήρησε τον λόγο της.</p>
+            <a href="https://www.goodnewsnetwork.org/paralyzed-woman-promised-to-return-and-play-piano-for-rehab-patients-she-kept-her-word/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
+                <span class="source">NYT Science</span>
+            </div>
+            <h3 class="card-title">Θηλυκά μποντόμπο κυνηγούν — ανατρέπεται η θεωρία του «άνδρα κυνηγού»</h3>
+            <p class="card-summary">Νέα έρευνα αποκαλύπτει ότι τα θηλυκά μποντόμπο είναι οι κύριοι κυνηγοί στην ομάδα τους, αναθεωρώντας ριζικά την κατανόησή μας για τις πρώιμες ανθρώπινες κοινωνίες και τους ρόλους των φύλων.</p>
+            <a href="https://www.nytimes.com/2026/11/12/science/these-killer-female-apes-challenge-the-man-the-hunter-origin-story.html" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">BBC Science</span>
+            </div>
+            <h3 class="card-title">Αποκατάσταση σπάνιου Ατλαντικού τροπικού δάσους με επιχορήγηση 6 εκατ. λιρών</h3>
+            <p class="card-summary">Ένα πρόγραμμα 6 εκατομμυρίων λιρών από λαχειοφόρο αγορά θα χρηματοδοτήσει την αποκατάσταση σπάνιου Ατλαντικού τροπικού δάσους στη Σκωτία, με κέντρα εκπαίδευσης στη διατήρηση της φύσης.</p>
+            <a href="https://www.bbc.co.uk/news/articles/cmn8w8n5ynq2o?at_medium=RSS&at_campaign=rss" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>Δημιουργήθηκε αυτόματα με AI · Πηγές: ΑΠΕ-ΜΠΕ, Kathimerini, Positive.news, Good News Network κ.ά.</p>
+        <p style="margin-top:0.4rem">
+            <a href="index.html">Αρχική</a> ·
+            Τελευταία ενημέρωση: 12 Νοεμβρίου 2026
+        </p>
+    </footer>
+</body>
+</html>

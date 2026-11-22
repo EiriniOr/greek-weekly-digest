@@ -7,6 +7,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import time
 
+from edition import edition_date
+
 
 class NewsCollector:
     def __init__(self):
@@ -17,7 +19,7 @@ class NewsCollector:
         self.data_dir.mkdir(exist_ok=True)
         # Look back only to the previous edition so Monday and Thursday
         # digests don't overlap: Mon covers Thu-Mon (4d), Thu covers Mon-Thu (3d).
-        weekday = datetime.now(timezone.utc).weekday()
+        weekday = edition_date().weekday()
         lookback = {0: 4, 3: 3}.get(weekday, 7)
         self.week_ago = datetime.now(timezone.utc) - timedelta(days=lookback)
 
@@ -86,7 +88,7 @@ class NewsCollector:
             all_items["world_positive_news"].extend(items[: cfg["max_items_per_feed"]])
             time.sleep(0.5)
 
-        date_str = datetime.now().strftime("%Y%m%d")
+        date_str = edition_date().strftime("%Y%m%d")
         out_path = self.data_dir / f"raw_news_{date_str}.json"
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(all_items, f, ensure_ascii=False, indent=2)

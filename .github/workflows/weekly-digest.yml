@@ -2,10 +2,22 @@ name: Greek Weekly Positive News
 
 on:
   schedule:
-    # Monday and Thursday at 05:00 UTC = 08:00 Greece summer (EEST/UTC+3)
-    - cron: '0 5 * * 1'
-    - cron: '0 5 * * 4'
-  workflow_dispatch:  # allow manual trigger from GitHub UI
+    # GitHub often starts scheduled runs hours late (6–9 hours in Nov 2026),
+    # so each edition is made the EVENING BEFORE, to be ready by 9:00 Athens:
+    #   Sunday evening    → Monday edition
+    #   Wednesday evening → Thursday edition
+    # (scripts/edition.py works out which edition a run is making.)
+    # Times are UTC; Athens is UTC+2 in winter, UTC+3 in summer.
+    - cron: '17 16 * * 0,3'  # main run:   Sun & Wed 16:17 UTC (18:17 / 19:17 Athens)
+    - cron: '47 20 * * 0,3'  # backup:     Sun & Wed 20:47 UTC
+    - cron: '17 4 * * 1,4'   # last resort: Mon & Thu 04:17 UTC
+    # Backup runs stop straight away if the edition is already published.
+  workflow_dispatch:  # allow manual trigger from GitHub UI (always runs)
+
+# Never run two at once; a second run waits, then sees the edition is out.
+concurrency:
+  group: digest
+  cancel-in-progress: false
 
 jobs:
   generate:
@@ -20,19 +32,35 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Check whether this edition is already published
+        id: check
+        run: |
+          EDITION=$(python scripts/edition.py)
+          echo "This run makes the edition for $EDITION"
+          if [ "${{ github.event_name }}" = "schedule" ] \
+             && git fetch --depth=1 origin gh-pages 2>/dev/null \
+             && git cat-file -e "FETCH_HEAD:narration_${EDITION}.mp3" 2>/dev/null; then
+            echo "Edition $EDITION is already published, so this backup run has nothing to do."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Install ffmpeg
+        if: steps.check.outputs.skip != 'true'
         run: sudo apt-get update && sudo apt-get install -y --fix-missing ffmpeg
 
       - name: Install dependencies
+        if: steps.check.outputs.skip != 'true'
         run: pip install -r requirements.txt
 
       - name: Generate digest
+        if: steps.check.outputs.skip != 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: python generate_weekly_digest.py --no-deploy
 
       - name: Upload audio artifact
+        if: steps.check.outputs.skip != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: greek-digest-audio
@@ -40,6 +68,7 @@ jobs:
           retention-days: 30
 
       - name: Deploy to GitHub Pages
+        if: steps.check.outputs.skip != 'true'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

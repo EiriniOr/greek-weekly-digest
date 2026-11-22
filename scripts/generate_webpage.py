@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import json
 import yaml
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 
 
@@ -63,7 +63,10 @@ def news_card(item):
 
 def build_html(curated, date_str, has_audio):
     now = datetime.now()
-    greek_dt = greek_date(now)
+    # Show the date of the edition (it is made the evening before).
+    greek_dt = greek_date(
+        date.fromisoformat(curated["edition_date"]) if curated.get("edition_date") else now
+    )
     cache_bust = now.strftime("%Y%m%d%H%M")
     intro = curated.get("weekly_intro", "")
     greek_news = curated.get("greek_news", [])

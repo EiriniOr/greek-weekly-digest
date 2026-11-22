@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 import jokes  # noqa: E402
 import namedays  # noqa: E402
 import weather  # noqa: E402
+from edition import edition_date  # noqa: E402
 
 
 SYSTEM_PROMPT = """Είσαι επιμελητής ειδήσεων που επιλέγει αποκλειστικά θετικές, εμπνευστικές ή ενδιαφέρουσες ειδήσεις.
@@ -94,9 +95,10 @@ class ContentCurator:
         world_items = raw.get("world_positive_news", [])
         print(f"Curating {len(greek_items)} Greek + {len(world_items)} world items...")
 
-        now = datetime.now()
+        # The day this edition is for — made the evening before (edition.py).
+        today = edition_date()
         # Week starts on Monday
-        monday = now - timedelta(days=now.weekday())
+        monday = today - timedelta(days=today.weekday())
         sunday = monday + timedelta(days=6)
         GREEK_MONTHS = [
             "",
@@ -170,18 +172,19 @@ class ContentCurator:
 
         # Name days and the joke never come from the AI: both are read from
         # vetted lists (namedays.py, jokes.py), picked by today's date.
-        curated["namedays"] = namedays.get_edition_namedays(now.date())
-        curated["joke"] = jokes.get_joke(now.date())
+        curated["edition_date"] = today.isoformat()
+        curated["namedays"] = namedays.get_edition_namedays(today)
+        curated["joke"] = jokes.get_joke(today)
         curated["weather"] = weather.get_edition_weather(
-            now.date(), self.config.get("weather", {})
+            today, self.config.get("weather", {})
         )
-        left = jokes.jokes_left(now.date())
+        left = jokes.jokes_left(today)
         if left < 4:
             print(
                 f"WARNING: only {max(left, 0)} new joke(s) left, add more to scripts/jokes.py"
             )
 
-        date_str = datetime.now().strftime("%Y%m%d")
+        date_str = today.strftime("%Y%m%d")
         out_path = self.data_dir / f"curated_{date_str}.json"
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(curated, f, ensure_ascii=False, indent=2)

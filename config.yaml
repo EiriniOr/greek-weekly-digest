@@ -52,6 +52,14 @@ curation:
     - "earthquake, flood, disaster"
     - "murder, crime, arrest"
 
+weather:
+  enabled: true
+  # How the town is said after "Ο καιρός ..." (e.g. "στην Αθήνα",
+  # "στη Θεσσαλονίκη", "στο Ηράκλειο"), and where it is on the map.
+  place: "στην Αθήνα"
+  latitude: 37.98
+  longitude: 23.73
+
 audio:
   enabled: true
   model: "gpt-4o-mini-tts"  # cheaper + better than tts-1-hd; same speech endpoint

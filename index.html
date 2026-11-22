@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Τα νέα της μαμάς — 19 Νοεμβρίου 2026</title>
+    <title>Τα νέα της μαμάς — 23 Νοεμβρίου 2026</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -91,7 +91,7 @@
         .intro {
             font-family: 'Noto Serif', serif;
             font-style: italic;
-            font-size: 1.05rem;
+            font-size: 1.15rem;
             line-height: 1.7;
             color: rgba(255,255,255,0.9);
             max-width: 640px;
@@ -210,12 +210,13 @@
             padding: 0.25rem 0.7rem;
             border-radius: 999px;
             font-weight: 600;
+            white-space: nowrap;
         }
 
         /* ── Card grid ── */
         .card-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.25rem;
             margin-bottom: 3rem;
         }
@@ -241,7 +242,7 @@
         }
         .badge {
             color: #fff;
-            font-size: 0.68rem;
+            font-size: 0.78rem;
             font-weight: 600;
             letter-spacing: 0.04em;
             padding: 0.2rem 0.55rem;
@@ -249,25 +250,25 @@
             text-transform: uppercase;
         }
         .source {
-            font-size: 0.75rem;
+            font-size: 0.88rem;
             color: var(--muted);
             margin-left: auto;
         }
         .card-title {
             font-family: 'Noto Serif', serif;
-            font-size: 1rem;
+            font-size: 1.25rem;
             font-weight: 700;
             line-height: 1.4;
             color: var(--text);
         }
         .card-summary {
-            font-size: 0.88rem;
-            line-height: 1.6;
-            color: #374151;
+            font-size: 1.1rem;
+            line-height: 1.65;
+            color: #263238;
             flex: 1;
         }
         .read-more {
-            font-size: 0.82rem;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--blue);
             text-decoration: none;
@@ -313,15 +314,32 @@
             gap: 0.6rem 1.5rem;
             padding: 0;
         }
-        .nameday-list li { font-size: 1rem; }
-        .nd-date { font-size: 0.82rem; color: var(--muted); }
+        .nameday-list li { font-size: 1.15rem; }
+        .nd-date { font-size: 0.95rem; color: var(--muted); }
+        .weather-block {
+            background: #e8f5e9;
+            border: 2px solid #a5d6a7;
+        }
+        .weather-block h3 { color: #2e7d32; }
+        .weather-list { list-style: none; padding: 0; display: grid; gap: 0.6rem; }
+        .weather-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.1rem;
+        }
+        .w-emoji { font-size: 1.8rem; width: 2.2rem; text-align: center; }
+        .w-text { flex: 1; display: flex; flex-direction: column; line-height: 1.3; }
+        .w-day { font-weight: 600; }
+        .w-desc { font-size: 0.95rem; color: #546e7a; }
+        .w-temp { font-weight: 600; white-space: nowrap; }
         .joke-block {
             background: #fffde7;
             border: 2px solid #ffe082;
         }
         .joke-block h3 { color: #f57f17; }
         .joke-text {
-            font-size: 1.05rem;
+            font-size: 1.15rem;
             line-height: 1.7;
             font-style: italic;
             color: #37474f;
@@ -333,12 +351,13 @@
             color: rgba(255,255,255,0.7);
             text-align: center;
             padding: 1.5rem;
-            font-size: 0.8rem;
+            font-size: 0.95rem;
         }
         footer a { color: var(--gold); text-decoration: none; }
 
         @media (max-width: 480px) {
             .card-grid { grid-template-columns: 1fr; }
+            .section-heading h2 { font-size: 1.35rem; }
             h1 { font-size: 1.6rem; }
         }
     </style>
@@ -347,7 +366,7 @@
     
         <div class="audio-bar" id="podcast-bar">
             <audio id="podcast-audio" preload="auto" playsinline>
-                <source src="narration_20261119.mp3?v=202611191411" type="audio/mpeg">
+                <source src="narration_20261123.mp3?v=202611222030" type="audio/mpeg">
             </audio>
             <button class="big-play-btn" id="play-btn">
                 🔊 ΠΑΤΑ ΕΔΩ ΓΙΑ ΝΑ ΠΑΙΞΕΙ
@@ -355,7 +374,7 @@
             <div class="progress-wrap" id="progress-wrap">
                 <div class="progress-bar" id="progress-bar"></div>
             </div>
-            <span class="audio-duration-label">🎙️ Τα νέα της μαμάς &nbsp;·&nbsp; ~5 λεπτά &nbsp;·&nbsp; 19 Νοεμβρίου 2026</span>
+            <span class="audio-duration-label">🎙️ Τα νέα της μαμάς &nbsp;·&nbsp; ~5 λεπτά &nbsp;·&nbsp; 23 Νοεμβρίου 2026</span>
         </div>
         <script>
         (function() {
@@ -392,10 +411,19 @@
 
     <div class="top-extras">
         
+        <div class="extra-block weather-block">
+            <h3>🌤️ Ο καιρός στην Αθήνα</h3>
+            <ul class="weather-list"><li><span class="w-emoji">☁️</span><span class="w-text"><span class="w-day">Σήμερα</span><span class="w-desc">Συννεφιά</span></span><span class="w-temp">14° – 23°</span></li><li><span class="w-emoji">⛅</span><span class="w-text"><span class="w-day">Τρίτη</span><span class="w-desc">Λίγα σύννεφα</span></span><span class="w-temp">11° – 18°</span></li><li><span class="w-emoji">☁️</span><span class="w-text"><span class="w-day">Τετάρτη</span><span class="w-desc">Συννεφιά</span></span><span class="w-temp">10° – 16°</span></li></ul>
+        </div>
+        
+        <div class="extra-block nameday-block">
+            <h3>🎂 Ποιοι γιορτάζουν</h3>
+            <ul class="nameday-list"><li><strong>Κατερίνα, Μερκούριος</strong> <span class="nd-date">— Τετάρτη 25 Νοεμβρίου</span></li></ul>
+        </div>
         
         <div class="extra-block joke-block">
             <h3>😄 Το αστείο της εβδομάδας</h3>
-            <p class="joke-text">Στο γυμναστήριο κάθομαι στο ποδήλατο και δεν κάνω πετάλι. Έρχεται ο γυμναστής: «Γιατί δεν κάνεις πετάλι;» «Είμαι σε κατηφόρα.»</p>
+            <p class="joke-text">Μια μαμά ποντικίνα κάνει βόλτα με τα ποντικάκια της. Ξαφνικά πετάγεται μπροστά τους ένας τεράστιος γάτος. Τα ποντικάκια παγώνουν. Η μαμά ποντικίνα φουσκώνει το στήθος της και φωνάζει όσο πιο δυνατά μπορεί: «Γαβ! Γαβ! Γαβ!» Ο γάτος τρομάζει και το βάζει στα πόδια. Γυρίζει τότε η μαμά στα παιδιά της και λέει: «Είδατε, παιδιά μου, πόσο χρήσιμο είναι να ξέρει κανείς ξένες γλώσσες;»</p>
         </div>
     </div>
 
@@ -404,8 +432,8 @@
         <div class="header-inner">
             <p class="site-label">Εβδομαδιαία Έκδοση · Podcast</p>
             <h1>Τα νέα της μαμάς 🇬🇷</h1>
-            <p class="header-date">19 Νοεμβρίου 2026</p>
-            <p class="intro">Η εβδομάδα 16-22 Νοεμβρίου 2026 φέρνει εμπνευστικές ειδήσεις από την Ελλάδα και τον κόσμο. Από την ένταξη της Ελλάδας στη Διεθνή Ομοσπονδία Abilympics και το συνέδριο τουρισμού, μέχρι εντυπωσιακές επιστημονικές ανακαλύψεις και περιβαλλοντικές επιτυχίες. Μια εβδομάδα γεμάτη καινοτομία, πολιτισμό και ελπιδοφόρα νέα.</p>
+            <p class="header-date">23 Νοεμβρίου 2026</p>
+            <p class="intro">Η εβδομάδα φέρνει εντυπωσιακές ανακαλύψεις στην επιστήμη και την τεχνολογία, από την άφιξη διαστημοπλοίου στον Ερμή έως πρωτοποριακές θεραπείες για χοληστερόλη και υπέρταση. Παράλληλα, ανθρώπινες ιστορίες αλληλεγγύης και καινοτόμες ιδέες από όλο τον κόσμο μας θυμίζουν ότι η δημιουργικότητα και η καλοσύνη δεν σταματούν ποτέ.</p>
         </div>
         <div class="meander-bottom"></div>
     </header>
@@ -415,42 +443,18 @@
             <div class="section-heading">
                 <span class="section-flag">🇬🇷</span>
                 <h2>Νέα από την Ελλάδα</h2>
-                <span class="section-count">10 ειδήσεις</span>
+                <span class="section-count">5 ειδήσεις</span>
             </div>
             <div class="card-grid">
                 
         <article class="card">
             <div class="card-header">
-                <span class="badge" style="background:#6d28d9">Εκπαίδευση</span>
-                <span class="source">Υπουργείο Παιδείας</span>
+                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
+                <span class="source">Proto Thema</span>
             </div>
-            <h3 class="card-title">Η Ελλάδα εντάχθηκε στη Διεθνή Ομοσπονδία Abilympics</h3>
-            <p class="card-summary">Η Ελλάδα εντάχθηκε στη Διεθνή Ομοσπονδία Abilympics και προετοιμάζεται για την πρώτη της συμμετοχή στους διεθνείς διαγωνισμούς επαγγελματικών δεξιοτήτων ΑμεΑ το 2027.</p>
-            <a href="https://news.google.com/rss/articles/CBMijgJBVV95cUxNalJ5RW1uM05tYVJLQXVNQVpoUFdPTmRkeHFlZWY3V3dLQWlFS0MtTkVQYzNCVkJJYmdnaTZZcUctMGVMaVJIb0JZclVvd1FQb3pLRkVHLVZLQlpCcTRNZWlGT25DbndZQ29ZMEFlNEZuZVFXOEt5SmNIdG9CVE9MVG5MczFrWWJBSkpHbXBEcGN1VW1rVDFuU0JTU3A0Ym5EanNjSkIwbUZxczJPQjVBVEVHei1aMm03blh4eFlOTklhS093ZkVqZ3JlT0E1S1kxZFlXWmlIX0JvUnFLekVIb2Z1Qk9lTUN4Tk43c21tcmlJSFRLN2dsV2dsRjVWY1R2bzhrMnNESGZmZHJ4N1E" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#0e7490">Τουρισμός</span>
-                <span class="source">Kathimerini</span>
-            </div>
-            <h3 class="card-title">Reimagine Tourism 2026: Μεγάλο συνέδριο για το μέλλον του ελληνικού τουρισμού</h3>
-            <p class="card-summary">Το συνέδριο της Καθημερινής για τον τουρισμό συζήτησε τις επεμβάσεις στον αιγιαλό, τη στρατηγική για την κρουαζιέρα και τον οδικό χάρτη ανάπτυξης του κλάδου στην Ελλάδα.</p>
-            <a href="https://news.google.com/rss/articles/CBMitgFBVV95cUxQa2V3WS1XcGozRVkyRU1MNDF5bEFkenhMbDkxRVhwbEg0a2lqNEJYZkEtU0dGdTh5NjhkRUh6TUhVY3pQZWRSbVpqUTN6OFh1QnVhaEpOZmZoUmhqN0puZVYydW9yRDFzWVhIZk9veENPMDhuU2JFeHlGSDN6XzFjRDFYUGFNZUxKZlpROUF1N3M5dTNQdHhBbzliX1VleHY2MTNBbTdpUHVGWXZRYVgtdWJCQkV3QQ" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
-                <span class="source">Kathimerini</span>
-            </div>
-            <h3 class="card-title">Ελλάδα και Κύπρος σε κοινή πορεία για ηλεκτρική διασύνδεση</h3>
-            <p class="card-summary">Ελλάδα και Κύπρος προχωρούν από κοινού στο φιλόδοξο έργο ηλεκτρικής διασύνδεσης, ενισχύοντας την ενεργειακή τους αυτονομία και τη συνεργασία στην ανατολική Μεσόγειο.</p>
-            <a href="https://news.google.com/rss/articles/CBMiugFBVV95cUxQV1ljWFVyR29CVF94TWtZYVdjcE80ZmR1SThySVhvV0lpLXM4Ni1hM3FtRUFQWmd6V3pOSVRxdEw2SFl3T1B5Q296cHVjamRqQ0tFck5DZGdSdVJ1MnVzZ1djVE56Sm4xTTcxbmVaZnY5NzdmUmd5dGpydFMxa29SOERmU2RXTGVrcmh4bjlSVVV2OWtCaFFKYVNwQ2U2aERRazJVVl9wSVAxQW0xQ3lKVEZnc25RX01Db3c" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Ένας ποδοσφαιριστής έκανε τον Τολστόι μπεστ σέλερ 140 χρόνια μετά</h3>
+            <p class="card-summary">Ο Βραζιλιάνος Γκουστάβο Σκάρπα μέσω βίντεο στο YouTube ώθησε εκατομμύρια συμπατριώτες του να διαβάσουν κλασική λογοτεχνία, κάνοντας τον «Θάνατο του Ιβάν Ίλιτς» του Τολστόι viral.</p>
+            <a href="https://www.protothema.gr/stories/article/1915264/goustavo-skarpa-pos-enas-podosfairistis-ekane-ton-thanato-tou-ivan-ilits-best-seler-140-hronia-meta/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -458,23 +462,35 @@
         <article class="card">
             <div class="card-header">
                 <span class="badge" style="background:#d97706">Κοινωνία</span>
-                <span class="source">Μακεδονικό Πρακτορείο Ειδήσεων</span>
+                <span class="source">Proto Thema</span>
             </div>
-            <h3 class="card-title">Η Ελλάδα στέλνει δυνατή ομάδα στην Παγκόσμια Γυμνασιάδα στο Ρίο</h3>
-            <p class="card-summary">Η Ελλάδα θα εκπροσωπηθεί με ισχυρή αποστολή στην Παγκόσμια Γυμνασιάδα που θα διεξαχθεί στο Ρίο ντε Τζανέιρο, σε μια σημαντική αθλητική διοργάνωση νέων.</p>
-            <a href="https://news.google.com/rss/articles/CBMirwFBVV95cUxNQy1Zd0thcVNTWVJGWWVwbm1xODRYU0JLVGN4NTVtUnpMNmN3US1SLWJqSVkxM3NkUVVzNlhJNHBiS0dLR1hxZ2xGUnZFR3FvWFJwVkNpTkowSENrVUNOajhzZ1huYmlZMUlsaUdEOTA3NV9jbHZkQjg4ZUdNbXR3ZEstbUk1RWI0bmx6LVlFbk1jQ0VwYkRmcFV4WVNocVE0WHh4VWpwZ3V2QkVzeUln" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Ο Κουέντιν Ταραντίνο έγινε πατέρας για τρίτη φορά στα 63 του</h3>
+            <p class="card-summary">Ο διάσημος σκηνοθέτης και η σύζυγός του Ντανιέλα Πικ Ταραντίνο απέκτησαν ένα αγοράκι, το τρίτο τους παιδί.</p>
+            <a href="https://www.protothema.gr/life-style/article/1915248/pateras-gia-triti-fora-sta-63-tou-o-kouedin-taradino/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
 
         <article class="card">
             <div class="card-header">
-                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
-                <span class="source">eKathimerini</span>
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">in.gr</span>
             </div>
-            <h3 class="card-title">Ελληνική τέχνη λάμπει στο Παρίσι: Δημοπρασία ξεπέρασε τα 3,85 εκατ. ευρώ</h3>
-            <p class="card-summary">Δημοπρασία ελληνικής τέχνης στο Παρίσι σημείωσε εντυπωσιακή επιτυχία, ξεπερνώντας τα 3,85 εκατομμύρια ευρώ και αναδεικνύοντας τη διεθνή αξία της ελληνικής καλλιτεχνικής δημιουργίας.</p>
-            <a href="https://news.google.com/rss/articles/CBMilgFBVV95cUxOelhJc0xJSVZjWi1RS1RVVTY1RU9iYjNITE9vVXg2VjRXaHJzem1DTEJ1VkRmbjNKQ2VQeWdWMld6ZVBDcERtQTBTdWI3VWViejMwZElYWU1RY3RDckczbWNjbnYxZ0E5VFBfYXhZRGpZeVpmWHFETWJfbXI4U195aFNkLVhHdFIxa1ZYZHMxNWRLQy1wTmc" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Android Fast Switch: Ένας αριθμός τηλεφώνου σε δύο κινητά ταυτόχρονα</h3>
+            <p class="card-summary">Η Google δοκιμάζει νέα λειτουργία για Android που θα επιτρέπει τη χρήση ενός αριθμού σε δύο συσκευές, αλλάζοντας τον τρόπο που διαχειριζόμαστε τις τηλεφωνικές μας γραμμές.</p>
+            <a href="https://www.in.gr/2026/11/22/in-science/technology/google-to-android-etoimazei-to-epomeno-megalo-vima-enas-arithmos-se-dyo-kinita-ti-einai-to-fast-switch/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
+                <span class="source">in.gr</span>
+            </div>
+            <h3 class="card-title">Ιπτάμενο μονοθέσιο χωρίς φτερά: Η Κίνα κάνει πραγματικότητα το όνειρο</h3>
+            <p class="card-summary">Ένα εντυπωσιακό ιπτάμενο όχημα χωρίς φτερά παρουσιάστηκε στην Κίνα, κλέβοντας την παράσταση και δείχνοντας ότι τα ιπτάμενα αυτοκίνητα δεν είναι πλέον επιστημονική φαντασία.</p>
+            <a href="https://www.in.gr/2026/11/22/in-science/technology/kina-kseperase-to-concept-tou-iptamenou-aytokinitou-kai-pige-se-oxima-pou-petaei-xoris-ftera/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -482,59 +498,11 @@
         <article class="card">
             <div class="card-header">
                 <span class="badge" style="background:#0369a1">Οικονομία</span>
-                <span class="source">Greek City Times</span>
-            </div>
-            <h3 class="card-title">Η Ελλάδα ως ευρωπαϊκός επιχειρηματικός κόμβος: Γιατί οι επενδυτές στρέφονται προς τη χώρα</h3>
-            <p class="card-summary">Διεθνές δημοσίευμα αναλύει πώς η Ελλάδα μετασχηματίζεται από τουριστικό προορισμό σε ισχυρό επιχειρηματικό κέντρο, προσελκύοντας παγκόσμιες επενδύσεις.</p>
-            <a href="https://news.google.com/rss/articles/CBMikgFBVV95cUxNSG5zUzFWRUY1TGdINHZzZzRRWXluMWQ3SFdFQUtNWGNOemFyNXg5WExqM05iNWVNcHctNUNVUkt3a1RLSzJra2VLVHZzcUktMWdOVnVHVGFuZHFQVkQyTWtkMXBiaXJKbHhvT3RGR3M5WHRqczY5TjBXUUJ2Mzg4bGRCOFZnSjh5R1E0ZzU1VFVwQQ" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#d97706">Κοινωνία</span>
-                <span class="source">in.gr</span>
-            </div>
-            <h3 class="card-title">Σύμπραξη τεσσάρων Δήμων της Θεσσαλίας για κοινό σχέδιο ανάπτυξης</h3>
-            <p class="card-summary">Οι Δήμοι Μουζακίου, Πύλης, Παλαμά και Φαρκαδόνας ενώνουν τις δυνάμεις τους για ένα κοινό αναπτυξιακό σχέδιο για την «Καρδιά της Θεσσαλίας».</p>
-            <a href="https://www.in.gr/2026/11/19/politics/aftodioikisi/sympraksi-anaptyksis-dimon-tis-thessalias/" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
-                <span class="source">in.gr</span>
-            </div>
-            <h3 class="card-title">«Ο Θαυμαστός τους Κόσμος»: Παράσταση που αμφισβητεί τα στερεότυπα για τον αυτισμό</h3>
-            <p class="card-summary">Ο ηθοποιός και σκηνοθέτης Μιχάλης Κουμαριανός δημιούργησε ένα έργο που μας καλεί να ανακαλύψουμε τον κόσμο μέσα από τα μάτια ατόμων στο φάσμα του αυτισμού.</p>
-            <a href="https://www.in.gr/2026/11/19/life/culture-live/o-thaymastos-tous-kosmos-tou-mixali-koumarianou-amfisvitei-ola-osa-theoroume-aytonoita-gia-ton-aytismo/" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#7c3aed">Πολιτισμός</span>
                 <span class="source">Proto Thema</span>
             </div>
-            <h3 class="card-title">Το σμαραγδί φόρεμα της Κίρα Νάιτλι από το «Atonement» βγαίνει σε δημοπρασία</h3>
-            <p class="card-summary">Η εμβληματική μεταξωτή δημιουργία που φόρεσε η Κίρα Νάιτλι στη σκηνή της βιβλιοθήκης δημοπρατείται στο Λονδίνο, με εκτιμώμενη τιμή 100.000-120.000 λίρες.</p>
-            <a href="https://www.protothema.gr/marie-claire/article/1913717/to-smaragdi-forema-pou-forouse-i-kira-naitli-stin-tainia-atonement-vgainei-se-dimoprasia/" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#0891b2">Τεχνολογία</span>
-                <span class="source">in.gr</span>
-            </div>
-            <h3 class="card-title">Η Google ποντάρει σε γεωθερμική ενέργεια με καινοτόμα γεωτρύπανα μικροκυμάτων</h3>
-            <p class="card-summary">Η Google εξασφαλίζει 50 MW καθαρής ενέργειας από φιλόδοξο γεωθερμικό έργο στο Όρεγκον, αξιοποιώντας θερμότητα από βαθιά πετρώματα για συνεχή παραγωγή ρεύματος.</p>
-            <a href="https://www.in.gr/2026/11/19/in-science/technology/h-google-pontarei-se-geothermiki-egkatastasi-me-geotrypana-mikrokymaton/" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Οι οίκοι πολυτελείας επανεφευρίσκουν τον εαυτό τους μέσα από αρχιτεκτονική και εμπειρίες</h3>
+            <p class="card-summary">Η Hermès μετέτρεψε παλιό εργοστάσιο καλτσών στο Νάσβιλ σε εντυπωσιακό κατάστημα-φόρο τιμής στη «Πόλη της Μουσικής», αναδεικνύοντας τη νέα στρατηγική επιβίωσης της πολυτέλειας.</p>
+            <a href="https://www.protothema.gr/economy/article/1915237/70-ekatommuria-ligoteroi-agorastes-kai-tsades-104-akrivoteres-to-shedio-epiviosis-ton-oikon-poluteleias/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -551,12 +519,12 @@
                 
         <article class="card">
             <div class="card-header">
-                <span class="badge" style="background:#2563eb">Επιστήμη</span>
-                <span class="source">NYT Science</span>
+                <span class="badge" style="background:#d97706">Κοινωνία</span>
+                <span class="source">Good News Network</span>
             </div>
-            <h3 class="card-title">Το Voyager 1 βρίσκεται σε απόσταση μιας φωτεινής ημέρας από τη Γη — 49 χρόνια ταξίδι</h3>
-            <p class="card-summary">Το σκάφος Voyager 1 της NASA, που εκτοξεύτηκε το 1977, έχει φτάσει σε απόσταση μιας φωτεινής ημέρας από τη Γη, αποτελώντας το πιο απομακρυσμένο ανθρώπινο κατασκεύασμα στο διάστημα.</p>
-            <a href="https://www.nytimes.com/2026/11/18/science/nasa-voyager-1-earth-light-day.html" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Το πρώτο μουσείο μέσα σε παιδικό νοσοκομείο εκπληρώνει την τελευταία επιθυμία ενός μικρού αγοριού</h3>
+            <p class="card-summary">Ένα αγόρι που νοσηλευόταν με καρκίνο ονειρευόταν έναν χώρο διαφυγής από τη θεραπεία. Η οικογένειά του έκανε το όνειρό του πραγματικότητα δημιουργώντας το πρώτο μουσείο εντός παιδικού νοσοκομείου.</p>
+            <a href="https://www.goodnewsnetwork.org/the-first-museum-built-in-a-childrens-hospital-fulfills-dying-boys-wish/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -566,57 +534,21 @@
                 <span class="badge" style="background:#be185d">Υγεία</span>
                 <span class="source">Good News Network</span>
             </div>
-            <h3 class="card-title">Επιστήμονες «θεράπευσαν» θανατηφόρους όγκους εγκεφάλου σε ποντίκια με νέα θεραπεία</h3>
-            <p class="card-summary">Ερευνητές του UC San Francisco εξάλειψαν επιθετικό παιδικό καρκίνο εγκεφάλου σε όλα τα ποντίκια που δοκιμάστηκαν, παρέχοντας παράλληλα μακροχρόνια προστασία.</p>
-            <a href="https://www.goodnewsnetwork.org/scientists-cure-deadly-brain-tumors-in-every-mouse-tested-with-new-cancer-therapy/" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">«Εξαιρετικό» φάρμακο μπορεί να θεραπεύσει οριστικά την υψηλή αρτηριακή πίεση</h3>
+            <p class="card-summary">Νέα κλινική μελέτη δείχνει ότι ένα ήδη εγκεκριμένο από τον FDA φάρμακο μπορεί να αντιμετωπίσει τη ρίζα της ορμονικής υπέρτασης, προσφέροντας μόνιμη ανακούφιση σε εκατομμύρια ασθενείς.</p>
+            <a href="https://www.goodnewsnetwork.org/drug-may-actually-cure-high-blood-pressure-caused-by-hormones/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
 
         <article class="card">
             <div class="card-header">
-                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="badge" style="background:#be185d">Υγεία</span>
                 <span class="source">Good News Network</span>
             </div>
-            <h3 class="card-title">Οι μπλε φάλαινες της Ανταρκτικής αυξήθηκαν κατά 1.000% από το τέλος του κυνηγιού</h3>
-            <p class="card-summary">Από μόλις 418 το 1973, οι μπλε φάλαινες της Ανταρκτικής έφτασαν τις 4.018, με ρυθμό ανάκαμψης 4,5% ετησίως — μια από τις μεγαλύτερες περιβαλλοντικές επιτυχίες της εποχής μας.</p>
-            <a href="https://www.goodnewsnetwork.org/this-blue-whale-population-grew-1000-since-the-end-of-whaling/" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#d97706">Κοινωνία</span>
-                <span class="source">Good News Network</span>
-            </div>
-            <h3 class="card-title">Αδέρφια έχτισαν σκάλα 430 σκαλοπατιών για τη μητέρα τους που αρνείται να φύγει από το βουνό</h3>
-            <p class="card-summary">Παιδιά ηλικιωμένης Κινέζας έχτισαν με τα χέρια τους μια «ουράνια σκάλα» στην πλαγιά βουνού για να διευκολύνουν τη μητέρα τους να φτάνει στο σπίτι της.</p>
-            <a href="https://www.goodnewsnetwork.org/siblings-build-430-step-sky-ladder-for-their-mother-who-refuses-to-live-in-the-city/" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
-                <span class="source">Good News Network</span>
-            </div>
-            <h3 class="card-title">Φοιτητές αγωνίζονται να σώσουν σπάνιο φυτό που υπάρχει μόνο κοντά στο πανεπιστήμιό τους</h3>
-            <p class="card-summary">Επιστήμονες του Santa Clara University καταβάλλουν κάθε προσπάθεια για να σώσουν ένα μοναδικό άγριο λουλούδι της κοιλάδας Santa Clara που απειλείται από λαθροσυλλογή.</p>
-            <a href="https://www.goodnewsnetwork.org/students-fighting-to-save-poached-plant-species-that-only-exists-near-their-campus/" class="read-more" target="_blank" rel="noopener">
-                Διαβάστε περισσότερα →
-            </a>
-        </article>
-
-        <article class="card">
-            <div class="card-header">
-                <span class="badge" style="background:#d97706">Κοινωνία</span>
-                <span class="source">Good News Network</span>
-            </div>
-            <h3 class="card-title">Ο Warren Buffett δώρισε 5,5 δισ. δολάρια για την Ημέρα των Ευχαριστιών</h3>
-            <p class="card-summary">Ο θρυλικός επενδυτής μετέτρεψε χιλιάδες μετοχές της Berkshire Hathaway σε φιλανθρωπική δωρεά αξίας 5,5 δισ. δολαρίων, τονίζοντας ότι «η καλοσύνη δεν έχει τιμή».</p>
-            <a href="https://www.goodnewsnetwork.org/warren-buffett-gives-away-5-5-billion-thanksgiving-gift/" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Μία ένεση CRISPR μειώνει την «κακή» χοληστερόλη κατά 52% για πάνω από ένα χρόνο</h3>
+            <p class="card-summary">Η πρώτη ανθρώπινη δοκιμή γονιδιακής θεραπείας με CRISPR έδειξε μείωση της LDL χοληστερόλης κατά 52% χωρίς παρενέργειες, με αποτελέσματα που διαρκούν τουλάχιστον 12 μήνες.</p>
+            <a href="https://www.goodnewsnetwork.org/first-human-trial-to-slash-bad-cholesterol-by-50pt-with-one-crispr-injection/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -626,21 +558,45 @@
                 <span class="badge" style="background:#2563eb">Επιστήμη</span>
                 <span class="source">Good News Network</span>
             </div>
-            <h3 class="card-title">Αγρότης βρήκε άγνωστους σπόρους στη σοφίτα του και ανέστησε αρχαίο «θαυματουργό» σιτάρι</h3>
-            <p class="card-summary">Ιταλός αγρότης από την Πάρμα ανακάλυψε τυχαία σπόρους αρχαίου σιταριού και κατάφερε να τους καλλιεργήσει, ανοίγοντας νέες προοπτικές για το σύγχρονο διατροφικό σύστημα.</p>
-            <a href="https://www.goodnewsnetwork.org/farmer-finds-unknown-seeds-in-his-attic-and-grows-an-ancient-miracle-grain/" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Drone συνέλεξε ανάσα φάλαινας και ολοκλήρωσε για πρώτη φορά την αλληλούχιση του γονιδιώματός της</h3>
+            <p class="card-summary">Επιστήμονες του Πανεπιστημίου του Αγίου Ανδρέα χρησιμοποίησαν drone για να συλλέξουν εκπνοή φάλαινας, επιτυγχάνοντας πλήρη αλληλούχιση γονιδιώματος χωρίς καμία παρεμβατική επαφή με το ζώο.</p>
+            <a href="https://www.goodnewsnetwork.org/breath-of-whale-captured-via-drone-to-complete-genome-sequence/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
 
         <article class="card">
             <div class="card-header">
-                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
+                <span class="source">BBC Science</span>
+            </div>
+            <h3 class="card-title">Το BepiColombo έφτασε στον Ερμή μετά από οκτώ χρόνια ταξίδι στο διάστημα</h3>
+            <p class="card-summary">Η διαστημική αποστολή BepiColombo έγινε μόλις το δεύτερο σκάφος στην ιστορία που τίθεται σε τροχιά γύρω από τον Ερμή, τον πλησιέστερο πλανήτη στον Ήλιο, υπόσχοντας νέες αποκαλύψεις.</p>
+            <a href="https://www.bbc.co.uk/news/articles/c39w9l4v1p9ro" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
                 <span class="source">Good News Network</span>
             </div>
-            <h3 class="card-title">Τα χημικά «για πάντα» μειώθηκαν κατά 30% στα ποτάμια της Αγγλίας</h3>
-            <p class="card-summary">Δύο επικίνδυνες χημικές ενώσεις που απαγορεύτηκαν διεθνώς εντοπίζονται πλέον σε σημαντικά χαμηλότερες συγκεντρώσεις στα αγγλικά ποτάμια, με μείωση 49% στα ψάρια.</p>
-            <a href="https://www.goodnewsnetwork.org/30-drop-in-levels-of-forever-chemicals-in-englands-rivers-49-in-fish-brilliant-to-see/" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Το Voyager 1 βρίσκεται σε απόσταση μιας φωτεινής ημέρας από τη Γη — το Empire State Building φωτίστηκε χρυσό</h3>
+            <p class="card-summary">Το Voyager 1, που εκτοξεύτηκε το 1977, έχει φτάσει σε απόσταση μιας φωτεινής ημέρας από τη Γη. Το Empire State Building φωτίστηκε χρυσό για να τιμήσει αυτό το ιστορικό ορόσημο.</p>
+            <a href="https://www.goodnewsnetwork.org/empire-state-building-lit-up-with-gold-to-celebrate-nasa-spacecraft-passing-one-light-day-from-earth/" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#2563eb">Επιστήμη</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Ανακαλύφθηκαν πάνω από 100 σκελετοί σπηλαιόαρκτων σε «συγκλονιστική» ανακάλυψη στις Άλπεις</h3>
+            <p class="card-summary">Ένας οδηγός ορεινής πεζοπορίας ανακάλυψε σπήλαιο με σκελετούς εκατοντάδων εκλιπόντων σπηλαιόαρκτων. Η ανακάλυψη κρατήθηκε μυστική για να αποτραπεί η λεηλασία.</p>
+            <a href="https://www.goodnewsnetwork.org/over-100-cave-bear-skeletons-found-in-sensational-discovery-by-alpine-guide/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -650,9 +606,9 @@
                 <span class="badge" style="background:#0891b2">Τεχνολογία</span>
                 <span class="source">NYT Science</span>
             </div>
-            <h3 class="card-title">Πώς τα εικονικά κύτταρα τεχνητής νοημοσύνης μπορούν να μεταμορφώσουν την ιατρική</h3>
-            <p class="card-summary">Εταιρείες βιοτεχνολογίας αναπτύσσουν AI μοντέλα ανθρώπινων κυττάρων για να επιταχύνουν την ανάπτυξη φαρμάκων και να επιβραδύνουν τη γήρανση.</p>
-            <a href="https://www.nytimes.com/2026/11/18/science/ai-virtual-human-cells.html" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Η AI ίσως έλυσε την υπόθεση Riemann — ένα από τα μεγαλύτερα μαθηματικά μυστήρια</h3>
+            <p class="card-summary">Μαθηματικός της Anthropic ισχυρίζεται ότι με τη βοήθεια του AI Claude κατάφερε να αποδείξει την υπόθεση Riemann, ένα από τα πιο διάσημα άλυτα προβλήματα των μαθηματικών.</p>
+            <a href="https://www.nytimes.com/2026/11/20/science/anthropic-ai-math-riemann-hypothesis.html" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -662,9 +618,21 @@
                 <span class="badge" style="background:#16a34a">Περιβάλλον</span>
                 <span class="source">BBC Science</span>
             </div>
-            <h3 class="card-title">Ουίλιαμ και Κέιτ τίμησαν τους νικητές του Βραβείου Earthshot στη Μουμπάι</h3>
-            <p class="card-summary">Ο Πρίγκιπας και η Πριγκίπισσα της Ουαλίας παρέστησαν στην τελετή απονομής των περιβαλλοντικών βραβείων Earthshot, γιορτάζοντας καινοτόμες λύσεις για το κλίμα.</p>
-            <a href="https://www.bbc.co.uk/news/articles/cqlykve012d1o" class="read-more" target="_blank" rel="noopener">
+            <h3 class="card-title">Σπάνιος σκνίπας καταγράφηκε σε ρεκόρ αριθμό στο Έσεξ — επιστρέφει η φύση</h3>
+            <p class="card-summary">Για πρώτη φορά καταγράφηκε αυτοσυντηρούμενος πληθυσμός σπάνιου σκνίπα σε φυσικό καταφύγιο στο Έσεξ, σε ό,τι χαρακτηρίζεται ως σημαντική επιτυχία για τη διατήρηση της βιοποικιλότητας.</p>
+            <a href="https://www.bbc.co.uk/news/articles/c6jrey28gvqxo" class="read-more" target="_blank" rel="noopener">
+                Διαβάστε περισσότερα →
+            </a>
+        </article>
+
+        <article class="card">
+            <div class="card-header">
+                <span class="badge" style="background:#16a34a">Περιβάλλον</span>
+                <span class="source">Good News Network</span>
+            </div>
+            <h3 class="card-title">Χαρτί από κοπριά ρινόκερου σώζει τα ζώα και στηρίζει τις τοπικές κοινότητες</h3>
+            <p class="card-summary">Ένα πατέρας-κόρη δίδυμο στην Ινδία παράγει χαρτί από κοπριά ρινόκερου, δίνοντας οικονομικό κίνητρο στους κατοίκους να προστατεύουν τα ζώα αντί να συγκρούονται μαζί τους.</p>
+            <a href="https://www.goodnewsnetwork.org/father-daughter-business-sells-paper-and-stationery-made-from-rhino-dung/" class="read-more" target="_blank" rel="noopener">
                 Διαβάστε περισσότερα →
             </a>
         </article>
@@ -674,10 +642,10 @@
     </main>
 
     <footer>
-        <p>Δημιουργήθηκε αυτόματα με AI · Πηγές: ΑΠΕ-ΜΠΕ, Kathimerini, Positive.news, Good News Network κ.ά.</p>
+        <p>Δημιουργήθηκε αυτόματα με AI · Πηγές: Proto Thema, in.gr, Good News Network, BBC Science, NYT Science · Καιρός: Open-Meteo</p>
         <p style="margin-top:0.4rem">
             <a href="index.html">Αρχική</a> ·
-            Τελευταία ενημέρωση: 19 Νοεμβρίου 2026
+            Τελευταία ενημέρωση: 23 Νοεμβρίου 2026
         </p>
     </footer>
 </body>

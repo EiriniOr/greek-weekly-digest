@@ -172,10 +172,13 @@ class AudioGenerator:
         return files[0]
 
     def _build_data(self, curated):
-        from datetime import datetime
+        from datetime import date
 
         # Mon–Wed belongs to the Monday edition, Thu–Sun to the Thursday one.
-        thursday = datetime.now().weekday() >= 3
+        edition = date.fromisoformat(
+            curated.get("edition_date") or date.today().isoformat()
+        )
+        thursday = edition.weekday() >= 3
         edition = "Πέμπτης" if thursday else "Δευτέρας"
         goodbye = (
             "Καλό Σαββατοκύριακο σε όλους!" if thursday else "Καλή εβδομάδα σε όλους!"

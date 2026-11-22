@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 import jokes  # noqa: E402
 import namedays  # noqa: E402
+import weather  # noqa: E402
 
 
 SYSTEM_PROMPT = """Είσαι επιμελητής ειδήσεων που επιλέγει αποκλειστικά θετικές, εμπνευστικές ή ενδιαφέρουσες ειδήσεις.
@@ -171,6 +172,9 @@ class ContentCurator:
         # vetted lists (namedays.py, jokes.py), picked by today's date.
         curated["namedays"] = namedays.get_edition_namedays(now.date())
         curated["joke"] = jokes.get_joke(now.date())
+        curated["weather"] = weather.get_edition_weather(
+            now.date(), self.config.get("weather", {})
+        )
         left = jokes.jokes_left(now.date())
         if left < 4:
             print(
@@ -186,6 +190,7 @@ class ContentCurator:
             f"Curated: {len(curated['greek_news'])} Greek, {len(curated['world_news'])} world"
         )
         print(f"Namedays: {[n['name'] for n in curated['namedays']]}")
+        print(f"Weather: {weather.spoken_text(curated['weather']) or 'none'}")
         print(f"Joke: {curated.get('joke', '')[:80]}...")
         print(f"Saved to {out_path}")
         return out_path

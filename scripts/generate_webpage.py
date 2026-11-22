@@ -70,6 +70,19 @@ def build_html(curated, date_str, has_audio):
     world_news = curated.get("world_news", [])
     namedays = curated.get("namedays", [])
     joke = curated.get("joke", "")
+    weather_data = curated.get("weather")
+
+    # Footer lists the sources actually used in this edition.
+    sources = list(
+        dict.fromkeys(
+            item.get("source", "").strip()
+            for item in greek_news + world_news
+            if item.get("source", "").strip()
+        )
+    )
+    sources_text = ", ".join(sources) if sources else "διάφορες πηγές"
+    if weather_data:
+        sources_text += " · Καιρός: Open-Meteo"
 
     if has_audio:
         audio_player = f"""
@@ -136,6 +149,21 @@ def build_html(curated, date_str, has_audio):
         <div class="extra-block nameday-block">
             <h3>🎂 Ποιοι γιορτάζουν</h3>
             <ul class="nameday-list">{items_html}</ul>
+        </div>"""
+
+    weather_html = ""
+    if weather_data and weather_data.get("days"):
+        rows = "".join(
+            f'<li><span class="w-emoji">{d["emoji"]}</span>'
+            f'<span class="w-text"><span class="w-day">{d["label"]}</span>'
+            f'<span class="w-desc">{d["desc"].capitalize()}</span></span>'
+            f'<span class="w-temp">{d["min"]}° – {d["max"]}°</span></li>'
+            for d in weather_data["days"]
+        )
+        weather_html = f"""
+        <div class="extra-block weather-block">
+            <h3>🌤️ Ο καιρός {weather_data.get("place", "")}</h3>
+            <ul class="weather-list">{rows}</ul>
         </div>"""
 
     joke_html = ""
@@ -239,7 +267,7 @@ def build_html(curated, date_str, has_audio):
         .intro {{
             font-family: 'Noto Serif', serif;
             font-style: italic;
-            font-size: 1.05rem;
+            font-size: 1.15rem;
             line-height: 1.7;
             color: rgba(255,255,255,0.9);
             max-width: 640px;
@@ -358,12 +386,13 @@ def build_html(curated, date_str, has_audio):
             padding: 0.25rem 0.7rem;
             border-radius: 999px;
             font-weight: 600;
+            white-space: nowrap;
         }}
 
         /* ── Card grid ── */
         .card-grid {{
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.25rem;
             margin-bottom: 3rem;
         }}
@@ -389,7 +418,7 @@ def build_html(curated, date_str, has_audio):
         }}
         .badge {{
             color: #fff;
-            font-size: 0.68rem;
+            font-size: 0.78rem;
             font-weight: 600;
             letter-spacing: 0.04em;
             padding: 0.2rem 0.55rem;
@@ -397,25 +426,25 @@ def build_html(curated, date_str, has_audio):
             text-transform: uppercase;
         }}
         .source {{
-            font-size: 0.75rem;
+            font-size: 0.88rem;
             color: var(--muted);
             margin-left: auto;
         }}
         .card-title {{
             font-family: 'Noto Serif', serif;
-            font-size: 1rem;
+            font-size: 1.25rem;
             font-weight: 700;
             line-height: 1.4;
             color: var(--text);
         }}
         .card-summary {{
-            font-size: 0.88rem;
-            line-height: 1.6;
-            color: #374151;
+            font-size: 1.1rem;
+            line-height: 1.65;
+            color: #263238;
             flex: 1;
         }}
         .read-more {{
-            font-size: 0.82rem;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--blue);
             text-decoration: none;
@@ -461,15 +490,32 @@ def build_html(curated, date_str, has_audio):
             gap: 0.6rem 1.5rem;
             padding: 0;
         }}
-        .nameday-list li {{ font-size: 1rem; }}
-        .nd-date {{ font-size: 0.82rem; color: var(--muted); }}
+        .nameday-list li {{ font-size: 1.15rem; }}
+        .nd-date {{ font-size: 0.95rem; color: var(--muted); }}
+        .weather-block {{
+            background: #e8f5e9;
+            border: 2px solid #a5d6a7;
+        }}
+        .weather-block h3 {{ color: #2e7d32; }}
+        .weather-list {{ list-style: none; padding: 0; display: grid; gap: 0.6rem; }}
+        .weather-list li {{
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.1rem;
+        }}
+        .w-emoji {{ font-size: 1.8rem; width: 2.2rem; text-align: center; }}
+        .w-text {{ flex: 1; display: flex; flex-direction: column; line-height: 1.3; }}
+        .w-day {{ font-weight: 600; }}
+        .w-desc {{ font-size: 0.95rem; color: #546e7a; }}
+        .w-temp {{ font-weight: 600; white-space: nowrap; }}
         .joke-block {{
             background: #fffde7;
             border: 2px solid #ffe082;
         }}
         .joke-block h3 {{ color: #f57f17; }}
         .joke-text {{
-            font-size: 1.05rem;
+            font-size: 1.15rem;
             line-height: 1.7;
             font-style: italic;
             color: #37474f;
@@ -481,12 +527,13 @@ def build_html(curated, date_str, has_audio):
             color: rgba(255,255,255,0.7);
             text-align: center;
             padding: 1.5rem;
-            font-size: 0.8rem;
+            font-size: 0.95rem;
         }}
         footer a {{ color: var(--gold); text-decoration: none; }}
 
         @media (max-width: 480px) {{
             .card-grid {{ grid-template-columns: 1fr; }}
+            .section-heading h2 {{ font-size: 1.35rem; }}
             h1 {{ font-size: 1.6rem; }}
         }}
     </style>
@@ -495,6 +542,7 @@ def build_html(curated, date_str, has_audio):
     {audio_player}
 
     <div class="top-extras">
+        {weather_html}
         {nameday_html}
         {joke_html}
     </div>
@@ -536,7 +584,7 @@ def build_html(curated, date_str, has_audio):
     </main>
 
     <footer>
-        <p>Δημιουργήθηκε αυτόματα με AI · Πηγές: ΑΠΕ-ΜΠΕ, Kathimerini, Positive.news, Good News Network κ.ά.</p>
+        <p>Δημιουργήθηκε αυτόματα με AI · Πηγές: {sources_text}</p>
         <p style="margin-top:0.4rem">
             <a href="index.html">Αρχική</a> ·
             Τελευταία ενημέρωση: {greek_dt}

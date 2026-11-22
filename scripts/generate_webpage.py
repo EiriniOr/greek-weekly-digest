@@ -68,7 +68,7 @@ def build_html(curated, date_str, has_audio):
     intro = curated.get("weekly_intro", "")
     greek_news = curated.get("greek_news", [])
     world_news = curated.get("world_news", [])
-    namedays = []  # namedays temporarily disabled (accuracy work pending)
+    namedays = curated.get("namedays", [])
     joke = curated.get("joke", "")
 
     if has_audio:
@@ -134,7 +134,7 @@ def build_html(curated, date_str, has_audio):
         )
         nameday_html = f"""
         <div class="extra-block nameday-block">
-            <h3>🎂 Ονομαστικές εορτές εβδομάδας</h3>
+            <h3>🎂 Ποιοι γιορτάζουν</h3>
             <ul class="nameday-list">{items_html}</ul>
         </div>"""
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Greek TTS via OpenAI tts-1-hd.
+Greek TTS via OpenAI (model set in config.yaml).
 
 Approach to avoid mid-sentence cutoff:
 - Split script at paragraph boundaries into chunks of ≤2000 chars each
@@ -20,6 +20,8 @@ import anthropic
 from openai import OpenAI
 from pathlib import Path
 
+import namedays
+
 SCRIPT_PROMPT = """Είσαι η Βερόνικα, παρουσιάστρια του podcast «Τα νέα της μαμάς».
 
 Γράψε ένα podcast σενάριο στα ελληνικά, περίπου 7 λεπτά (χωρίς αυστηρό όριο λέξεων).
@@ -29,10 +31,11 @@ SCRIPT_PROMPT = """Είσαι η Βερόνικα, παρουσιάστρια τ
 
 Δομή:
 1. Χαιρετισμός (μία φράση)
-2. Αστείο: ΜΟΝΟ αν τα δεδομένα περιέχουν τη γραμμή «ΑΣΤΕΙΟ: ΝΑΙ» — γράψε μια σύντομη φυσική εισαγωγή (π.χ. «Και τώρα, το ανέκδοτο της ημέρας!») και αμέσως μετά, σε ΔΙΚΗ ΤΟΥ παράγραφο, γράψε ΑΚΡΙΒΩΣ τον δείκτη [ΑΣΤΕΙΟ] και τίποτα άλλο. ΜΗΝ γράψεις εσύ αστείο — το κείμενο θα εισαχθεί αυτόματα. Αν δεν υπάρχει «ΑΣΤΕΙΟ: ΝΑΙ», παράλειψε το βήμα.
-3. Ελληνικά νέα (~3 λεπτά): τα 4-5 σημαντικότερα, με πλαίσιο και σημασία
-4. Παγκόσμια θετικά νέα (~2,5 λεπτά): τα 4-5 σημαντικότερα, με πλαίσιο
-5. Αποχαιρετισμός: «Καλή εβδομάδα σε όλους!»
+2. Ονομαστικές εορτές: ΜΟΝΟ αν τα δεδομένα περιέχουν τη γραμμή «ΓΙΟΡΤΕΣ: ΝΑΙ» — σε ΔΙΚΗ ΤΟΥ παράγραφο γράψε ΑΚΡΙΒΩΣ τον δείκτη [ΓΙΟΡΤΕΣ] και τίποτα άλλο. ΜΗΝ γράψεις εσύ ονόματα ή ημερομηνίες — το κείμενο θα εισαχθεί αυτόματα. Αν δεν υπάρχει «ΓΙΟΡΤΕΣ: ΝΑΙ», παράλειψε το βήμα.
+3. Αστείο: ΜΟΝΟ αν τα δεδομένα περιέχουν τη γραμμή «ΑΣΤΕΙΟ: ΝΑΙ» — γράψε μια σύντομη φυσική εισαγωγή (π.χ. «Και τώρα, το ανέκδοτο της ημέρας!») και αμέσως μετά, σε ΔΙΚΗ ΤΟΥ παράγραφο, γράψε ΑΚΡΙΒΩΣ τον δείκτη [ΑΣΤΕΙΟ] και τίποτα άλλο. ΜΗΝ γράψεις εσύ αστείο — το κείμενο θα εισαχθεί αυτόματα. Αν δεν υπάρχει «ΑΣΤΕΙΟ: ΝΑΙ», παράλειψε το βήμα.
+4. Ελληνικά νέα (~3 λεπτά): τα 4-5 σημαντικότερα, με πλαίσιο και σημασία
+5. Παγκόσμια θετικά νέα (~2,5 λεπτά): τα 4-5 σημαντικότερα, με πλαίσιο
+6. Αποχαιρετισμός: «Καλή εβδομάδα σε όλους!»
 
 Στυλ: ζεστό, φυσικό, σαν να μιλάς σε φίλο. Συνεχές κείμενο με φυσικές μεταβάσεις.
 ΣΗΜΑΝΤΙΚΟ: χώρισε το κείμενο σε παραγράφους (κενή γραμμή μεταξύ τους).
@@ -128,10 +131,12 @@ class AudioGenerator:
         weekday = datetime.now().weekday()
         edition = "Πέμπτης" if weekday == 3 else "Δευτέρας"
         lines = [f"ΕΚΔΟΣΗ: {edition}"]
-        # Namedays temporarily disabled (accuracy work pending).
-        # The joke text itself is deliberately NOT given to Claude — it would
-        # paraphrase it. Claude only writes a [ΑΣΤΕΙΟ] placeholder; the exact
-        # text is spliced in after script generation (see generate()).
+        # Name days and the joke are deliberately NOT given to Claude — it
+        # would paraphrase them (or add names). Claude only writes the
+        # [ΓΙΟΡΤΕΣ] / [ΑΣΤΕΙΟ] placeholders; the exact text is spliced in
+        # after script generation (see generate()).
+        if curated.get("namedays"):
+            lines.append("\nΓΙΟΡΤΕΣ: ΝΑΙ")
         if curated.get("joke", ""):
             lines.append("\nΑΣΤΕΙΟ: ΝΑΙ")
         lines.append("\nΕΛΛΗΝΙΚΑ ΝΕΑ:")
@@ -142,18 +147,20 @@ class AudioGenerator:
             lines.append(f"- {item['title']}: {item.get('summary', '')}")
         return "\n".join(lines)
 
-    def _insert_joke(self, script: str, joke: str) -> str:
-        """Splice the curated joke verbatim where Claude left the placeholder."""
-        if not joke:
-            return script.replace("[ΑΣΤΕΙΟ]", "").strip()
-        if "[ΑΣΤΕΙΟ]" in script:
-            script = script.replace("[ΑΣΤΕΙΟ]", joke, 1)
-            return script.replace("[ΑΣΤΕΙΟ]", "").strip()
-        # Placeholder missing — insert the joke as its own paragraph after the
-        # second paragraph (greeting + namedays), so it still airs verbatim.
+    @staticmethod
+    def _splice(
+        script: str, marker: str, text: str, fallback_pos: int, lead_in: str = ""
+    ) -> str:
+        """Put `text` verbatim where Claude left `marker`. If Claude forgot the
+        marker, insert it (with `lead_in`) as its own paragraph at
+        `fallback_pos` so it still airs. Empty text removes stray markers."""
+        if not text:
+            return script.replace(marker, "").strip()
+        if marker in script:
+            script = script.replace(marker, text, 1)
+            return script.replace(marker, "").strip()
         paras = re.split(r"\n{2,}", script)
-        pos = min(2, len(paras))
-        paras.insert(pos, f"Και τώρα, το ανέκδοτο της ημέρας! {joke}")
+        paras.insert(min(fallback_pos, len(paras)), f"{lead_in} {text}".strip())
         return "\n\n".join(paras)
 
     def _tts_to_file(self, text: str, cfg: dict, path: Path) -> None:
@@ -183,7 +190,13 @@ class AudioGenerator:
             ],
         )
         script = response.content[0].text.strip()
-        script = self._insert_joke(script, curated.get("joke", ""))
+        nameday_text = namedays.spoken_text(curated.get("namedays", []))
+        joke = curated.get("joke", "")
+        script = self._splice(script, "[ΓΙΟΡΤΕΣ]", nameday_text, 1)
+        script = self._splice(
+            script, "[ΑΣΤΕΙΟ]", joke, 2 if nameday_text else 1,
+            lead_in="Και τώρα, το ανέκδοτο της ημέρας!",
+        )
         print(f"Script: {len(script)} chars, {len(script.split())} words")
 
         script_path = self.audio_dir / f"script_{date_str}.txt"

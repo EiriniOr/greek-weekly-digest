@@ -9,6 +9,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
+import jokes  # noqa: E402
+import namedays  # noqa: E402
+
 
 SYSTEM_PROMPT = """Είσαι επιμελητής ειδήσεων που επιλέγει αποκλειστικά θετικές, εμπνευστικές ή ενδιαφέρουσες ειδήσεις.
 
@@ -33,9 +36,6 @@ CURATION_PROMPT = """Έχεις τις παρακάτω ειδήσεις της 
 
 {{
   "weekly_intro": "2-3 προτάσεις εισαγωγής που συνοψίζουν τα θέματα της εβδομάδας",
-  "namedays": [
-    {{"name": "Ελληνικό όνομα", "date": "π.χ. Δευτέρα 2 Ιουνίου"}}
-  ],
   "greek_news": [
     {{
       "title": "τίτλος στα ελληνικά",
@@ -167,19 +167,15 @@ class ContentCurator:
                     fixed_text = fixed_text[4:]
             curated = json.loads(fixed_text.strip())
 
-        # Namedays temporarily disabled (accuracy work pending) — do not inject.
-        curated.pop("namedays", None)
-
-        # Inject a vetted joke from the static bank (deterministic by date,
-        # so each run is new without persisted state). See jokes.py.
-        import importlib.util as _ilu
-
-        _jspec = _ilu.spec_from_file_location(
-            "jokes", Path(__file__).parent / "jokes.py"
-        )
-        _jmod = _ilu.module_from_spec(_jspec)
-        _jspec.loader.exec_module(_jmod)
-        curated["joke"] = _jmod.get_joke(now.date())
+        # Name days and the joke never come from the AI: both are read from
+        # vetted lists (namedays.py, jokes.py), picked by today's date.
+        curated["namedays"] = namedays.get_edition_namedays(now.date())
+        curated["joke"] = jokes.get_joke(now.date())
+        left = jokes.jokes_left(now.date())
+        if left < 4:
+            print(
+                f"WARNING: only {max(left, 0)} new joke(s) left, add more to scripts/jokes.py"
+            )
 
         date_str = datetime.now().strftime("%Y%m%d")
         out_path = self.data_dir / f"curated_{date_str}.json"
@@ -189,6 +185,7 @@ class ContentCurator:
         print(
             f"Curated: {len(curated['greek_news'])} Greek, {len(curated['world_news'])} world"
         )
+        print(f"Namedays: {[n['name'] for n in curated['namedays']]}")
         print(f"Joke: {curated.get('joke', '')[:80]}...")
         print(f"Saved to {out_path}")
         return out_path
